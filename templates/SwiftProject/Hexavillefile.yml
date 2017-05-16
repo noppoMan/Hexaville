@@ -1,0 +1,11 @@
+name: {{appName}}
+service: aws
+aws:
+  # credential:
+  #   access_key_id: xxxxxxxxxxxxxxxxxx
+  #   secret_access_key: xxxxxxxxxxxxxxxxxx
+  # region: us-east-1
+  lambda:
+    role: xxxxxxxxxxxxxxxxxxxxxxxxxx
+# build:
+#   nocache: false
