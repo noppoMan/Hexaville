@@ -76,6 +76,8 @@ try app.run()
 
 Fill `access_key_id`, `secret_access_key`, `region` and `lambda.role` in!
 
+`lambda.role` should be a `arn:aws:iam::{accountId}:role/{roleName}` format.
+
 ```yml
 name: test-app
 service: aws
