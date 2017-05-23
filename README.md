@@ -22,7 +22,7 @@ Current Swift Version is 3.1
 
 * Custom Domain Support
 * VPC Support
-* a
+* Binary Media Support
 * GCP
 
 ## Quick Start
