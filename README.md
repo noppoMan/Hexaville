@@ -22,6 +22,7 @@ Current Swift Version is 3.1
 
 * Custom Domain Support
 * VPC Support
+* a
 * GCP
 
 ## Quick Start
