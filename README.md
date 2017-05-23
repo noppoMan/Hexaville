@@ -22,6 +22,7 @@ Current Swift Version is 3.1
 
 * Custom Domain Support
 * VPC Support
+* GCP
 
 ## Quick Start
 
@@ -70,6 +71,27 @@ app.use(router)
 
 try app.run()
 ```
+
+### Edit Hexavillefile.yml
+
+Fill `access_key_id`, `secret_access_key`, `region` and `lambda.role` in!
+
+```yml
+name: test-app
+service: aws
+aws:
+  credential:
+    access_key_id: xxxxxxxxx
+    secret_access_key: xxxxxxxxx
+  region: us-east-1
+  lambda:
+    role: xxxxxxxxx
+    timout: 10
+build:
+  nocache: false
+
+```
+
 
 ### Deploy a Project
 
