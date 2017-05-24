@@ -27,7 +27,7 @@ Current Swift Version is 3.1
 
 ## Quick Start
 
-### Insall Hexaville
+### Install Hexaville
 ```sh
 git clone https://github.com/noppoMan/Hexaville.git
 cd Hexaville
@@ -98,20 +98,21 @@ build:
 
 ### Deploy a Project
 
-`Usage: hexaville deploy <hexavileApplicationPath> <target>`
+`Usage: hexaville deploy <target>`
 
 Use this when you have made changes to your Functions, Events or Resources.
 This operation take a while.
 
 ```sh
-./.build/debug/Hexaville deploy ~/Hello Hello
+cd /path/to/your/app
+/path/to/.build/debug/Hexaville deploy Hello
 ```
 
 ### Show routes
 
 show routes with running `routes` command at your Project root dir.
 
-```swift
+```sh
 cd /path/to/your/app
 /path/to/.build/debug/Hexaville routes
 ```
