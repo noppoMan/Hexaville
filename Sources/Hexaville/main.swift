@@ -33,6 +33,7 @@ enum HexavilleError: Error {
     case unsupportedService(String)
     case projectAlreadyCreated(String)
     case couldNotFindManifestFile(String)
+    case pathIsNotForHexavillefile(String)
 }
 
 class GenerateProject: Command {
@@ -155,23 +156,33 @@ class RoutesCommand: Command {
 class Deploy: Command {
     let name = "deploy"
     let shortDescription  = "Deploy your application to the specified cloud provider"
-    let hexavileApplicationPath = Parameter()
     let target = Parameter()
+    let hexavillefilePath = Key<String>("-c", "--hexavillefile", usage: "Path for the Hexavillefile.yml")
     let stage = Key<String>("--stage", usage: "Deployment Stage. default is staging")
+    
     func execute() throws {
-        let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-        let yml = try loadHexavilleFile(hexavilleFilePath: hexavileApplicationPath.value+"/Hexavillefile.yml")
-        let cloudProvider = try loadProvider(config: yml)
-        
-        let launcher = Launcher(
-            provider: cloudProvider,
-            hexavilleApplicationPath: hexavileApplicationPath.value,
-            executableTarget: target.value,
-            buildConfiguration: BuildConfiguration(yml: yml),
-            deploymentStage: deploymentStage
-        )
-        
         do {
+            var hexavileApplicationPath = FileManager.default.currentDirectoryPath
+            if let hexavillefilePath = hexavillefilePath.value {
+                var splited = hexavillefilePath.components(separatedBy: "/")
+                let last = splited.removeLast()
+                if last != "Hexavillefile.yml" {
+                    throw HexavilleError.pathIsNotForHexavillefile(hexavillefilePath)
+                }
+                hexavileApplicationPath = splited.joined(separator: "/")
+            }
+            
+            let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
+            let yml = try loadHexavilleFile(hexavilleFilePath: hexavileApplicationPath+"/Hexavillefile.yml")
+            let cloudProvider = try loadProvider(config: yml)
+            
+            let launcher = Launcher(
+                provider: cloudProvider,
+                hexavilleApplicationPath: hexavileApplicationPath,
+                executableTarget: target.value,
+                buildConfiguration: BuildConfiguration(yml: yml),
+                deploymentStage: deploymentStage
+            )
             try launcher.launch()
         } catch {
             print(error)
