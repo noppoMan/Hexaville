@@ -9,7 +9,7 @@
 import Foundation
 
 struct LinuxBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
-    func build(config: BuildConfiguration, hexavilleApplicationPath: String) throws -> BuildResult {
+    func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
         throw SwiftBuilderError.unsupportedPlatform("Linux")
     }
 }

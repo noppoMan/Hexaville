@@ -523,6 +523,26 @@ extension AWSLauncherProvider {
             throw LauncherError.missingRequiredParam("RestApi.id")
         }
         
+        let binaryMediaTypes: [String] = api.binaryMediaTypes ?? []
+        
+        let patchOperations: [Apigateway.PatchOperation] = Configuration.binaryMediaTypes.flatMap({
+            if binaryMediaTypes.contains($0) {
+                return nil
+            }
+            return Apigateway.PatchOperation(
+                path: "/binaryMediaTypes/\($0.replacingOccurrences(of: "/", with: "~1"))",
+                op: .add
+            )
+        })
+        
+        if patchOperations.count > 0 {
+            let input = Apigateway.UpdateRestApiRequest(
+                restApiId: restApiId,
+                patchOperations: patchOperations
+            )
+            _ = try apiGateway.client.updateRestApi(input)
+        }
+        
         let resources = try apiGateway.client.getResources(Apigateway.GetResourcesRequest(restApiId: api.id!))
         var resourceItems: [Apigateway.Resource] = resources.items ?? []
         
