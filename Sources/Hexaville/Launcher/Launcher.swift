@@ -82,13 +82,13 @@ public class Launcher {
     
     let deploymentStage: DeploymentStage
     
-    let buildConfiguration: BuildConfiguration
+    let configuration: Configuration
     
-    public init(provider: CloudLauncherProvider, hexavilleApplicationPath: String, executableTarget: String, buildConfiguration: BuildConfiguration, deploymentStage: DeploymentStage = .staging) {
+    public init(provider: CloudLauncherProvider, hexavilleApplicationPath: String, executableTarget: String, configuration: Configuration, deploymentStage: DeploymentStage = .staging) {
         self.provider = provider
         self.hexavilleApplicationPath = hexavilleApplicationPath
         self.executableTarget = executableTarget
-        self.buildConfiguration = buildConfiguration
+        self.configuration = configuration
         self.deploymentStage = deploymentStage
     }
     
@@ -112,12 +112,12 @@ public class Launcher {
             case .linux_x86:
                 let buildEnvProvider = LinuxBuildEnvironmentProvider()
                 let builder = SwiftBuilder()
-                _ = try builder.build(with: buildEnvProvider, config: buildConfiguration, hexavilleApplicationPath: hexavilleApplicationPath)
+                _ = try builder.build(with: buildEnvProvider, config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
                 
             case .mac:
                 let buildEnvProvider = XcodeBuildEnvironmentProvider()
                 let builder = SwiftBuilder()
-                let result = try builder.build(with: buildEnvProvider, config: buildConfiguration, hexavilleApplicationPath: hexavilleApplicationPath)
+                let result = try builder.build(with: buildEnvProvider, config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
                 _ = Proc(result.destination+"/.build/debug/"+executableTarget)
             }
             
@@ -145,7 +145,7 @@ public class Launcher {
         }
         
         let builder = SwiftBuilder()
-        return try builder.build(config: buildConfiguration, hexavilleApplicationPath: hexavilleApplicationPath)
+        return try builder.build(config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
     }
     
     private func launchFor(aws provider: AWSLauncherProvider) throws {

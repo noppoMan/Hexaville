@@ -34,7 +34,7 @@ class SwiftBuilder {
         return fileName.components(separatedBy: ".tar.gz")[0]
     }
     
-    public func build(with defaultProvider: SwiftBuildEnvironmentProvider? = nil, config: BuildConfiguration, hexavilleApplicationPath: String) throws -> BuildResult {
+    public func build(with defaultProvider: SwiftBuildEnvironmentProvider? = nil, config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
         if let defaultProvider = defaultProvider {
             return try defaultProvider.build(config: config, hexavilleApplicationPath: hexavilleApplicationPath)
         }

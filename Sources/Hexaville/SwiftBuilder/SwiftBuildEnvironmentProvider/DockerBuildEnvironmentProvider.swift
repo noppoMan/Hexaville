@@ -10,7 +10,7 @@ import Foundation
 
 struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     
-    func build(config: BuildConfiguration, hexavilleApplicationPath: String) throws -> BuildResult {
+    func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
         try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh")
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
@@ -33,7 +33,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         let tag = "hexaville-app"
         
         var opts = ["build", "-t", tag, "-f", "\(hexavilleApplicationPath)/Dockerfile", hexavilleApplicationPath]
-        if config.noCache {
+        if config.build.noCache {
             opts.insert("--no-cache", at: 1)
         }
         _ = Proc("/usr/local/bin/docker", opts)

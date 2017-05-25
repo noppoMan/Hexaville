@@ -142,7 +142,7 @@ class RoutesCommand: Command {
                 provider: cloudProvider,
                 hexavilleApplicationPath: cwd,
                 executableTarget: "\(cwd)".components(separatedBy: "/").last ?? "",
-                buildConfiguration: BuildConfiguration(),
+                configuration: Configuration(),
                 deploymentStage: deploymentStage
             )
             try launcher.showRoutes()
@@ -180,7 +180,7 @@ class Deploy: Command {
                 provider: cloudProvider,
                 hexavilleApplicationPath: hexavileApplicationPath,
                 executableTarget: target.value,
-                buildConfiguration: BuildConfiguration(yml: yml),
+                configuration: Configuration(yml: yml),
                 deploymentStage: deploymentStage
             )
             try launcher.launch()

@@ -16,7 +16,7 @@ struct XcodeBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         self.useDerivedDataPath = useDerivedDataPath
     }
     
-    func build(config: BuildConfiguration, hexavilleApplicationPath: String) throws -> BuildResult {
+    func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
         _ = Proc("/usr/bin/swift", ["build", "--chdir", hexavilleApplicationPath])
         return BuildResult(destination: hexavilleApplicationPath+"/.build/debug")
     }
