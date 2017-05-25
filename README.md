@@ -132,6 +132,16 @@ Routes:
 curl https://id.execute-api.ap-northeast-1.amazonaws.com/staging/
 ```
 
+## How to debug?
+
+You can debug your application with the HexavilleFramework's builtin web server with serve command.
+
+```sh
+/path/to/your/app/.build/debug/Hello serve
+# => Hexaville Builtin Server started at 0.0.0.0:3000
+```
+
+
 ## Contributing
 All developers should feel welcome and encouraged to contribute to Hexaville, see our getting started document here to get involved.
 
