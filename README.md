@@ -142,6 +142,9 @@ If you find a bug, please submit a pull request with a failing test case display
 If you find a security vulnerability, please contact yuki@miketokyo.com as soon as possible. We take these matters seriously.
 
 
+## Related Articles
+* [Serverless Server Side Swift with Hexaville](https://medium.com/@yukitakei/serverless-server-side-swift-with-hexaville-ef0e1788a20)
+
 ## License
 
 Hexaville is released under the MIT license. See LICENSE for details.
