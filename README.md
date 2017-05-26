@@ -5,9 +5,9 @@ Build applications comprised of microservices that run in response to events, au
 
 It's the greatest motivation to help many Swift and mobile application developers with rapid server side development and low cost operation.
 
-## Features
-
+## Supported Cloud Servises
 * AWS(lambda+api-gateway, Node.js 4.3 runtime)
+
 
 ## Swift Build Environments
 
@@ -22,7 +22,6 @@ Current Swift Version is 3.1
 
 * Custom Domain Support
 * VPC Support
-* Binary Media Support
 * GCP
 
 ## Quick Start
@@ -121,16 +120,59 @@ Output is like following.
 ```
 Endpoint: https://id.execute-api.ap-northeast-1.amazonaws.com/staging
 Routes:
-  GET /hello
-  GET /
-  POST /hello/{id}
-  GET /hello/{id}
+  POST    /hello/{id}
+  GET    /hello/{id}
+  GET    /hello
+  GET    /
+  GET    /random_img
 ```
 
 ### Access to your resources
 ```
 curl https://id.execute-api.ap-northeast-1.amazonaws.com/staging/
 ```
+
+## Binary Media Types
+
+Currenty Hexaville supports following binary media types
+
+* image/*
+* application/octet-stream
+* application/x-protobuf
+* application/x-google-protobuf
+
+### Here is an example for getting image/jpeg
+
+Threr are two rules to respond to the binary content in the routing handler.
+* RowBinaryData should be encoded as Base64
+* Adding `"Content-Type": "{BinaryMediaType}"` to the response headers
+
+```swift
+router.use(.get, "/some_image") { request, context in
+    let imageData = Data(contentsOf: URL(string: "file:///path/to/your/image.jpeg")!)
+    return Response(headers: ["Content-Type": "image/jpeg"], body: imageData.base64EncodedData())
+}
+```
+
+Getting binary content from Hexaville, need to send request that includes `Content-Type: {BinaryMediaType}` and `Accept: {BinaryMediaType}` headers
+
+```sh
+curl --request GET -H "Accept: image/jpeg" -H "Content-Type: image/jpeg" https://yourdomain.com/staging/random_image
+
+# ????JFIF``??;CREATOR: gd-jpeg v1.0 (using IJG JPEG v62), quality = 70
+# ??C
+# 
+# 
+# 
+# 
+# 
+# #%$""!&+7/&)4)!"0A149;>>>%.DIC<H7=>;??C
+# 
+# 
+# ;("(;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;???"??
+# ............
+```
+
 
 ## How to debug?
 
