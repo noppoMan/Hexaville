@@ -51,10 +51,22 @@ class GenerateProject: Command {
             if FileManager.default.fileExists(atPath: packageSwiftPath) {
                 throw HexavilleError.projectAlreadyCreated(out)
             }
+            let hashids = Hashids(salt: UUID().uuidString)
+            
+            #if os(Linux)
+                srandom(UInt32(time(nil)))
+                let randomNumber = Int(UInt32(random() % 10000))
+            #else
+                let randomNumber = Int(arc4random_uniform(9999))
+            #endif
+            
             try FileManager.default.copyFiles(from: "\(projectRoot)/templates/SwiftProject", to: out)
+            let hashId = hashids.encode(randomNumber)!
+            let bucketName = "hexaville-\(projectName.value.lowercased())-\(hashId)-bucket"
             
             try String(contentsOfFile: ymlPath)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
+                .replacingOccurrences(of: "{{bucketName}}", with: bucketName)
                 .write(toFile: ymlPath, atomically: true, encoding: .utf8)
             
             try String(contentsOfFile: packageSwiftPath)
@@ -95,8 +107,13 @@ func loadProvider(config: Yaml) throws -> CloudLauncherProvider {
             )
         }
         
+        guard let lambdaBucket = config["aws"]["lambda"]["bucket"].string else {
+            throw HexavilleError.missingRequiredParamInHexavillefile("aws.lambda.bucket")
+        }
+        
         let lambdaCodeConfig = AWSLauncherProvider.LambdaCodeConfig(
             role: config["aws"]["lambda"]["role"].string ?? "",
+            bucket: lambdaBucket,
             timeout: config["aws"]["lambda"]["timout"].int ?? 10
         )
         
