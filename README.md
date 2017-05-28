@@ -87,6 +87,7 @@ aws:
     secret_access_key: xxxxxxxxx
   region: us-east-1
   lambda:
+    bucket: xxxxxxxxx # here is generated automatically
     role: xxxxxxxxx
     timout: 10
 build:
@@ -105,6 +106,15 @@ This operation take a while.
 ```sh
 cd /path/to/your/app
 /path/to/.build/debug/Hexaville deploy Hello
+```
+
+Got `bucketAlreadyExists` Error?
+
+If you got **bucketAlreadyExists("The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.")**, Change the bucket name for lambda in the Hexavillfile.yml
+
+```yml
+lambda:
+  bucket: unique-bucket-name-here
 ```
 
 ### Show routes
@@ -161,14 +171,14 @@ curl --request GET -H "Accept: image/jpeg" -H "Content-Type: image/jpeg" https:/
 
 # ????JFIF``??;CREATOR: gd-jpeg v1.0 (using IJG JPEG v62), quality = 70
 # ??C
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
 # #%$""!&+7/&)4)!"0A149;>>>%.DIC<H7=>;??C
-# 
-# 
+#
+#
 # ;("(;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;???"??
 # ............
 ```

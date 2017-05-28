@@ -63,6 +63,7 @@ public struct AWSLauncherProvider {
         
         self.s3 = S3Executor(
             appName: appName,
+            bucketName: lambdaCodeConfig.bucket,
             credential: credential,
             region: region,
             endpoint: endpoints?.lambdaEndpoint
@@ -97,13 +98,15 @@ extension AWSLauncherProvider {
     
     public struct LambdaCodeConfig {
         let role: String
+        let bucket: String
         let timeout: Int
         let memory: Int32?
         let vpcConfig: Lambda.VpcConfig?
         let environment: [String : String]
         
-        public init(role: String, timeout: Int = 10, memory: Int32? = nil, vpcConfig: Lambda.VpcConfig? = nil, environment: [String : String] = [:]) {
+        public init(role: String, bucket: String, timeout: Int = 10, memory: Int32? = nil, vpcConfig: Lambda.VpcConfig? = nil, environment: [String : String] = [:]) {
             self.role = role
+            self.bucket = bucket
             self.timeout = timeout
             self.memory = memory
             self.vpcConfig = vpcConfig
@@ -116,11 +119,9 @@ extension AWSLauncherProvider {
         
         let client: S3
         
-        var bucketName: String {
-            return "hexaville-"+appName+"-bucket"
-        }
+        let bucketName: String
         
-        init(appName: String, credential: Credential? = nil, region: Region? = nil, endpoint: String? = nil) {
+        init(appName: String, bucketName: String, credential: Credential? = nil, region: Region? = nil, endpoint: String? = nil) {
             self.appName = appName
             if let credential = credential {
                 self.client = S3(
@@ -132,6 +133,8 @@ extension AWSLauncherProvider {
             } else {
                 self.client = S3(region: region, endpoint: endpoint)
             }
+            
+            self.bucketName = bucketName
         }
         
         public func uploadCode(zipData: Data) throws -> Lambda.FunctionCode {
@@ -462,30 +465,40 @@ extension AWSLauncherProvider {
 }
 
 extension AWSLauncherProvider {
-    fileprivate func uploadCodeToS3(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Lambda.FunctionCode {
+    fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Data {
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
         let nodejsTemplatePath = "\(projectRoot)/templates/lambda/node.js"
         try String(contentsOfFile: "\(nodejsTemplatePath)/index.js")
             .replacingOccurrences(of: "{{executablePath}}", with: executableTarget)
             .write(toFile: buildResult.destination+"/index.js", atomically: true, encoding: .utf8)
-        
+
         try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js")
             .write(toFile: buildResult.destination+"/byline.js", atomically: true, encoding: .utf8)
-        
+
         let proc = Proc("/bin/sh", ["\(projectRoot)/build-lambda-package.sh", pkgFileName, buildResult.destination])
-        
+
         if proc.terminationStatus > 0 {
             throw AWSLauncherProviderError.createLambdaPackageFailed
         }
         
         let data = try Data(contentsOf: URL(string: "file://"+pkgFileName)!)
         
+        try FileManager.default.removeItem(atPath: pkgFileName)
+        
+        return data
+    }
+    
+    fileprivate func uploadCodeToS3(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Lambda.FunctionCode {
+        let zipData = try zipPackage(
+            buildResult: buildResult,
+            hexavilleApplicationPath: hexavilleApplicationPath,
+            executableTarget: executableTarget
+        )
+        
         print("Uploading code to s3.....")
         _ = try s3.createBucketIfNotExists()
-        let code = try s3.uploadCode(zipData: data)
+        let code = try s3.uploadCode(zipData: zipData)
         print("Code uploaded")
-        
-        //try FileManager.default.removeItem(atPath: pkgFileName)
         
         return code
     }
