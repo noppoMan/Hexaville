@@ -26,6 +26,13 @@ class HexavilefileLoaderTest: XCTestCase {
         str += "    bucket: hexaville-test-app-8uh-bucket\n"
         str += "    role: arn:aws:iam::foo:role/lambda_basic_execution\n"
         str += "    timout: 10\n"
+        str += "    vpc:\n"
+        str += "      subnetIds:\n"
+        str += "        - subnet-foo-bar\n"
+        str += "        - subnet-bar-foo\n"
+        str += "      securityGroupIds:\n"
+        str += "        - sg-foo-bar\n"
+        str += "        - sg-bar-foo\n"
         str += "build:\n"
         str += "  nocache: true\n"
         
@@ -53,6 +60,8 @@ class HexavilefileLoaderTest: XCTestCase {
                 XCTAssertEqual(config.lambdaCodeConfig.bucket, "hexaville-test-app-8uh-bucket")
                 XCTAssertEqual(config.lambdaCodeConfig.role, "arn:aws:iam::foo:role/lambda_basic_execution")
                 XCTAssertEqual(config.lambdaCodeConfig.timeout, 10)
+                XCTAssertEqual(config.lambdaCodeConfig.vpcConfig!.subnetIds!, ["subnet-foo-bar", "subnet-bar-foo"])
+                XCTAssertEqual(config.lambdaCodeConfig.vpcConfig!.securityGroupIds!, ["sg-foo-bar", "sg-bar-foo"])
             }
             
         } catch {
