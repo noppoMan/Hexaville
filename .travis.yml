@@ -1,0 +1,14 @@
+os:
+  - linux
+  - osx
+language: generic
+sudo: required
+dist: trusty
+osx_image: xcode8
+
+install:
+  - source Scripts/install-swift.sh
+
+script:
+  - travis_wait 30 swift build
+  - swift test
