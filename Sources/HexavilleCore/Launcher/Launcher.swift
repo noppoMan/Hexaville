@@ -21,7 +21,7 @@ public enum DeploymentStage {
     case production
     case other(String)
     
-    init(string: String) {
+    public init(string: String) {
         switch string {
         case DeploymentStage.staging.stringValue:
             self = .staging
@@ -32,7 +32,7 @@ public enum DeploymentStage {
         }
     }
     
-    var stringValue: String {
+    public var stringValue: String {
         switch self {
         case .staging:
             return "staging"
@@ -84,8 +84,8 @@ public class Launcher {
     
     let configuration: Configuration
     
-    public init(provider: CloudLauncherProvider, hexavilleApplicationPath: String, executableTarget: String, configuration: Configuration, deploymentStage: DeploymentStage = .staging) {
-        self.provider = provider
+    public init(hexavilleApplicationPath: String, executableTarget: String, configuration: Configuration, deploymentStage: DeploymentStage = .staging) {
+        self.provider = configuration.createProvider()
         self.hexavilleApplicationPath = hexavilleApplicationPath
         self.executableTarget = executableTarget
         self.configuration = configuration
@@ -169,5 +169,22 @@ public class Launcher {
         print("######################################################")
         
         print("All Done.")
+    }
+}
+
+
+extension Configuration {
+    func createProvider() -> CloudLauncherProvider {
+        switch self.forPlatform {
+        case .aws(let config):
+            let provider = AWSLauncherProvider(
+                appName: self.name,
+                credential: config.credential,
+                region: config.region,
+                endpoints: config.endpoints,
+                lambdaCodeConfig: config.lambdaCodeConfig
+            )
+            return .aws(provider)
+        }
     }
 }
