@@ -33,7 +33,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         let tag = "hexaville-app"
         
         var opts = ["build", "-t", tag, "-f", "\(hexavilleApplicationPath)/Dockerfile", hexavilleApplicationPath]
-        if config.build.noCache {
+        if config.forBuild.noCache {
             opts.insert("--no-cache", at: 1)
         }
         _ = Proc("/usr/local/bin/docker", opts)

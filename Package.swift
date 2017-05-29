@@ -5,7 +5,8 @@ import PackageDescription
 let package = Package(
     name: "Hexaville",
     targets: [
-        Target(name: "Hexaville")
+        Target(name: "HexavilleCore"),
+        Target(name: "Hexaville", dependencies: ["HexavilleCore"])
     ],
     dependencies: [
         .Package(url: "https://github.com/noppoMan/aws-sdk-swift.git", majorVersion: 0, minor: 1),

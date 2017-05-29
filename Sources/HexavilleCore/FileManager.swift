@@ -13,7 +13,7 @@ enum FileManagerError: Error {
 }
 
 extension FileManager {
-    func copyFiles(from: String, to dest: String, excludes: [String] = []) throws {        
+    public func copyFiles(from: String, to dest: String, excludes: [String] = []) throws {
         guard let enumerator = FileManager.default.enumerator(atPath: from) else { return }
         let r = Proc("/bin/mkdir", ["-p", dest])
         if r.terminationStatus != 0 {

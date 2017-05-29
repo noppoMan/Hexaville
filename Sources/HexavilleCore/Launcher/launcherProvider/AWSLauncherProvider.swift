@@ -28,18 +28,6 @@ public enum AWSLauncherProviderError: Error {
 }
 
 public struct AWSLauncherProvider {
-    public struct Endpoints {
-        let s3Endpoint: String?
-        let lambdaEndpoint: String?
-        let apiGatewayEndpoint: String?
-        
-        init(s3Endpoint: String? = nil, lambdaEndpoint: String? = nil, apiGatewayEndpoint: String) {
-            self.s3Endpoint = s3Endpoint
-            self.lambdaEndpoint = lambdaEndpoint
-            self.apiGatewayEndpoint = apiGatewayEndpoint
-        }
-    }
-    
     public let appName: String
     
     public let credential: Credential?
@@ -54,13 +42,13 @@ public struct AWSLauncherProvider {
     
     public let region: Region
     
-    public let lambdaCodeConfig: LambdaCodeConfig
+    public let lambdaCodeConfig: AWSConfiguration.LambdaCodeConfig
     
     public func endpoint(restApiId: String, deploymentStage: DeploymentStage) -> String {
         return "https://\(restApiId).execute-api.\(region.rawValue).amazonaws.com/\(deploymentStage.stringValue)"
     }
     
-    public init(appName: String, credential: Credential? = nil, region: Region? = nil, endpoints: Endpoints? = nil, lambdaCodeConfig: LambdaCodeConfig) {
+    public init(appName: String, credential: Credential? = nil, region: Region? = nil, endpoints: AWSConfiguration.Endpoints? = nil, lambdaCodeConfig: AWSConfiguration.LambdaCodeConfig) {
         self.credential = credential
         
         self.appName = appName
@@ -418,24 +406,6 @@ extension AWSLauncherProvider {
 
 // lambda aliases
 extension AWSLauncherProvider {
-    public struct LambdaCodeConfig {
-        let role: String
-        let bucket: String
-        let timeout: Int
-        let memory: Int32?
-        let vpcConfig: Lambda.VpcConfig?
-        let environment: [String : String]
-        
-        public init(role: String, bucket: String, timeout: Int = 10, memory: Int32? = nil, vpcConfig: Lambda.VpcConfig? = nil, environment: [String : String] = [:]) {
-            self.role = role
-            self.bucket = bucket
-            self.timeout = timeout
-            self.memory = memory
-            self.vpcConfig = vpcConfig
-            self.environment = environment
-        }
-    }
-    
     var functionName: String {
         return "hexaville-"+appName+"-function"
     }
@@ -449,14 +419,7 @@ extension AWSLauncherProvider {
             _ = try getFunction()
             return try updateFunction(code: code)
         } catch LambdaError.resourceNotFoundException(_) {
-            return try createFunction(
-                role:  lambdaCodeConfig.role,
-                timeout: lambdaCodeConfig.timeout,
-                code: code,
-                memory: lambdaCodeConfig.memory,
-                vpcConfig: lambdaCodeConfig.vpcConfig,
-                environment: lambdaCodeConfig.environment
-            )
+            return try createFunction(code: code, environment: lambdaCodeConfig.environment)
         } catch {
             throw error
         }
@@ -471,34 +434,45 @@ extension AWSLauncherProvider {
         return configuration
     }
     
-    public func updateFunction(code: Lambda.FunctionCode) throws -> Lambda.FunctionConfiguration {
+    public func updateFunction(code: Lambda.FunctionCode, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
         let input = Lambda.UpdateFunctionCodeRequest(
             s3ObjectVersion: code.s3ObjectVersion,
             functionName: functionName,
             s3Bucket: code.s3Bucket,
             publish: true,
-            s3Key: code.s3Key,
-            zipFile: nil
+            s3Key: code.s3Key
         )
         
-        return try lambda.updateFunctionCode(input)
+        _ = try lambda.updateFunctionCode(input)
+        
+        let updateFunctionConfigurationRequest = Lambda.UpdateFunctionConfigurationRequest(
+            functionName: functionName,
+            vpcConfig: lambdaCodeConfig.vpcConfig,
+            memorySize: lambdaCodeConfig.memory,
+            role: lambdaCodeConfig.role,
+            environment: Lambda.Environment(variables: environment),
+            timeout: Int32(lambdaCodeConfig.timeout)
+        )
+        
+        return try lambda.updateFunctionConfiguration(updateFunctionConfigurationRequest)
     }
     
-    public func createFunction(role: String, timeout: Int = 10, code: Lambda.FunctionCode, memory: Int32? = nil, vpcConfig: Lambda.VpcConfig? = nil, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
+    public func createFunction(code: Lambda.FunctionCode, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
         
         let input = Lambda.CreateFunctionRequest(
-            vpcConfig: vpcConfig,
-            timeout: Int32(timeout),
+            vpcConfig: lambdaCodeConfig.vpcConfig,
+            timeout: Int32(lambdaCodeConfig.timeout),
             runtime: .nodejs4_3,
             publish: true,
             description: "Automatically generated by Hexaville",
             functionName: functionName,
             code: code,
-            memorySize: memory,
-            role: role,
+            memorySize: lambdaCodeConfig.memory,
+            role: lambdaCodeConfig.role,
             environment: Lambda.Environment(variables: environment),
             handler: lambdaHandler
         )
+        
         return try lambda.createFunction(input)
     }
     
