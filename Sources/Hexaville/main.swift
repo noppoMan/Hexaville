@@ -31,7 +31,7 @@ import HexavilleCore
 
 let projectRoot = #file.characters
     .split(separator: "/", omittingEmptySubsequences: false)
-    .dropLast(4)
+    .dropLast(3)
     .map { String($0) }
     .joined(separator: "/")
 

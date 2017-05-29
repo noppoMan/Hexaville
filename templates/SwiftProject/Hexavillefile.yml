@@ -8,5 +8,12 @@ aws:
   lambda:
     bucket: {{bucketName}}
     role: xxxxxxxxxxxxxxxxxxxxxxxxxx
+#     vpc:
+#       subnetIds:
+#         - xxxxxx
+#         - xxxxxx
+#       securityGroupIds:
+#         - xxxxxx
+#         - xxxxxx
 # build:
 #   nocache: false

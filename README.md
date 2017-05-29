@@ -195,6 +195,29 @@ You can debug your application with the HexavilleFramework's builtin web server 
 # => Hexaville Builtin Server started at 0.0.0.0:3000
 ```
 
+# Advanced Settings
+
+## VPC
+
+You can add VPC configuration to the lambda function in Hexavillefile.yml by adding a vpc object property in the lambda configuration section. This object should contain the securityGroupIds and subnetIds array properties needed to construct VPC for this function.
+
+Here's an example.
+
+```yaml
+name: test-app
+service: aws
+aws:
+  ....
+  lambda:
+    ....
+    vpc:
+       subnetIds:
+         - subnet-1234
+         - subnet-56789
+       securityGroupIds:
+         - sg-1234
+         - sg-56789
+```
 
 ## Contributing
 All developers should feel welcome and encouraged to contribute to Hexaville, see our getting started document here to get involved.
