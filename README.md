@@ -21,7 +21,6 @@ Current Swift Version is 3.1
 ## TODO
 
 * Custom Domain Support
-* VPC Support
 * GCP
 
 ## Quick Start
