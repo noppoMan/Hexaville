@@ -26,6 +26,9 @@ Current Swift Version is 3.1
 
 ## Quick Start
 
+### Install Docker for mac
+Install Docker for mac from [here](https://docs.docker.com/docker-for-mac/install/), If you haven't installed yet.
+
 ### Install Hexaville
 ```sh
 git clone https://github.com/noppoMan/Hexaville.git
@@ -94,7 +97,6 @@ build:
   nocache: false
 
 ```
-
 
 ### Deploy a Project
 
