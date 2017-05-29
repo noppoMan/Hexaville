@@ -68,7 +68,11 @@ public final class Spawn {
     var threadInfo: ThreadInfo!
     
     func watchStreams() {
-        func callback(x: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer? {
+        threadInfo = ThreadInfo(outputPipe: &outputPipe, output: output)
+        pthread_create(&tid, nil, { x in
+            #if os(Linux)
+            guard let x = x else { return nil }
+            #endif
             let threadInfo = x.assumingMemoryBound(to: ThreadInfo.self).pointee
             let outputPipe = threadInfo.outputPipe
             close(outputPipe[1])
@@ -86,17 +90,18 @@ public final class Spawn {
             }
             dynamicBuffer.deallocate(capacity: bufferSize)
             return nil
-        }
-        threadInfo = ThreadInfo(outputPipe: &outputPipe, output: output)
-        pthread_create(&tid, nil, callback, &threadInfo)
+        }, &threadInfo)
     }
     
     deinit {
         var status: Int32 = 0
-        
-        if let tid = tid {
+        #if os(Linux)
             pthread_join(tid, nil)
-        }
+        #else
+            if let tid = tid {
+                pthread_join(tid, nil)
+            }
+        #endif
         
         waitpid(pid, &status, 0)
     }
