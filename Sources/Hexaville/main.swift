@@ -85,59 +85,6 @@ func loadHexavilleFile(hexavilleFilePath: String) throws -> Yaml {
     return try Yaml.load(ymlString)
 }
 
-func loadProvider(config: Yaml) throws -> CloudLauncherProvider {
-    guard let service = config["service"].string else {
-        throw HexavilleError.missingRequiredParamInHexavillefile("service")
-    }
-    
-    guard let appName = config["name"].string else {
-        throw HexavilleError.missingRequiredParamInHexavillefile("name")
-    }
-    
-    let cloudProvider: CloudLauncherProvider
-    
-    switch service {
-    case "aws":
-        var cred: Credential?
-        
-        if let accessKey = config["aws"]["credential"]["access_key_id"].string, let secretKey = config["aws"]["credential"]["secret_access_key"].string {
-            cred = Credential(
-                accessKeyId: accessKey,
-                secretAccessKey: secretKey
-            )
-        }
-        
-        guard let lambdaBucket = config["aws"]["lambda"]["bucket"].string else {
-            throw HexavilleError.missingRequiredParamInHexavillefile("aws.lambda.bucket")
-        }
-        
-        let lambdaCodeConfig = AWSLauncherProvider.LambdaCodeConfig(
-            role: config["aws"]["lambda"]["role"].string ?? "",
-            bucket: lambdaBucket,
-            timeout: config["aws"]["lambda"]["timout"].int ?? 10
-        )
-        
-        var region: Region?
-        if let reg = config["aws"]["region"].string {
-            region = Region(rawValue: reg)
-        }
-        
-        let provider = AWSLauncherProvider(
-            appName: appName,
-            credential: cred,
-            region: region,
-            lambdaCodeConfig: lambdaCodeConfig
-        )
-        
-        cloudProvider = .aws(provider)
-        
-    default:
-        throw HexavilleError.unsupportedService(service)
-    }
-
-    return cloudProvider
-}
-
 class RoutesCommand: Command {
     let name = "routes"
     let shortDescription  = "Show routes and endpoint for the API"
@@ -152,8 +99,7 @@ class RoutesCommand: Command {
             }
             
             let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-            let yml = try loadHexavilleFile(hexavilleFilePath: ymlPath)
-            let cloudProvider = try loadProvider(config: yml)
+            let cloudProvider = try HexavillefileLoader(fromHexavillefilePath: ymlPath).load()
             
             let launcher = Launcher(
                 provider: cloudProvider,
@@ -191,7 +137,7 @@ class Deploy: Command {
             
             let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
             let yml = try loadHexavilleFile(hexavilleFilePath: hexavileApplicationPath+"/Hexavillefile.yml")
-            let cloudProvider = try loadProvider(config: yml)
+            let cloudProvider = try HexavillefileLoader(fromYaml: yml).load()
             
             let launcher = Launcher(
                 provider: cloudProvider,
