@@ -139,9 +139,16 @@ class Deploy: Command {
                 hexavileApplicationPath = splited.joined(separator: "/")
             }
             
+            var environment: [String: String] = [:]
+            do {
+                environment = try DotEnvParser.parse(fromFile: hexavileApplicationPath+"/.env")
+            } catch {
+                print(".env was not found")
+            }
+            
             let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
             let yml = try loadHexavilleFile(hexavilleFilePath: hexavileApplicationPath+"/Hexavillefile.yml")
-            let config = try HexavillefileLoader(fromYaml: yml).load()
+            let config = try HexavillefileLoader(fromYaml: yml).load(withEnvironment: environment)
             
             let launcher = Launcher(
                 hexavilleApplicationPath: hexavileApplicationPath,

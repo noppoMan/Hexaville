@@ -33,7 +33,7 @@ public struct HexavillefileLoader {
         self.config = try HexavillefileLoader.load(hexavilleFilePath: hexavilleFilePath)
     }
     
-    public func load() throws -> Configuration {
+    public func load(withEnvironment environment: [String: String] = [:]) throws -> Configuration {
         guard let service = config["service"].string else {
             throw HexavilleCoreError.missingRequiredParamInHexavillefile("service")
         }
@@ -48,7 +48,7 @@ public struct HexavillefileLoader {
         case "aws":
             return Configuration(
                 name: appName,
-                platformConfiguration: try AWSLoader(appName: appName, yaml: config["aws"]).load(),
+                platformConfiguration: try AWSLoader(appName: appName, yaml: config["aws"], environment: environment).load(),
                 buildConfiguration: buildConfiguration
             )
             

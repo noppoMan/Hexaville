@@ -196,6 +196,18 @@ You can debug your application with the HexavilleFramework's builtin web server 
 
 # Advanced Settings
 
+## Environment Variables
+
+You can pass environment variables to the lambda function with using `.env`.
+The `.env` file should be put at your root directory of the HexavilleFramework Application.
+
+**The contents in .env is...**
+```
+SWIFT_ENV=production
+FACEBOOK_APP_ID=xxxxxxx
+FACEBOOK_APP_SECRET=xxxxxxx
+```
+
 ## VPC
 
 You can add VPC configuration to the lambda function in Hexavillefile.yml by adding a vpc object property in the lambda configuration section. This object should contain the securityGroupIds and subnetIds array properties needed to construct VPC for this function.
