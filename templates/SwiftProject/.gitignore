@@ -5,3 +5,4 @@
 .routing-manifest.json
 __docker_shared
 Dockerfile
+.env
