@@ -3,4 +3,5 @@ import XCTest
 
 XCTMain([
     testCase(HexavilefileLoaderTest.allTests),
+    testCase(DotEnvParserTests.allTests),
 ])
