@@ -17,9 +17,12 @@ struct AWSLoader: PlatformConfigurationLoadable {
     
     let config: Yaml
     
-    init(appName: String, yaml: Yaml) {
+    let environment: [String: String]
+    
+    init(appName: String, yaml: Yaml, environment: [String: String] = [:]) {
         self.config = yaml
         self.appName = appName
+        self.environment = environment
     }
     
     func load() throws -> Configuration.PlatformConfiguration {
@@ -48,7 +51,8 @@ struct AWSLoader: PlatformConfigurationLoadable {
             role: config["lambda"]["role"].string ?? "",
             bucket: lambdaBucket,
             timeout: config["lambda"]["timout"].int ?? 10,
-            vpcConfig: vpcConfig
+            vpcConfig: vpcConfig,
+            environment: environment
         )
         
         var region: Region?

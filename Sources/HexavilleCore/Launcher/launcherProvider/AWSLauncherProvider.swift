@@ -417,7 +417,7 @@ extension AWSLauncherProvider {
     public func updateFunctionCode(code: Lambda.FunctionCode) throws -> Lambda.FunctionConfiguration {
         do {
             _ = try getFunction()
-            return try updateFunction(code: code)
+            return try updateFunction(code: code, environment: lambdaCodeConfig.environment)
         } catch LambdaError.resourceNotFoundException(_) {
             return try createFunction(code: code, environment: lambdaCodeConfig.environment)
         } catch {
