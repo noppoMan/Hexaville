@@ -36,7 +36,10 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         if config.forBuild.noCache {
             opts.insert("--no-cache", at: 1)
         }
-        _ = Proc("/usr/local/bin/docker", opts)
+        let buildResult = Proc("/usr/local/bin/docker", opts)
+        if buildResult.terminationStatus != 0 {
+            throw SwiftBuilderError.swiftBuildFailed
+        }
         
         let sharedDir = "\(hexavilleApplicationPath)/__docker_shared"
         

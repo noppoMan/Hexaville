@@ -23,6 +23,7 @@ enum OS {
 
 enum SwiftBuilderError: Error {
     case unsupportedPlatform(String)
+    case swiftBuildFailed
 }
 
 class SwiftBuilder {
