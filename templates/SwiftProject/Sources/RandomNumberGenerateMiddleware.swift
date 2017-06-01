@@ -10,7 +10,7 @@ struct RandomNumberGenerateMiddleware: Middleware {
             let randomNumber = String(format: "%04d", Int(arc4random_uniform(9999)))
         #endif
 
-        context.storage["randumNumber"] = randomNumber
+        context.memory["randumNumber"] = randomNumber
 
         return .next(request)
     }
