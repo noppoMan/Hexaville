@@ -25,6 +25,10 @@ Current Swift Version is 3.1
 * Custom Domain Support
 * GCP
 
+## Plugins
+* [HexavilleAuth](https://github.com/Hexaville): A pluggable framework for providing various authentication methods(OAuth, simple password based etc.)
+* [RedisSessionStore](https://github.com/Hexaville/RedisSessionStore): Redis Session Store
+
 ## Quick Start
 
 ### Install Docker for mac
