@@ -67,8 +67,28 @@ class GenerateProject: Command {
             
             try FileManager.default.copyFiles(from: "\(projectRoot)/templates/SwiftProject", to: out)
             let hashId = hashids.encode(randomNumber)!
-            let bucketName = "hexaville-\(projectName.value.lowercased())-\(hashId)-bucket"
             
+            func createBucketName(from projectName: String, hashId: String) -> String {
+                let prefix = "hexaville-"
+                let suffix = "-\(hashId)-bucket"
+
+                let bucketNameMaxLength = 63
+                let maxLength = bucketNameMaxLength - (prefix + suffix).characters.count
+
+                let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-".characters)
+                let sanitizedCharacters = projectName
+                    .lowercased()
+                    .characters
+                    .filter { allowedCharacters.contains($0) }
+                    .prefix(maxLength)
+                
+                let sanitizedName = String(sanitizedCharacters)
+                
+                return prefix + sanitizedName + suffix
+            }
+            
+            let bucketName = createBucketName(from: projectName.value, hashId: hashId)
+                
             try String(contentsOfFile: ymlPath)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
                 .replacingOccurrences(of: "{{bucketName}}", with: bucketName)
