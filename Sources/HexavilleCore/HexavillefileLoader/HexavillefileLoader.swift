@@ -15,7 +15,7 @@ public protocol PlatformConfigurationLoadable {
 
 public struct HexavillefileLoader {
     public static func load(hexavilleFilePath: String) throws -> Yaml {
-        let ymlString = try String(contentsOfFile: hexavilleFilePath)
+        let ymlString = try String(contentsOfFile: hexavilleFilePath, encoding: .utf8)
         return try Yaml.load(ymlString)
     }
     

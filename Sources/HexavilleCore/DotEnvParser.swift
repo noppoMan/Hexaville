@@ -11,7 +11,7 @@ import Foundation
 public struct DotEnvParser {
     
     public static func parse(fromFile file: String) throws -> [String: String] {
-        return try self.parse(fromString: String(contentsOfFile: file))
+        return try self.parse(fromString: String(contentsOfFile: file, encoding: .utf8))
     }
     
     public static func parse(fromString string: String) throws -> [String: String] {

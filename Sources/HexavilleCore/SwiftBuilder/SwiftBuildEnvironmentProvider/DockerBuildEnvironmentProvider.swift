@@ -11,7 +11,7 @@ import Foundation
 struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     
     func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
-        try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh")
+        try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh", encoding: .utf8)
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
         try String(contentsOfFile: projectRoot+"/templates/Dockerfile", encoding: .utf8)

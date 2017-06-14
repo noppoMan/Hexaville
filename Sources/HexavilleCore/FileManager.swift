@@ -26,10 +26,10 @@ extension FileManager {
             let fullTargetPath = from+"/"+item
             let attributes = try FileManager.default.attributesOfItem(atPath: fullTargetPath)
 
-            if let fileType = attributes[FileAttributeKey.type] as? String {
+            if let fileType = attributes[FileAttributeKey.type] as? Foundation.FileAttributeType {
                 let fullDestinationPath = dest+"/"+item
                 switch fileType {
-                case FileAttributeType.typeDirectory.rawValue:
+                case FileAttributeType.typeDirectory:
                     _ = try FileManager.default.createDirectory(
                         atPath: fullDestinationPath,
                         withIntermediateDirectories: true,
@@ -37,7 +37,7 @@ extension FileManager {
                     )
                     print("created \(fullDestinationPath)")
 
-                case FileAttributeType.typeRegular.rawValue:
+                case FileAttributeType.typeRegular:
                     try Data(contentsOf: URL(string: "file://\(fullTargetPath)")!)
                         .write(to: URL(string: "file://\(fullDestinationPath)")!)
                     print("created \(fullDestinationPath)")
