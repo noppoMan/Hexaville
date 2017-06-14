@@ -8,19 +8,6 @@
 
 import Foundation
 
-enum OS {
-    case linux_x86
-    case mac
-    
-    static var current: OS {
-        #if os(Linux)
-            return .linux_x86
-        #else
-            return .mac
-        #endif
-    }
-}
-
 enum SwiftBuilderError: Error {
     case unsupportedPlatform(String)
     case swiftBuildFailed
@@ -40,14 +27,8 @@ class SwiftBuilder {
             return try defaultProvider.build(config: config, hexavilleApplicationPath: hexavilleApplicationPath)
         }
         
-        switch OS.current {
-        case .mac:
-            let provider = DockerBuildEnvironmentProvider()
-            return try provider.build(config: config, hexavilleApplicationPath: hexavilleApplicationPath)
-            
-        case .linux_x86:
-            throw SwiftBuilderError.unsupportedPlatform("linux_x86")
-        }
+        let provider = DockerBuildEnvironmentProvider()
+        return try provider.build(config: config, hexavilleApplicationPath: hexavilleApplicationPath)
     }
     
 }
