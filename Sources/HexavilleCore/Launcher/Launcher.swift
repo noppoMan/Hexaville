@@ -107,25 +107,9 @@ public class Launcher {
     }
     
     public func launch(debug: Bool = false, shouldDiscardCache: Bool = false) throws {
-        if debug {
-            switch OS.current {
-            case .linux_x86:
-                let buildEnvProvider = LinuxBuildEnvironmentProvider()
-                let builder = SwiftBuilder()
-                _ = try builder.build(with: buildEnvProvider, config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
-                
-            case .mac:
-                let buildEnvProvider = XcodeBuildEnvironmentProvider()
-                let builder = SwiftBuilder()
-                let result = try builder.build(with: buildEnvProvider, config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
-                _ = Proc(result.destination+"/.build/debug/"+executableTarget)
-            }
-            
-        } else {
-            switch provider {
-            case .aws(let provider):
-                try launchFor(aws: provider)
-            }
+        switch provider {
+        case .aws(let provider):
+            try launchFor(aws: provider)
         }
     }
     
