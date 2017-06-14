@@ -103,7 +103,7 @@ extension AWSLauncherProvider {
         try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js")
             .write(toFile: buildResult.destination+"/byline.js", atomically: true, encoding: .utf8)
         
-        let proc = Proc("/bin/sh", ["\(projectRoot)/build-lambda-package.sh", pkgFileName, buildResult.destination])
+        let proc = Proc("/bin/sh", ["\(projectRoot)/build-lambda-package.sh", pkgFileName, buildResult.destination, executableTarget])
         
         if proc.terminationStatus > 0 {
             throw AWSLauncherProviderError.couldNotZipPackage
