@@ -89,12 +89,12 @@ class GenerateProject: Command {
             
             let bucketName = createBucketName(from: projectName.value, hashId: hashId)
                 
-            try String(contentsOfFile: ymlPath)
+            try String(contentsOfFile: ymlPath, encoding: .utf8)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
                 .replacingOccurrences(of: "{{bucketName}}", with: bucketName)
                 .write(toFile: ymlPath, atomically: true, encoding: .utf8)
             
-            try String(contentsOfFile: packageSwiftPath)
+            try String(contentsOfFile: packageSwiftPath, encoding: .utf8)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
                 .write(toFile: packageSwiftPath, atomically: true, encoding: .utf8)
             
@@ -106,7 +106,7 @@ class GenerateProject: Command {
 }
 
 func loadHexavilleFile(hexavilleFilePath: String) throws -> Yaml {
-    let ymlString = try String(contentsOfFile: hexavilleFilePath)
+    let ymlString = try String(contentsOfFile: hexavilleFilePath, encoding: .utf8)
     return try Yaml.load(ymlString)
 }
 

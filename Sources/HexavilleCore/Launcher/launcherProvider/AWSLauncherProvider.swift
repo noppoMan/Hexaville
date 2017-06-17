@@ -96,11 +96,11 @@ extension AWSLauncherProvider {
     fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Data {
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
         let nodejsTemplatePath = "\(projectRoot)/templates/lambda/node.js"
-        try String(contentsOfFile: "\(nodejsTemplatePath)/index.js")
+        try String(contentsOfFile: "\(nodejsTemplatePath)/index.js", encoding: .utf8)
             .replacingOccurrences(of: "{{executablePath}}", with: executableTarget)
             .write(toFile: buildResult.destination+"/index.js", atomically: true, encoding: .utf8)
         
-        try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js")
+        try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js", encoding: .utf8)
             .write(toFile: buildResult.destination+"/byline.js", atomically: true, encoding: .utf8)
         
         let proc = Proc("/bin/sh", ["\(projectRoot)/build-lambda-package.sh", pkgFileName, buildResult.destination, executableTarget])
@@ -545,7 +545,7 @@ extension AWSLauncherProvider {
         
         let lambdaPolicies = fetchLambdaPolicies()
         
-        let manifest = try String(contentsOfFile: hexavilleApplicationPath+"/.routing-manifest.json")
+        let manifest = try String(contentsOfFile: hexavilleApplicationPath+"/.routing-manifest.json", encoding: .utf8)
         let dict = try JSONSerialization.jsonObject(with: manifest.data, options: []) as! [String: Any]
         let manifestJSON = JSON(dict)
         
