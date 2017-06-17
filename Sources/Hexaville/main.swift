@@ -33,7 +33,7 @@ enum HexavilleError: Error {
     case projectAlreadyCreated(String)
     case couldNotFindManifestFile(String)
     case pathIsNotForHexavillefile(String)
-    case couldNotFoundTemplateIn([String])
+    case couldNotFindTemplateIn([String])
 }
 
 class GenerateProject: Command {
@@ -77,7 +77,7 @@ class GenerateProject: Command {
             }
         }
         
-        throw HexavilleError.couldNotFoundTemplateIn(templatesPathCandidates)
+        throw HexavilleError.couldNotFindTemplateIn(templatesPathCandidates)
     }
     
     func execute() throws {
