@@ -29,16 +29,11 @@ import SwiftCLI
 import Yaml
 import HexavilleCore
 
-let projectRoot = #file.characters
-    .split(separator: "/", omittingEmptySubsequences: false)
-    .dropLast(3)
-    .map { String($0) }
-    .joined(separator: "/")
-
 enum HexavilleError: Error {
     case projectAlreadyCreated(String)
     case couldNotFindManifestFile(String)
     case pathIsNotForHexavillefile(String)
+    case couldNotFoundTemplateIn([String])
 }
 
 class GenerateProject: Command {
@@ -46,6 +41,44 @@ class GenerateProject: Command {
     let shortDescription  = "Generate initial project"
     let projectName = Parameter()
     let dest = Key<String>("-o", "--dest", usage: "Destination for the project")
+    
+    private func createBucketName(from projectName: String, hashId: String) -> String {
+        let prefix = "hexaville-"
+        let suffix = "-\(hashId)-bucket"
+        
+        let bucketNameMaxLength = 63
+        let maxLength = bucketNameMaxLength - (prefix + suffix).characters.count
+        
+        let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-".characters)
+        let sanitizedCharacters = projectName
+            .lowercased()
+            .characters
+            .filter { allowedCharacters.contains($0) }
+            .prefix(maxLength)
+        
+        let sanitizedName = String(sanitizedCharacters)
+        
+        return prefix + sanitizedName + suffix
+    }
+    
+    func findSwiftProjectTemplatePath() throws -> String {
+        let manager = FileManager.default
+        var templatesPathCandidates: [String] = [manager.currentDirectoryPath]
+        do {
+            let execPath = ProcessInfo.processInfo.arguments[0]
+            let dest = try manager.destinationOfSymbolicLink(atPath: execPath)+"/../"
+            templatesPathCandidates.append(dest)
+        } catch {}
+        
+        for path in templatesPathCandidates {
+            let tplPath = path+"/templates/SwiftProject"
+            if manager.fileExists(atPath: tplPath) {
+                return tplPath
+            }
+        }
+        
+        throw HexavilleError.couldNotFoundTemplateIn(templatesPathCandidates)
+    }
     
     func execute() throws {
         do {
@@ -65,27 +98,8 @@ class GenerateProject: Command {
                 let randomNumber = Int(arc4random_uniform(9999))
             #endif
             
-            try FileManager.default.copyFiles(from: "\(projectRoot)/templates/SwiftProject", to: out)
+            try FileManager.default.copyFiles(from: "\(findSwiftProjectTemplatePath())", to: out)
             let hashId = hashids.encode(randomNumber)!
-            
-            func createBucketName(from projectName: String, hashId: String) -> String {
-                let prefix = "hexaville-"
-                let suffix = "-\(hashId)-bucket"
-
-                let bucketNameMaxLength = 63
-                let maxLength = bucketNameMaxLength - (prefix + suffix).characters.count
-
-                let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-".characters)
-                let sanitizedCharacters = projectName
-                    .lowercased()
-                    .characters
-                    .filter { allowedCharacters.contains($0) }
-                    .prefix(maxLength)
-                
-                let sanitizedName = String(sanitizedCharacters)
-                
-                return prefix + sanitizedName + suffix
-            }
             
             let bucketName = createBucketName(from: projectName.value, hashId: hashId)
                 
