@@ -63,7 +63,11 @@ class GenerateProject: Command {
     
     func findSwiftProjectTemplatePath() throws -> String {
         let manager = FileManager.default
-        var templatesPathCandidates: [String] = [manager.currentDirectoryPath]
+        var templatesPathCandidates: [String] = [
+            manager.currentDirectoryPath,
+            NSHomeDirectory()+"/.hexaville"
+        ]
+        
         do {
             let execPath = ProcessInfo.processInfo.arguments[0]
             let dest = try manager.destinationOfSymbolicLink(atPath: execPath)+"/../"
