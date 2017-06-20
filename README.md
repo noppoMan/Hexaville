@@ -34,19 +34,26 @@ Current Swift Version is 3.1
 ### Install Docker for mac
 Install Docker for mac from [here](https://docs.docker.com/docker-for-mac/install/), If you haven't installed yet.
 
-### Install Hexaville
+### Install Hexaville from Script(Highly recommended)
+
+```
+curl -o- https://cdn.rawgit.com/noppoMan/Hexaville/master/install.sh | bash
+```
+
+### Install Hexaville from Source
 ```sh
 git clone https://github.com/noppoMan/Hexaville.git
 cd Hexaville
 swift build
 ```
+and then, should link Hexaville executable path to /usr/local/bin or something like that.
 
 ### Create a Project
 
 `Usage: hexaville generate <projectName>`
 
 ```sh
-./.build/debug/Hexaville generate Hello --dest /path/to/your/app
+hexaville generate Hello --dest /path/to/your/app
 ```
 
 ### Open your project with Xcode
@@ -112,7 +119,7 @@ This operation take a while.
 
 ```sh
 cd /path/to/your/app
-/path/to/.build/debug/Hexaville deploy Hello
+hexaville deploy Hello
 ```
 
 Got `bucketAlreadyExists` Error?
@@ -130,7 +137,7 @@ show routes with running `routes` command at your Project root dir.
 
 ```sh
 cd /path/to/your/app
-/path/to/.build/debug/Hexaville routes
+hexaville routes
 ```
 
 Output is like following.
