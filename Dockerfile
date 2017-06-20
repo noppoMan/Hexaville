@@ -11,7 +11,8 @@ RUN apt-get install -y clang \
   python-dev \
   libcurl4-openssl-dev \
   emacs \
-  wget
+  wget \
+  zip
 
 ENV SWIFT_DOWNLOAD_URL=https://swift.org/builds/swift-3.1-release/ubuntu1404/swift-3.1-RELEASE/swift-3.1-RELEASE-ubuntu14.04.tar.gz
 ENV SWIFTFILE=swift-3.1-RELEASE-ubuntu14.04
@@ -24,4 +25,6 @@ COPY . Hexaville
 
 WORKDIR Hexaville
 
-CMD swift build
+RUN mkdir -p .build/debug
+
+CMD ./Scripts/zip.sh
