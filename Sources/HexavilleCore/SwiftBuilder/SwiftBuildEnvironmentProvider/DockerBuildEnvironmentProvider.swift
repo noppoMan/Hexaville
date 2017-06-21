@@ -16,6 +16,10 @@ enum DockerBuildEnvironmentProviderError: Error {
 
 struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     
+    var dockerExecutablePath: String {
+        return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "/usr/local/bin/docker"
+    }
+    
     func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
         try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh", encoding: .utf8)
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
@@ -42,8 +46,6 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         if config.forBuild.noCache {
             opts.insert("--no-cache", at: 1)
         }
-        
-        let dockerExecutablePath = "/usr/local/bin/docker"
         
         if !FileManager.default.isExecutableFile(atPath: dockerExecutablePath) {
             throw DockerBuildEnvironmentProviderError.couldNotFindDocker(at: dockerExecutablePath)
