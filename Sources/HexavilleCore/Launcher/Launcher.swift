@@ -113,9 +113,16 @@ public class Launcher {
         }
     }
     
+    private func swiftExecutablePath() -> String {
+        if let home = ProcessInfo.processInfo.environment["SWIFT_HOME"] {
+            return "\(home)/usr/bin/swift"
+        }
+        return "/usr/bin/swift"
+    }
+    
     private func buildSwift() throws -> BuildResult {
         print("Building application....")
-        let swiftBuildResult = Proc("/usr/bin/swift", ["build", "--chdir", hexavilleApplicationPath])
+        let swiftBuildResult = Proc(swiftExecutablePath(), ["build", "--chdir", hexavilleApplicationPath])
         
         if swiftBuildResult.terminationStatus > 0 {
             throw LauncherError.swiftBuildFailed
