@@ -10,12 +10,6 @@ import Foundation
 import AWSSDKSwift
 import SwiftyJSON
 
-let projectRoot = #file.characters
-    .split(separator: "/", omittingEmptySubsequences: false)
-    .dropLast(4)
-    .map { String($0) }
-    .joined(separator: "/")
-
 public enum DeploymentStage {
     case staging
     case production
@@ -134,6 +128,7 @@ public class Launcher {
         if genManifestResult.terminationStatus > 0 {
             throw LauncherError.cloudNotGenerateRoutingManifest
         }
+        print("Generated Routing Manifest file")
         
         let builder = SwiftBuilder()
         return try builder.build(config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)

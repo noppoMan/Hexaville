@@ -21,10 +21,13 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     }
     
     func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
-        try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh", encoding: .utf8)
+        let templatePath = try Finder.findTemplatePath()
+        let buildSwiftShellPath = try Finder.findScriptPath(for: "build-swift.sh")
+        
+        try String(contentsOfFile: buildSwiftShellPath, encoding: .utf8)
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
-        try String(contentsOfFile: projectRoot+"/templates/Dockerfile", encoding: .utf8)
+        try String(contentsOfFile: templatePath+"/Dockerfile", encoding: .utf8)
             .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: SwiftBuilder.swiftDownloadURL)
             .replacingOccurrences(of: "{{SWIFTFILE}}", with: SwiftBuilder.swiftFileName)
             .write(
@@ -33,7 +36,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 encoding: .utf8
         )
         
-        try String(contentsOfFile: projectRoot+"/templates/.dockerignore", encoding: .utf8)
+        try String(contentsOfFile: templatePath+"/.dockerignore", encoding: .utf8)
             .write(
                 toFile: hexavilleApplicationPath+"/.dockerignore",
                 atomically: true,
