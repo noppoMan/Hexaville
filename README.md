@@ -37,7 +37,19 @@ Install Docker for mac from [here](https://docs.docker.com/docker-for-mac/instal
 ### Install Hexaville from Script(Highly recommended)
 
 ```
-curl -o- https://cdn.rawgit.com/noppoMan/Hexaville/master/install.sh | bash
+curl -L https://rawgit.com/noppoMan/Hexaville/master/install.sh | bash
+```
+
+The script clones the hexaville repository to `~/.hexaville` and adds the source line to your profile (~/.zshrc, or ~/.bashrc).
+```
+export PATH="$PATH:$HOME/.hexaville"
+```
+
+`source` your profile and then, type `hexaville`
+
+```sh
+source ~/.bashrc
+hexaville
 ```
 
 ### Install Hexaville from Source
