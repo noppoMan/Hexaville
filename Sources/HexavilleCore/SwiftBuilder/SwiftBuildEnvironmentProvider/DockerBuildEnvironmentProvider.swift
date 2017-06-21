@@ -8,7 +8,17 @@
 
 import Foundation
 
+
+enum DockerBuildEnvironmentProviderError: Error {
+    case couldNotFindDocker(at: String)
+    case dockerBuildFailed(message: String)
+}
+
 struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
+    
+    var dockerExecutablePath: String {
+        return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "/usr/local/bin/docker"
+    }
     
     func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
         try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh", encoding: .utf8)
@@ -36,9 +46,18 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         if config.forBuild.noCache {
             opts.insert("--no-cache", at: 1)
         }
-        let buildResult = Proc("/usr/local/bin/docker", opts)
+        
+        if !FileManager.default.isExecutableFile(atPath: dockerExecutablePath) {
+            throw DockerBuildEnvironmentProviderError.couldNotFindDocker(at: dockerExecutablePath)
+        }
+        
+        let buildResult = Proc(dockerExecutablePath, opts)
         if buildResult.terminationStatus != 0 {
-            throw SwiftBuilderError.swiftBuildFailed
+            var message = ""
+            if let errMes = buildResult.stderr {
+                message = "\(errMes)"
+            }
+            throw DockerBuildEnvironmentProviderError.dockerBuildFailed(message: message)
         }
         
         let sharedDir = "\(hexavilleApplicationPath)/__docker_shared"
