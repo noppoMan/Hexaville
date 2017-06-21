@@ -9,7 +9,7 @@ if [ -d "$HEXAVILLE_HOME" ]; then
 fi
 
 if [[ $UNAME == "Darwin" ]]; then
-  curl -OL https://cdn.rawgit.com/Hexaville/Binary/master/bin/latest/mac/Hexaville.zip
+  curl -OL https://rawgit.com/Hexaville/Binary/master/bin/latest/mac/Hexaville.zip
 else
   if [[ $UNAME == "Linux" ]]; then
     UBUNTU_RELEASE=`lsb_release -a 2>/dev/null`;
@@ -17,7 +17,7 @@ else
       echo "Unsupported OS"
       exit 1
     else
-      curl -OL https://cdn.rawgit.com/Hexaville/Binary/master/bin/latest/linux/Hexaville.zip
+      curl -OL https://rawgit.com/Hexaville/Binary/master/bin/latest/linux/Hexaville.zip
     fi
   else
     echo "Unsupported OS"
