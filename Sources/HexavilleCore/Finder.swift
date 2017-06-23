@@ -19,7 +19,9 @@ public struct Finder {
         
         let paths = ProcessInfo.processInfo.arguments[0].split(separator: "/")
         if paths.count > 3 {
-            templatesPathCandidates.append("/\(paths[0..<paths.count-3].joined(separator: "/"))")
+            let projectRoot = "/\(paths[0..<paths.count-3].joined(separator: "/"))"
+            let relativePath = FileManager.default.currentDirectoryPath+projectRoot
+            templatesPathCandidates.append(contentsOf: [projectRoot, relativePath])
         }
         
         do {
