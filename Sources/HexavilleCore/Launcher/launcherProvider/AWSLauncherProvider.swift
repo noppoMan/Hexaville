@@ -107,6 +107,7 @@ extension AWSLauncherProvider {
         let nodejsTemplatePath = try Finder.findTemplatePath(for: "/lambda/node.js")
         
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
+        
         try String(contentsOfFile: "\(nodejsTemplatePath)/index.js", encoding: .utf8)
             .replacingOccurrences(of: "{{executablePath}}", with: executableTarget)
             .write(toFile: buildResult.destination+"/index.js", atomically: true, encoding: .utf8)
@@ -404,11 +405,14 @@ extension AWSLauncherProvider {
     }
     
     fileprivate func uploadCodeToS3(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Lambda.FunctionCode {
+        
+        print("Starting zip package........")
         let zipData = try zipPackage(
             buildResult: buildResult,
             hexavilleApplicationPath: hexavilleApplicationPath,
             executableTarget: executableTarget
         )
+        print("Zip package done.")
         
         print("Uploading code to s3.....")
         _ = try createBucketIfNotExists()

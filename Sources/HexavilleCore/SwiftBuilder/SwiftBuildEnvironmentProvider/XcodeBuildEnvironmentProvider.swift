@@ -17,7 +17,7 @@ struct XcodeBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     }
     
     func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
-        _ = Proc("/usr/bin/swift", ["build", "--chdir", hexavilleApplicationPath])
+        _ = Process.exec("swift", ["build", "--chdir", hexavilleApplicationPath])
         return BuildResult(destination: hexavilleApplicationPath+"/.build/debug")
     }
 }

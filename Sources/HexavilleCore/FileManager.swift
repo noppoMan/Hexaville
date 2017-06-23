@@ -15,7 +15,7 @@ enum FileManagerError: Error {
 extension FileManager {
     public func copyFiles(from: String, to dest: String, excludes: [String] = []) throws {
         guard let enumerator = FileManager.default.enumerator(atPath: from) else { return }
-        let r = Proc("/bin/mkdir", ["-p", dest])
+        let r = Process.exec("mkdir", ["-p", dest])
         if r.terminationStatus != 0 {
             throw FileManagerError.couldNotMakeDirectory(dest)
         }
