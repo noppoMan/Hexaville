@@ -10,21 +10,24 @@ import Foundation
 
 
 enum DockerBuildEnvironmentProviderError: Error {
-    case couldNotFindDocker(at: String)
-    case dockerBuildFailed(message: String)
+    case dockerBuildFailed
+    case couldNotMakeSharedDir
 }
 
 struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     
     var dockerExecutablePath: String {
-        return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "/usr/local/bin/docker"
+        return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "docker"
     }
     
     func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
-        try String(contentsOfFile: "\(projectRoot)/Scripts/build-swift.sh", encoding: .utf8)
+        let templatePath = try Finder.findTemplatePath()
+        let buildSwiftShellPath = try Finder.findScriptPath(for: "build-swift.sh")
+        
+        try String(contentsOfFile: buildSwiftShellPath, encoding: .utf8)
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
-        try String(contentsOfFile: projectRoot+"/templates/Dockerfile", encoding: .utf8)
+        try String(contentsOfFile: templatePath+"/Dockerfile", encoding: .utf8)
             .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: SwiftBuilder.swiftDownloadURL)
             .replacingOccurrences(of: "{{SWIFTFILE}}", with: SwiftBuilder.swiftFileName)
             .write(
@@ -33,7 +36,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 encoding: .utf8
         )
         
-        try String(contentsOfFile: projectRoot+"/templates/.dockerignore", encoding: .utf8)
+        try String(contentsOfFile: templatePath+"/.dockerignore", encoding: .utf8)
             .write(
                 toFile: hexavilleApplicationPath+"/.dockerignore",
                 atomically: true,
@@ -47,24 +50,19 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             opts.insert("--no-cache", at: 1)
         }
         
-        if !FileManager.default.isExecutableFile(atPath: dockerExecutablePath) {
-            throw DockerBuildEnvironmentProviderError.couldNotFindDocker(at: dockerExecutablePath)
-        }
-        
-        let buildResult = Proc(dockerExecutablePath, opts)
+        let buildResult = Process.exec(dockerExecutablePath, opts)
         if buildResult.terminationStatus != 0 {
-            var message = ""
-            if let errMes = buildResult.stderr {
-                message = "\(errMes)"
-            }
-            throw DockerBuildEnvironmentProviderError.dockerBuildFailed(message: message)
+            throw DockerBuildEnvironmentProviderError.dockerBuildFailed
         }
         
         let sharedDir = "\(hexavilleApplicationPath)/__docker_shared"
         
-        _ = Proc("/bin/mkdir", ["-p", sharedDir])
+        let mkdirResult = Process.exec("mkdir", ["-p", sharedDir])
+        if mkdirResult.terminationStatus != 0 {
+            throw DockerBuildEnvironmentProviderError.couldNotMakeSharedDir
+        }
         
-        _ = try Spawn(args: ["/usr/local/bin/docker", "run", "-v", "\(sharedDir):/hexaville-app/.build", "-it", tag]) {
+        _ = try Spawn(args: ["/usr/bin/env", "docker", "run", "-v", "\(sharedDir):/hexaville-app/.build", "-it", tag]) {
             print($0, separator: "", terminator: "")
         }
         

@@ -8,6 +8,14 @@
 
 import Foundation
 
+extension Process {
+    public static func exec(_ cmd: String, _ args: [String], environment: [String: String] = ProcessInfo.processInfo.environment) -> Proc {
+        var args = args
+        args.insert(cmd, at: 0)
+        return Proc.init("/usr/bin/env", args, environment: environment)
+    }
+}
+
 public struct Proc {
     
     public let terminationStatus: Int32

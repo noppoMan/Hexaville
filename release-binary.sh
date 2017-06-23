@@ -18,5 +18,6 @@ mv ${SHARED_DIR}/debug/Hexaville.zip $1/$LINUX_DIST
 
 swift build
 cp -r templates .build/debug
+cp -r Scripts .build/debug
 cd .build/debug
-zip $1/$MAC_DIST/Hexaville.zip Hexaville -r templates
+zip $1/$MAC_DIST/Hexaville.zip Hexaville -r templates -r Scripts

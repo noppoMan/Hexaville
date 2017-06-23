@@ -10,12 +10,6 @@ import Foundation
 import AWSSDKSwift
 import SwiftyJSON
 
-let projectRoot = #file.characters
-    .split(separator: "/", omittingEmptySubsequences: false)
-    .dropLast(4)
-    .map { String($0) }
-    .joined(separator: "/")
-
 public enum DeploymentStage {
     case staging
     case production
@@ -117,23 +111,24 @@ public class Launcher {
         if let home = ProcessInfo.processInfo.environment["SWIFT_HOME"] {
             return "\(home)/usr/bin/swift"
         }
-        return "/usr/bin/swift"
+        return "swift"
     }
     
     private func buildSwift() throws -> BuildResult {
         print("Building application....")
-        let swiftBuildResult = Proc(swiftExecutablePath(), ["build", "--chdir", hexavilleApplicationPath])
+        let swiftBuildResult = Process.exec(swiftExecutablePath(), ["build", "--chdir", hexavilleApplicationPath])
         
         if swiftBuildResult.terminationStatus > 0 {
             throw LauncherError.swiftBuildFailed
         }
         
         print("Generating Routing Manifest file....")
-        let genManifestResult = Proc("\(hexavilleApplicationPath)/.build/debug/\(executableTarget)", ["gen-routing-manif", hexavilleApplicationPath])
+        let genManifestResult = Process.exec("\(hexavilleApplicationPath)/.build/debug/\(executableTarget)", ["gen-routing-manif", hexavilleApplicationPath])
         
         if genManifestResult.terminationStatus > 0 {
             throw LauncherError.cloudNotGenerateRoutingManifest
         }
+        print("Generated Routing Manifest file")
         
         let builder = SwiftBuilder()
         return try builder.build(config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
@@ -142,6 +137,7 @@ public class Launcher {
     private func launchFor(aws provider: AWSLauncherProvider) throws {
         print("Start to build swift...")
         let result = try buildSwift()
+        print("Build swift done.")
         
         let deployResult = try provider.deploy(
             deploymentStage: deploymentStage,

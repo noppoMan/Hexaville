@@ -5,7 +5,7 @@
       "package": "AWSSDKSwift",
       "reason": null,
       "repositoryURL": "https://github.com/noppoMan/aws-sdk-swift.git",
-      "version": "0.1.15"
+      "version": "0.1.16"
     },
     {
       "package": "CHTTPParser",
@@ -29,7 +29,7 @@
       "package": "Prorsum",
       "reason": null,
       "repositoryURL": "https://github.com/noppoMan/Prorsum.git",
-      "version": "0.1.13"
+      "version": "0.1.14"
     },
     {
       "package": "SwiftCLI",
@@ -41,7 +41,7 @@
       "package": "SwiftyJSON",
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
-      "version": "16.0.0"
+      "version": "16.0.1"
     },
     {
       "package": "Yaml",

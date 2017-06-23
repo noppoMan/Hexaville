@@ -93,9 +93,21 @@ public struct AWSLauncherProvider {
 }
 
 extension AWSLauncherProvider {
+    fileprivate func lambdaPackageShellContent() -> String {
+        var content = ""
+        content += "#!/usr/bin/env sh"
+        content += "\n"
+        content += "cd $2"
+        content += "\n"
+        content += "zip $1 $3 byline.js index.js ./*.so ./*.so.*"
+        return content
+    }
+    
     fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Data {
+        let nodejsTemplatePath = try Finder.findTemplatePath(for: "/lambda/node.js")
+        
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
-        let nodejsTemplatePath = "\(projectRoot)/templates/lambda/node.js"
+        
         try String(contentsOfFile: "\(nodejsTemplatePath)/index.js", encoding: .utf8)
             .replacingOccurrences(of: "{{executablePath}}", with: executableTarget)
             .write(toFile: buildResult.destination+"/index.js", atomically: true, encoding: .utf8)
@@ -103,7 +115,10 @@ extension AWSLauncherProvider {
         try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js", encoding: .utf8)
             .write(toFile: buildResult.destination+"/byline.js", atomically: true, encoding: .utf8)
         
-        let proc = Proc("/bin/sh", ["\(projectRoot)/build-lambda-package.sh", pkgFileName, buildResult.destination, executableTarget])
+        let shellPath = "/tmp/build-lambda-package.sh"
+        let shellContent = lambdaPackageShellContent()
+        try shellContent.write(toFile: shellPath, atomically: true, encoding: .utf8)
+        let proc = Proc("/bin/sh", [shellPath, pkgFileName, buildResult.destination, executableTarget])
         
         if proc.terminationStatus > 0 {
             throw AWSLauncherProviderError.couldNotZipPackage
@@ -112,6 +127,7 @@ extension AWSLauncherProvider {
         let data = try Data(contentsOf: URL(string: "file://"+pkgFileName)!)
         
         try FileManager.default.removeItem(atPath: pkgFileName)
+        try FileManager.default.removeItem(atPath: shellPath)
         
         return data
     }
@@ -389,11 +405,14 @@ extension AWSLauncherProvider {
     }
     
     fileprivate func uploadCodeToS3(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Lambda.FunctionCode {
+        
+        print("Starting zip package........")
         let zipData = try zipPackage(
             buildResult: buildResult,
             hexavilleApplicationPath: hexavilleApplicationPath,
             executableTarget: executableTarget
         )
+        print("Zip package done.")
         
         print("Uploading code to s3.....")
         _ = try createBucketIfNotExists()

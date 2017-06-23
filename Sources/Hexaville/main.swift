@@ -33,7 +33,6 @@ enum HexavilleError: Error {
     case projectAlreadyCreated(String)
     case couldNotFindManifestFile(String)
     case pathIsNotForHexavillefile(String)
-    case couldNotFindTemplateIn([String])
 }
 
 class GenerateProject: Command {
@@ -61,29 +60,6 @@ class GenerateProject: Command {
         return prefix + sanitizedName + suffix
     }
     
-    func findSwiftProjectTemplatePath() throws -> String {
-        let manager = FileManager.default
-        var templatesPathCandidates: [String] = [
-            manager.currentDirectoryPath,
-            NSHomeDirectory()+"/.hexaville"
-        ]
-        
-        do {
-            let execPath = ProcessInfo.processInfo.arguments[0]
-            let dest = try manager.destinationOfSymbolicLink(atPath: execPath)+"/../"
-            templatesPathCandidates.append(dest)
-        } catch {}
-        
-        for path in templatesPathCandidates {
-            let tplPath = path+"/templates/SwiftProject"
-            if manager.fileExists(atPath: tplPath) {
-                return tplPath
-            }
-        }
-        
-        throw HexavilleError.couldNotFindTemplateIn(templatesPathCandidates)
-    }
-    
     func execute() throws {
         do {
             let out = (dest.value ?? FileManager.default.currentDirectoryPath) + "/\(projectName.value)"
@@ -102,7 +78,7 @@ class GenerateProject: Command {
                 let randomNumber = Int(arc4random_uniform(9999))
             #endif
             
-            try FileManager.default.copyFiles(from: "\(findSwiftProjectTemplatePath())", to: out)
+            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject"))", to: out)
             let hashId = hashids.encode(randomNumber)!
             
             let bucketName = createBucketName(from: projectName.value, hashId: hashId)
