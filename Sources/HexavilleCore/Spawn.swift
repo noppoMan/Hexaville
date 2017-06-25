@@ -39,7 +39,7 @@ public final class Spawn {
     private let process = "/bin/sh"
     private var outputPipe: [Int32] = [-1, -1]
     
-    public init(args: [String], output: OutputClosure? = nil) throws {
+    public init(args: [String], environment: [String: String] = ProcessInfo.processInfo.environment ,  output: OutputClosure? = nil) throws {
         (self.args, self.output)  = (args, output)
         
         if pipe(&outputPipe) < 0 {
@@ -55,7 +55,10 @@ public final class Spawn {
         let argv: [UnsafeMutablePointer<CChar>?] = args.map{ $0.withCString(strdup) }
         defer { for case let arg? in argv { free(arg) } }
         
-        if posix_spawn(&pid, argv[0], &childFDActions, nil, argv + [nil], nil) < 0 {
+        let envs = environment.map({ "\($0.key)=\($0.value)" })
+        let envp: [UnsafeMutablePointer<CChar>?] = envs.map { $0.withCString(strdup) }
+        
+        if posix_spawn(&pid, argv[0], &childFDActions, nil, argv + [nil], envp + [nil]) < 0 {
             throw SpawnError.couldNotSpawn
         }
         watchStreams()
