@@ -27,7 +27,12 @@ Current Swift Version is 3.1
 
 ## Plugins
 * [HexavilleAuth](https://github.com/Hexaville): A pluggable framework for providing various authentication methods(OAuth, simple password based etc.)
+* [DynamodbSessionStore](https://github.com/Hexaville/DynamodbSessionStore): Dynamodb Session Store
 * [RedisSessionStore](https://github.com/Hexaville/RedisSessionStore): Redis Session Store
+
+## Recommended Database Clients
+* [SwiftKnex](https://github.com/noppoMan/SwiftKnex): A Mysql Native Client and Query Builder written in Pure Swift
+* [Dynamodb](https://github.com/swift-aws/dynamodb): A Dynamodb typesafe client for swift (This is part of aws-sdk-swift)
 
 ## Quick Start
 
