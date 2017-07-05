@@ -7,9 +7,9 @@
 //
 
 import Foundation
-import AWSSDKSwift
-import Core
 import Yaml
+import AWSSDKSwiftCore
+import SwiftAWSLambda
 
 struct AWSLoader: PlatformConfigurationLoadable {
     
@@ -26,7 +26,7 @@ struct AWSLoader: PlatformConfigurationLoadable {
     }
     
     func load() throws -> Configuration.PlatformConfiguration {
-        var cred: Credential?
+        var cred: AWSSDKSwiftCore.Credential?
         
         if let accessKey = config["credential"]["access_key_id"].string, let secretKey = config["credential"]["secret_access_key"].string {
             cred = Credential(
@@ -55,7 +55,7 @@ struct AWSLoader: PlatformConfigurationLoadable {
             environment: environment
         )
         
-        var region: Region?
+        var region: AWSSDKSwiftCore.Region?
         if let reg = config["region"].string {
             region = Region(rawValue: reg)
         }

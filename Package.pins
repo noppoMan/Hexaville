@@ -2,10 +2,10 @@
   "autoPin": true,
   "pins": [
     {
-      "package": "AWSSDKSwift",
+      "package": "AWSSDKSwiftCore",
       "reason": null,
-      "repositoryURL": "https://github.com/noppoMan/aws-sdk-swift.git",
-      "version": "0.1.16"
+      "repositoryURL": "https://github.com/noppoMan/aws-sdk-swift-core.git",
+      "version": "0.2.1"
     },
     {
       "package": "CHTTPParser",
@@ -32,16 +32,34 @@
       "version": "0.1.14"
     },
     {
+      "package": "SwiftAWSApigateway",
+      "reason": null,
+      "repositoryURL": "https://github.com/swift-aws/apigateway.git",
+      "version": "0.3.0"
+    },
+    {
+      "package": "SwiftAWSIam",
+      "reason": null,
+      "repositoryURL": "https://github.com/swift-aws/iam.git",
+      "version": "0.3.0"
+    },
+    {
+      "package": "SwiftAWSLambda",
+      "reason": null,
+      "repositoryURL": "https://github.com/swift-aws/lambda.git",
+      "version": "0.3.0"
+    },
+    {
+      "package": "SwiftAWSS3",
+      "reason": null,
+      "repositoryURL": "https://github.com/swift-aws/s3.git",
+      "version": "0.3.0"
+    },
+    {
       "package": "SwiftCLI",
       "reason": null,
       "repositoryURL": "https://github.com/jakeheis/SwiftCLI.git",
       "version": "3.0.1"
-    },
-    {
-      "package": "SwiftyJSON",
-      "reason": null,
-      "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
-      "version": "16.0.1"
     },
     {
       "package": "Yaml",

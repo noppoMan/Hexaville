@@ -21,9 +21,7 @@
 #endif
 
 import Foundation
-import AWSSDKSwift
 import Prorsum
-import Core
 import SwiftyJSON
 import SwiftCLI
 import Yaml
