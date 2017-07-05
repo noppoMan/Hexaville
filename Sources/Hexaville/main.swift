@@ -30,7 +30,7 @@ import HexavilleCore
 enum HexavilleError: Error {
     case projectAlreadyCreated(String)
     case couldNotFindManifestFile(String)
-    case pathIsNotForHexavillefile(String)
+    case couldNotFindHexavillefile(String)
 }
 
 class GenerateProject: Command {
@@ -142,12 +142,13 @@ class Deploy: Command {
     func execute() throws {
         do {
             var hexavileApplicationPath = FileManager.default.currentDirectoryPath
+            var hexavilleFileYAML = "Hexavillefile.yml"
             if let hexavillefilePath = hexavillefilePath.value {
-                var splited = hexavillefilePath.components(separatedBy: "/")
-                let last = splited.removeLast()
-                if last != "Hexavillefile.yml" {
-                    throw HexavilleError.pathIsNotForHexavillefile(hexavillefilePath)
+                if !FileManager.default.fileExists(atPath: hexavillefilePath) {
+                    throw HexavilleError.couldNotFindHexavillefile(hexavillefilePath)
                 }
+                var splited = hexavillefilePath.components(separatedBy: "/")
+                hexavilleFileYAML = splited.removeLast()
                 hexavileApplicationPath = splited.joined(separator: "/")
             }
             
@@ -159,7 +160,10 @@ class Deploy: Command {
             }
             
             let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-            let yml = try loadHexavilleFile(hexavilleFilePath: hexavileApplicationPath+"/Hexavillefile.yml")
+            let yml = try loadHexavilleFile(hexavilleFilePath: "\(hexavileApplicationPath)/\(hexavilleFileYAML)")
+            
+            print("Hexavillefile: \(hexavileApplicationPath)/\(hexavilleFileYAML)")
+            
             let config = try HexavillefileLoader(fromYaml: yml).load(withEnvironment: environment)
             
             let launcher = Launcher(
