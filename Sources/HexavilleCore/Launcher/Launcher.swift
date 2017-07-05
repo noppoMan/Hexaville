@@ -7,7 +7,8 @@
 //
 
 import Foundation
-import AWSSDKSwift
+import AWSSDKSwiftCore
+import SwiftAWSApigateway
 import SwiftyJSON
 
 public enum DeploymentStage {

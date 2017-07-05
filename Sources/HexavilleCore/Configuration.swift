@@ -8,8 +8,11 @@
 
 import Foundation
 import Yaml
-import AWSSDKSwift
-import Core
+import SwiftAWSS3
+import SwiftAWSLambda
+import SwiftAWSApigateway
+import SwiftAWSIam
+import AWSSDKSwiftCore
 
 public struct AWSConfiguration {
     public struct Endpoints {
@@ -42,12 +45,12 @@ public struct AWSConfiguration {
         }
     }
     
-    public let credential: Credential?
-    public let region: Region?
+    public let credential: AWSSDKSwiftCore.Credential?
+    public let region: AWSSDKSwiftCore.Region?
     public let endpoints: Endpoints?
     public let lambdaCodeConfig: LambdaCodeConfig
     
-    public init(credential: Credential? = nil, region: Region? = nil, endpoints: Endpoints? = nil, lambdaCodeConfig: LambdaCodeConfig) {
+    public init(credential: AWSSDKSwiftCore.Credential? = nil, region: AWSSDKSwiftCore.Region? = nil, endpoints: Endpoints? = nil, lambdaCodeConfig: LambdaCodeConfig) {
         self.credential = credential
         self.region = region
         self.endpoints = endpoints
