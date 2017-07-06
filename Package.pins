@@ -53,13 +53,19 @@
       "package": "SwiftAWSS3",
       "reason": null,
       "repositoryURL": "https://github.com/swift-aws/s3.git",
-      "version": "0.3.0"
+      "version": "0.3.2"
     },
     {
       "package": "SwiftCLI",
       "reason": null,
       "repositoryURL": "https://github.com/jakeheis/SwiftCLI.git",
       "version": "3.0.1"
+    },
+    {
+      "package": "SwiftyJSON",
+      "reason": null,
+      "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
+      "version": "16.0.1"
     },
     {
       "package": "Yaml",
