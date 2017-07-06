@@ -35,6 +35,9 @@ class HexavilefileLoaderTest: XCTestCase {
         str += "        - sg-bar-foo\n"
         str += "build:\n"
         str += "  nocache: true\n"
+        str += "swift:\n"
+        str += "  build:\n"
+        str += "    configuration: release\n"
         
         return str
     }
@@ -50,6 +53,7 @@ class HexavilefileLoaderTest: XCTestCase {
 
             XCTAssertEqual(configuration.name, "test-app")
             XCTAssert(configuration.forBuild.noCache)
+            XCTAssertEqual(configuration.forSwift.build.configuration, "release")
             
             switch configuration.forPlatform {
             case .aws(let config):

@@ -62,10 +62,20 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             throw DockerBuildEnvironmentProviderError.couldNotMakeSharedDir
         }
         
-        _ = try Spawn(args: ["/usr/bin/env", "docker", "run", "-v", "\(sharedDir):/hexaville-app/.build", "-it", tag]) {
+        _ = try Spawn(args: [
+            "/usr/bin/env",
+            "docker",
+            "run",
+            "-e",
+            "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
+            "-v",
+            "\(sharedDir):/hexaville-app/.build",
+            "-it",
+            tag
+        ]) {
             print($0, separator: "", terminator: "")
         }
         
-        return BuildResult(destination: sharedDir+"/debug", dockerTag: tag)
+        return BuildResult(destination: sharedDir+"/\(config.forSwift.build.configuration)", dockerTag: tag)
     }
 }

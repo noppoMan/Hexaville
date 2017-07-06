@@ -44,12 +44,15 @@ public struct HexavillefileLoader {
         
         let buildConfiguration = Configuration.BuildConfiguration(noCache: config["build"]["nocache"].bool ?? false)
         
+        let swiftConfiguration = try Configuration.SwiftConfiguration(yml: config["swift"])
+        
         switch service {
         case "aws":
             return Configuration(
                 name: appName,
                 platformConfiguration: try AWSLoader(appName: appName, yaml: config["aws"], environment: environment).load(),
-                buildConfiguration: buildConfiguration
+                buildConfiguration: buildConfiguration,
+                swiftConfiguration: swiftConfiguration
             )
             
         default:

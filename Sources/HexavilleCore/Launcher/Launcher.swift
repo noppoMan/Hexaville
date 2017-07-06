@@ -117,14 +117,20 @@ public class Launcher {
     
     private func buildSwift() throws -> BuildResult {
         print("Building application....")
-        let swiftBuildResult = Process.exec(swiftExecutablePath(), ["build", "--chdir", hexavilleApplicationPath])
+        let swiftBuildResult = Process.exec(swiftExecutablePath(), [
+            "build",
+            "-c",
+            configuration.forSwift.build.configuration,
+            "--chdir",
+            hexavilleApplicationPath
+        ])
         
         if swiftBuildResult.terminationStatus > 0 {
             throw LauncherError.swiftBuildFailed
         }
         
         print("Generating Routing Manifest file....")
-        let genManifestResult = Process.exec("\(hexavilleApplicationPath)/.build/debug/\(executableTarget)", ["gen-routing-manif", hexavilleApplicationPath])
+        let genManifestResult = Process.exec("\(hexavilleApplicationPath)/.build/\(configuration.forSwift.build.configuration)/\(executableTarget)", ["gen-routing-manif", hexavilleApplicationPath])
         
         if genManifestResult.terminationStatus > 0 {
             throw LauncherError.cloudNotGenerateRoutingManifest

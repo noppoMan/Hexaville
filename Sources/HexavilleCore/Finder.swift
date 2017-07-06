@@ -12,10 +12,7 @@ public struct Finder {
     internal static func findPath(childDir: String) throws -> String {
         let manager = FileManager.default
         
-        var templatesPathCandidates: [String] = [
-            NSHomeDirectory()+"/.hexaville",
-            manager.currentDirectoryPath,
-        ]
+        var templatesPathCandidates: [String] = []
         
         let paths = ProcessInfo.processInfo.arguments[0].split(separator: "/")
         if paths.count > 3 {
@@ -23,6 +20,11 @@ public struct Finder {
             let relativePath = FileManager.default.currentDirectoryPath+projectRoot
             templatesPathCandidates.append(contentsOf: [projectRoot, relativePath])
         }
+        
+        templatesPathCandidates.append(contentsOf: [
+            manager.currentDirectoryPath,
+            NSHomeDirectory()+"/.hexaville"
+        ])
         
         do {
             let execPath = ProcessInfo.processInfo.arguments[0]

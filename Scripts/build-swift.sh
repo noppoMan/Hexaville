@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
-DEST=./.build/debug
+DEST=./.build/${BUILD_CONFIGURATION}
 swift package update
-swift build
+swift build -c ${BUILD_CONFIGURATION}
 cp -r /${SWIFTFILE}/usr/lib/swift/linux/*.so $DEST
 cp /usr/lib/x86_64-linux-gnu/libicudata.so $DEST/libicudata.so.52
 cp /usr/lib/x86_64-linux-gnu/libicui18n.so $DEST/libicui18n.so.52
