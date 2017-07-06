@@ -107,6 +107,7 @@ extension AWSLauncherProvider {
     }
     
     fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Data {
+        
         let nodejsTemplatePath = try Finder.findTemplatePath(for: "/lambda/node.js")
         
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"

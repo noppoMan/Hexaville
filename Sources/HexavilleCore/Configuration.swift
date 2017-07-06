@@ -14,6 +14,10 @@ import SwiftAWSApigateway
 import SwiftAWSIam
 import AWSSDKSwiftCore
 
+public enum ConfigurationError: Error {
+    case invalidSwiftBuildConfiguration(String)
+}
+
 public struct AWSConfiguration {
     public struct Endpoints {
         let s3Endpoint: String?
@@ -59,6 +63,26 @@ public struct AWSConfiguration {
 }
 
 public struct Configuration {
+    public struct SwiftConfiguration {
+        public struct Build {
+            public let configuration: String
+            
+            public init(configuration: String = "debug"){
+                self.configuration = configuration
+            }
+        }
+        
+        let build: Build
+        
+        init(yml: Yaml) throws {
+            let swiftBuildConfiguration = yml["build"]["configuration"].string ?? "debug"
+            guard ["release", "debug"].contains(swiftBuildConfiguration) else {
+                throw ConfigurationError.invalidSwiftBuildConfiguration(swiftBuildConfiguration)
+            }
+            self.build = Build(configuration: swiftBuildConfiguration)
+        }
+    }
+    
     public struct BuildConfiguration {
         public let noCache: Bool
         
@@ -85,9 +109,12 @@ public struct Configuration {
     
     public let forPlatform: PlatformConfiguration
     
-    public init(name: String, platformConfiguration: PlatformConfiguration,  buildConfiguration: BuildConfiguration) {
+    public let forSwift: SwiftConfiguration
+    
+    public init(name: String, platformConfiguration: PlatformConfiguration,  buildConfiguration: BuildConfiguration, swiftConfiguration: SwiftConfiguration) {
         self.name = name
         self.forPlatform = platformConfiguration
         self.forBuild = buildConfiguration
+        self.forSwift = swiftConfiguration
     }
 }

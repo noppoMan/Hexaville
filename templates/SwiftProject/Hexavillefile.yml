@@ -17,3 +17,6 @@ aws:
 #         - xxxxxx
 # build:
 #   nocache: false
+# swift:
+#   build:
+#     configuration: release # default is debug

@@ -124,7 +124,9 @@ aws:
     timout: 10
 build:
   nocache: false
-
+swift:
+  build:
+    configuration: release # default is debug
 ```
 
 ### Deploy a Project
@@ -258,6 +260,18 @@ aws:
        securityGroupIds:
          - sg-1234
          - sg-56789
+```
+
+## Build Configuration
+
+You can configure swift build configuration from `debug` or `release`.
+This will be worked as `--configuration` on the swift build.
+
+```yaml
+name: test-app
+swift:
+  build:
+    configuration: release
 ```
 
 ## Contributing
