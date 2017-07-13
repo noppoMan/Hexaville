@@ -52,12 +52,12 @@ exports.handler = function(event, context, callback) {
   }
   headers["User-Agent"] = event.requestContext.identity.userAgent;
 
-  const query = Object.keys(queryStringParameters).map(function(key) { return `${key}=${queryStringParameters[key]}` }).join("/")
+  const query = Object.keys(queryStringParameters).map(function(key) { return `${key}=${queryStringParameters[key]}` }).join("&");
   if(query !== "") {
-    path += `?${query}`
+    path += `?${query}`;
   }
 
-  const header = Object.keys(headers).map(function(key) { return `${key}=${headers[key]}` }).join("&")
+  const header = Object.keys(headers).map(function(key) { return `${key}=${headers[key]}` }).join("&");
   const body = event.body || '';
 
   const proc = spawn(`${__dirname}/{{executablePath}}`, [
