@@ -23,4 +23,4 @@ COPY . hexaville-app
 
 WORKDIR hexaville-app
 
-CMD ["sh", "./build-swift.sh"]
+CMD ["/bin/bash", "./build-swift.sh"]
