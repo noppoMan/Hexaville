@@ -9,6 +9,15 @@
 import Foundation
 
 public struct Finder {
+    
+    private static var absoluteFilePathAtCompiling: String {
+        return #file.characters
+            .split(separator: "/", omittingEmptySubsequences: false)
+            .dropLast(3)
+            .map { String($0) }
+            .joined(separator: "/")
+    }
+    
     internal static func findPath(childDir: String) throws -> String {
         let manager = FileManager.default
         
@@ -38,6 +47,12 @@ public struct Finder {
             if manager.fileExists(atPath: path) {
                 return path
             }
+        }
+        
+        // try to find file/directory in local compiled dir
+        // This should not be append to templatesPathCandidates
+        if manager.fileExists(atPath: absoluteFilePathAtCompiling+childDir) {
+            return absoluteFilePathAtCompiling+childDir
         }
         
         throw HexavilleCoreError.couldNotFindTemplate(in: templatesPathCandidates)
