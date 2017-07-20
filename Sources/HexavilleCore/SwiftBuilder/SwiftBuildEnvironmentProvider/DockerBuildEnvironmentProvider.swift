@@ -56,23 +56,40 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         }
         
         let sharedDir = "\(hexavilleApplicationPath)/__docker_shared"
-        
         let mkdirResult = Process.exec("mkdir", ["-p", sharedDir])
         if mkdirResult.terminationStatus != 0 {
             throw DockerBuildEnvironmentProviderError.couldNotMakeSharedDir
         }
         
-        _ = try Spawn(args: [
-            "/usr/bin/env",
-            "docker",
-            "run",
-            "-e",
-            "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
-            "-v",
-            "\(sharedDir):/hexaville-app/.build",
-            "-it",
-            tag
-        ]) {
+        #if os(OSX)
+            let dockerRunOpts = [
+                "-e",
+                "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
+                "-v",
+                "\(sharedDir):/hexaville-app/.build",
+                "-it",
+                tag
+            ]
+        #else
+            guard let user = ProcessInfo.processInfo.environment["USER"] else {
+                fatalError("$USER was not found in env")
+            }
+            
+            let dockerRunOpts = [
+                "-e",
+                "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
+                "-e",
+                "VOLUME_USER=\(user)",
+                "-e",
+                "VOLUME_GROUP=\(user)",
+                "-v",
+                "\(sharedDir):/hexaville-app/.build",
+                "-it",
+                tag
+            ]
+        #endif
+        
+        _ = try Spawn(args: ["/usr/bin/env", "docker", "run"] + dockerRunOpts) {
             print($0, separator: "", terminator: "")
         }
         
