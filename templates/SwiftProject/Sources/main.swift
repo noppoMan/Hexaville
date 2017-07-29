@@ -61,11 +61,11 @@ router.use(.get, "/hello") { request, context in
     return try Response(headers: ["Content-Type": "application/json"], body: requestDetail(for: request))
 }
 
-router.use(.get, "/hello/{id}") { request, context in
+router.use(.get, "/hello/:id") { request, context in
     return try Response(headers: ["Content-Type": "application/json"], body: requestDetail(for: request))
 }
 
-router.use(.post, "/hello/{id}") { request, context in
+router.use(.post, "/hello/:id") { request, context in
     return try Response(status: .created, headers: ["Content-Type": "application/json"], body: requestDetail(for: request))
 }
 
