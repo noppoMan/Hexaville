@@ -1,0 +1,115 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "AWSSDKSwiftCore",
+        "repositoryURL": "https://github.com/noppoMan/aws-sdk-swift-core.git",
+        "state": {
+          "branch": null,
+          "revision": "24b9cc84ca885b272d98da9889c190f15b86706d",
+          "version": "0.2.4"
+        }
+      },
+      {
+        "package": "CHTTPParser",
+        "repositoryURL": "https://github.com/Zewo/CHTTPParser.git",
+        "state": {
+          "branch": null,
+          "revision": "88306ab33bb316b2eedd39c90f4be8f4ebf65a11",
+          "version": "0.14.0"
+        }
+      },
+      {
+        "package": "CLibreSSL",
+        "repositoryURL": "https://github.com/vapor/clibressl.git",
+        "state": {
+          "branch": null,
+          "revision": "23ddb296981d17a8ee6c7418742a40cad5d2f9d0",
+          "version": "1.0.0"
+        }
+      },
+      {
+        "package": "HypertextApplicationLanguage",
+        "repositoryURL": "https://github.com/noppoMan/HypertextApplicationLanguage.git",
+        "state": {
+          "branch": null,
+          "revision": "e6216c13fd510e31e70e6f409936f1a656db1f33",
+          "version": "1.0.1"
+        }
+      },
+      {
+        "package": "Prorsum",
+        "repositoryURL": "https://github.com/noppoMan/Prorsum.git",
+        "state": {
+          "branch": null,
+          "revision": "95a1270399db6361f7a6564706c8dd3d2671dcb4",
+          "version": "0.1.14"
+        }
+      },
+      {
+        "package": "SwiftAWSApigateway",
+        "repositoryURL": "https://github.com/swift-aws/apigateway.git",
+        "state": {
+          "branch": null,
+          "revision": "ddeb6a1195d694823b624ac51b076cf497ffc4df",
+          "version": "0.3.0"
+        }
+      },
+      {
+        "package": "SwiftAWSIam",
+        "repositoryURL": "https://github.com/swift-aws/iam.git",
+        "state": {
+          "branch": null,
+          "revision": "30f99dfecd46b3e80436f4b951833f97fabe9c7c",
+          "version": "0.3.0"
+        }
+      },
+      {
+        "package": "SwiftAWSLambda",
+        "repositoryURL": "https://github.com/swift-aws/lambda.git",
+        "state": {
+          "branch": null,
+          "revision": "d3bc38b2a865b33aa5bfd6ed80ef5b2b56af01f2",
+          "version": "0.3.0"
+        }
+      },
+      {
+        "package": "SwiftAWSS3",
+        "repositoryURL": "https://github.com/swift-aws/s3.git",
+        "state": {
+          "branch": null,
+          "revision": "10d222774d15638377e80b9cca81f290b15971cb",
+          "version": "0.3.2"
+        }
+      },
+      {
+        "package": "SwiftCLI",
+        "repositoryURL": "https://github.com/jakeheis/SwiftCLI.git",
+        "state": {
+          "branch": null,
+          "revision": "6ad6d95ce0eb5247553ccb056b2064b5a9765f9e",
+          "version": "3.0.1"
+        }
+      },
+      {
+        "package": "SwiftyJSON",
+        "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
+        "state": {
+          "branch": null,
+          "revision": "4c57d4680e2b3d7be0e7c36737f99b6b36f09aac",
+          "version": "16.0.1"
+        }
+      },
+      {
+        "package": "Yaml",
+        "repositoryURL": "https://github.com/behrang/YamlSwift.git",
+        "state": {
+          "branch": null,
+          "revision": "901c4943f3206afb3b965bad2d1338e3c4fdbeba",
+          "version": "3.4.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
