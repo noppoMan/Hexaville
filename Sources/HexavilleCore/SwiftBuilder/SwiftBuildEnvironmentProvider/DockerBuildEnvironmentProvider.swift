@@ -20,16 +20,25 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "docker"
     }
     
-    func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult {
+    func build(config: Configuration, hexavilleApplicationPath: String, executableTarget: String) throws -> BuildResult {
         let templatePath = try Finder.findTemplatePath()
         let buildSwiftShellPath = try Finder.findScriptPath(for: "build-swift.sh")
         
         try String(contentsOfFile: buildSwiftShellPath, encoding: .utf8)
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
+        let dest: String
+        if config.forSwift.version.major > 3 {
+            dest = "/hexaville-app/.build/x86_64-unknown-linux"
+        } else {
+            dest = "/hexaville-app/.build"
+        }
+        
         try String(contentsOfFile: templatePath+"/Dockerfile", encoding: .utf8)
-            .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: SwiftBuilder.swiftDownloadURL)
-            .replacingOccurrences(of: "{{SWIFTFILE}}", with: SwiftBuilder.swiftFileName)
+            .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: config.forSwift.version.downloadURLString)
+            .replacingOccurrences(of: "{{SWIFTFILE}}", with: config.forSwift.version.fileName)
+            .replacingOccurrences(of: "{{EXECUTABLE_NAME}}", with: executableTarget)
+            .replacingOccurrences(of: "{{DEST}}", with: dest)
             .write(
                 toFile: hexavilleApplicationPath+"/Dockerfile",
                 atomically: true,
@@ -43,7 +52,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 encoding: .utf8
         )
         
-        let tag = "hexaville-app"
+        let tag = executableTarget.lowercased()
         
         var opts = ["build", "-t", tag, "-f", "\(hexavilleApplicationPath)/Dockerfile", hexavilleApplicationPath]
         if config.forBuild.noCache {
@@ -66,7 +75,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 "-e",
                 "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
                 "-v",
-                "\(sharedDir):/hexaville-app/.build",
+                "\(sharedDir):\(dest)",
                 "-it",
                 tag
             ]
@@ -83,7 +92,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 "-e",
                 "VOLUME_GROUP=\(user)",
                 "-v",
-                "\(sharedDir):/hexaville-app/.build",
+                "\(sharedDir):\(dest)",
                 "-it",
                 tag
             ]

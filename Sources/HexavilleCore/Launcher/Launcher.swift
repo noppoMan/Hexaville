@@ -116,29 +116,12 @@ public class Launcher {
     }
     
     private func buildSwift() throws -> BuildResult {
-        print("Building application....")
-        let swiftBuildResult = Process.exec(swiftExecutablePath(), [
-            "build",
-            "-c",
-            configuration.forSwift.build.configuration,
-            "--chdir",
-            hexavilleApplicationPath
-        ])
-        
-        if swiftBuildResult.terminationStatus > 0 {
-            throw LauncherError.swiftBuildFailed
-        }
-        
-        print("Generating Routing Manifest file....")
-        let genManifestResult = Process.exec("\(hexavilleApplicationPath)/.build/\(configuration.forSwift.build.configuration)/\(executableTarget)", ["gen-routing-manif", hexavilleApplicationPath])
-        
-        if genManifestResult.terminationStatus > 0 {
-            throw LauncherError.cloudNotGenerateRoutingManifest
-        }
-        print("Generated Routing Manifest file")
-        
-        let builder = SwiftBuilder()
-        return try builder.build(config: configuration, hexavilleApplicationPath: hexavilleApplicationPath)
+        let builder = SwiftBuilder(version: configuration.forSwift.version)
+        return try builder.build(
+            config: configuration,
+            hexavilleApplicationPath: hexavilleApplicationPath,
+            executableTarget: executableTarget
+        )
     }
     
     private func launchFor(aws provider: AWSLauncherProvider) throws {

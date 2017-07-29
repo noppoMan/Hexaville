@@ -12,6 +12,8 @@ RUN apt-get install -y clang \
   libcurl4-openssl-dev \
   wget
 
+ENV DEST={{DEST}}
+ENV EXECUTABLE_NAME={{EXECUTABLE_NAME}}
 ENV SWIFT_DOWNLOAD_URL={{SWIFT_DOWNLOAD_URL}}
 ENV SWIFTFILE={{SWIFTFILE}}
 

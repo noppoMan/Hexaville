@@ -17,5 +17,5 @@ struct BuildResult {
 }
 
 protocol SwiftBuildEnvironmentProvider {
-    func build(config: Configuration, hexavilleApplicationPath: String) throws -> BuildResult
+    func build(config: Configuration, hexavilleApplicationPath: String, executableTarget: String) throws -> BuildResult
 }

@@ -573,8 +573,7 @@ extension AWSLauncherProvider {
         }
         
         let lambdaPolicies = fetchLambdaPolicies()
-        
-        let manifest = try String(contentsOfFile: hexavilleApplicationPath+"/.routing-manifest.json", encoding: .utf8)
+        let manifest = try String(contentsOfFile: buildResult.destination+"/.routing-manifest.json", encoding: .utf8)
         let dict = try JSONSerialization.jsonObject(with: manifest.data, options: []) as! [String: Any]
         let manifestJSON = JSON(dict)
         

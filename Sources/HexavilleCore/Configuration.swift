@@ -74,12 +74,19 @@ public struct Configuration {
         
         let build: Build
         
+        let version: SwiftVersion
+        
         init(yml: Yaml) throws {
             let swiftBuildConfiguration = yml["build"]["configuration"].string ?? "debug"
             guard ["release", "debug"].contains(swiftBuildConfiguration) else {
                 throw ConfigurationError.invalidSwiftBuildConfiguration(swiftBuildConfiguration)
             }
             self.build = Build(configuration: swiftBuildConfiguration)
+            if let version = yml["version"].string {
+                self.version = try SwiftVersion(string: version)
+            } else {
+                self.version = SwiftVersion(major: 3, minor: 1)
+            }
         }
     }
     
