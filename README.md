@@ -1,29 +1,19 @@
 # Hexaville
 
-<img src="https://camo.githubusercontent.com/93de6573350b91e48ab570a4fe710e4e8baa38b8/687474703a2f2f696d672e736869656c64732e696f2f62616467652f73776966742d332e302d627269676874677265656e2e737667"> [<img src="https://travis-ci.org/noppoMan/Hexaville.svg?branch=master">](https://travis-ci.org/noppoMan/Hexaville)
+<img src="https://camo.githubusercontent.com/5871196ce0d8f5b7ba22d74eaa8754a03f53819a/687474703a2f2f696d672e736869656c64732e696f2f62616467652f73776966742d332e312d627269676874677265656e2e737667"> [<img src="https://travis-ci.org/noppoMan/Hexaville.svg?branch=master">](https://travis-ci.org/noppoMan/Hexaville)
 
 Hexaville - The Serverless Framework using AWS Lambda + ApiGateway etc as a back end.
 Build applications comprised of microservices that run in response to events, auto-scale for you, and only charge you when they run. This lowers the total cost of maintaining your apps, enabling you to develop more, faster.
 
 It's the greatest motivation to help many Swift and mobile application developers with rapid server side development and low cost operation.
 
-## Supported Cloud Servises
+### Supported Cloud Servises
 * AWS(lambda+api-gateway, Node.js 4.3 runtime)
 
 
-## Swift Build Environments
+### Swift Build Environments
 
-Current Swift Version is 3.1
-
-* Docker
-* Xcode(Not implemented yet)
-* Linux(Not implemented yet)
-* Vagrant(Not implemented yet)
-
-## TODO
-
-* Custom Domain Support
-* GCP
+Ubuntu 14.04 in Docker
 
 ## Plugins
 * [HexavilleAuth](https://github.com/Hexaville): A pluggable framework for providing various authentication methods(OAuth, simple password based etc.)
@@ -262,17 +252,25 @@ aws:
          - sg-56789
 ```
 
-## Build Configuration
+## Swift Versioning and Build Configuration
 
-You can configure swift build configuration from `debug` or `release`.
-This will be worked as `--configuration` on the swift build.
+You can configure swift versioning and build configuration in `swift` directive
+
+* default swift version is `3.1`
+* default build configuration is `debug`
 
 ```yaml
 name: test-app
 swift:
+  version: "4.0" #version should be string type of major.minor.[patch]
   build:
     configuration: release
 ```
+
+## Static Assets
+
+You can also upload static assets.
+Just put your assets into the `assets` directory in your project root.
 
 ## Contributing
 All developers should feel welcome and encouraged to contribute to Hexaville, see our getting started document here to get involved.
