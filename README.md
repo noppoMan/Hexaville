@@ -85,8 +85,8 @@ app.use(RandomNumberGenerateMiddleware())
 let router = Router()
 
 router.use(.get, "/") { request, context in
-    let str = "<html><head><title>Hexaville</title></head><body>Welcome to Hexaville!</body></html>"
-    return Response(headers: ["Content-Type": "text/html"], body: .buffer(str.data))
+    let htmlString = "<html><head><title>Hexaville</title></head><body>Welcome to Hexaville!</body></html>"
+    return Response(headers: ["Content-Type": "text/html"], body: htmlString)
 }
 
 app.use(router)
@@ -271,6 +271,16 @@ swift:
 
 You can also upload static assets.
 Just put your assets into the `assets` directory in your project root.
+
+### Loading Static Assets in Application
+
+You can load static assets from local filesystem with `AssetLoader`
+
+```swift
+import HexavilleFramework
+
+let data = try AssetLoader.shared.load(fileInAssets: "/html/index.html")
+```
 
 ## Contributing
 All developers should feel welcome and encouraged to contribute to Hexaville, see our getting started document here to get involved.
