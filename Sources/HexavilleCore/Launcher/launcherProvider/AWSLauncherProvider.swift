@@ -102,7 +102,7 @@ extension AWSLauncherProvider {
         content += "\n"
         content += "cd $2"
         content += "\n"
-        content += "zip $1 $3 byline.js index.js -r assets ./*.so ./*.so.*"
+        content += "zip $1 $3 byline.js index.js ./*.so ./*.so.* -r assets"
         return content
     }
     
@@ -121,9 +121,7 @@ extension AWSLauncherProvider {
         
         let assetPath = hexavilleApplicationPath+"/assets"
         if FileManager.default.fileExists(atPath: assetPath) {
-            try FileManager.default.copyFiles(from: assetPath, to: buildResult.destination, excludes: [])
-        } else {
-            _ = Process.exec("mkdir", ["-p", "\(buildResult.destination)/assets"])
+            _ = Process.exec("cp", ["-r", assetPath, "\(buildResult.destination)"])
         }
         
         let shellPath = "/tmp/build-lambda-package.sh"
