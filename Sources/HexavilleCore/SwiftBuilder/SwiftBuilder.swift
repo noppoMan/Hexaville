@@ -14,11 +14,11 @@ enum SwiftVersionError: Error {
 }
 
 public struct SwiftVersion {
-    let major: Int
-    let minor: Int
-    let patch: Int
+    public let major: Int
+    public let minor: Int
+    public let patch: Int
     
-    var versionString: String {
+    public var versionString: String {
         var version = "\(major).\(minor)"
         if patch > 0 {
             version += ".\(patch)"
@@ -58,7 +58,7 @@ extension SwiftVersion : Comparable {
 }
 
 extension SwiftVersion {
-    init(string: String) throws {
+    public init(string: String) throws {
         let components = string.components(separatedBy: ".")
         if components.count == 0 {
             throw SwiftVersionError.notEmpty
