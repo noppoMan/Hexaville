@@ -82,8 +82,18 @@ public struct Configuration {
                 throw ConfigurationError.invalidSwiftBuildConfiguration(swiftBuildConfiguration)
             }
             self.build = Build(configuration: swiftBuildConfiguration)
-            if let version = yml["version"].string {
+            
+            let versionYml = yml["version"]
+            
+            if let version = versionYml.string {
                 self.version = try SwiftVersion(string: version)
+                
+            } else if let version = versionYml.double {
+                self.version = try SwiftVersion(string: version.description)
+                
+            } else if let version = versionYml.int {
+                self.version = try SwiftVersion(string: version.description)
+                
             } else {
                 self.version = SwiftVersion(major: 3, minor: 1)
             }
