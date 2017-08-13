@@ -38,19 +38,19 @@ class GenerateProject: Command {
     let name = "generate"
     let shortDescription  = "Generate initial project"
     let projectName = Parameter()
-    let swiftToolVersion = Key<String>("--swift-tools-version", usage: "Major Swift Tool Version for this project. default is 4.0")
+    let swiftToolVersion = Key<String>("--swift-tools-version", usage: "Major Swift Tool Version for this project. default is 3.1")
     let dest = Key<String>("-o", "--dest", usage: "Destination for the project")
     
-    private func resolveSwiftVersion() throws -> SwiftVersion {
+    private func resolveSwiftVersion() throws -> SwiftVersionContainer {
         guard let version = swiftToolVersion.value else {
-            // default is 4.0
-            return SwiftVersion(major: 4, minor: 0)
+            // default is 3.1
+            return .release(SwiftVersion(major: 3, minor: 1))
         }
         
-        let swiftVersion = try SwiftVersion(string: version)
+        let swiftVersion = try SwiftVersionContainer(string: version)
         
-        if (3...4 ~= swiftVersion.major) == false {
-            throw HexavilleError.unsupportedSwiftToolsVersion(swiftVersion.versionString)
+        if (3...4 ~= swiftVersion.asCompareableVersion().major) == false {
+            throw HexavilleError.unsupportedSwiftToolsVersion(version)
         }
         
         return swiftVersion
@@ -96,7 +96,7 @@ class GenerateProject: Command {
             let swiftVersion = try resolveSwiftVersion()
             
             try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Base"))", to: out)
-            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Swift\(swiftVersion.major)"))", to: out)
+            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Swift\(swiftVersion.asCompareableVersion().major)"))", to: out)
             try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Sources"))", to: "\(out)/Sources/\(projectName.value)")
             
             let hashId = hashids.encode(randomNumber)!
