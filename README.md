@@ -320,6 +320,7 @@ If you find a security vulnerability, please contact yuki@miketokyo.com as soon 
 
 ## Related Articles
 * [Serverless Server Side Swift with Hexaville](https://medium.com/@yukitakei/serverless-server-side-swift-with-hexaville-ef0e1788a20)
+* [Serverless Server Side Swift@Builderscon Tokyo 2017](https://speakerdeck.com/noppoman/serverless-server-side-swift)
 
 ## License
 
