@@ -31,13 +31,30 @@ enum HexavilleError: Error {
     case projectAlreadyCreated(String)
     case couldNotFindManifestFile(String)
     case couldNotFindHexavillefile(String)
+    case unsupportedSwiftToolsVersion(String)
 }
 
 class GenerateProject: Command {
     let name = "generate"
     let shortDescription  = "Generate initial project"
     let projectName = Parameter()
+    let swiftToolVersion = Key<String>("--swift-tools-version", usage: "Major Swift Tool Version for this project. default is 3.1")
     let dest = Key<String>("-o", "--dest", usage: "Destination for the project")
+    
+    private func resolveSwiftVersion() throws -> SwiftVersionContainer {
+        guard let version = swiftToolVersion.value else {
+            // default is 3.1
+            return .release(SwiftVersion(major: 3, minor: 1))
+        }
+        
+        let swiftVersion = try SwiftVersionContainer(string: version)
+        
+        if (3...4 ~= swiftVersion.asCompareableVersion().major) == false {
+            throw HexavilleError.unsupportedSwiftToolsVersion(version)
+        }
+        
+        return swiftVersion
+    }
     
     private func createBucketName(from projectName: String, hashId: String) -> String {
         let prefix = "hexaville-"
@@ -76,18 +93,25 @@ class GenerateProject: Command {
                 let randomNumber = Int(arc4random_uniform(9999))
             #endif
             
-            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject"))", to: out)
+            let swiftVersion = try resolveSwiftVersion()
+            
+            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Base"))", to: out)
+            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Swift\(swiftVersion.asCompareableVersion().major)"))", to: out)
+            try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Sources"))", to: "\(out)/Sources/\(projectName.value)")
+            
             let hashId = hashids.encode(randomNumber)!
             
             let bucketName = createBucketName(from: projectName.value, hashId: hashId)
-                
+            
             try String(contentsOfFile: ymlPath, encoding: .utf8)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
                 .replacingOccurrences(of: "{{bucketName}}", with: bucketName)
+                .replacingOccurrences(of: "{{swiftVersion}}", with: swiftVersion.versionString)
                 .write(toFile: ymlPath, atomically: true, encoding: .utf8)
             
             try String(contentsOfFile: packageSwiftPath, encoding: .utf8)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
+                .replacingOccurrences(of: "{{appNameLower}}", with: projectName.value.lowercased())
                 .write(toFile: packageSwiftPath, atomically: true, encoding: .utf8)
             
         } catch {
