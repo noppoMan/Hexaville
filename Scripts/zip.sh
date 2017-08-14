@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-DEST=./.build/debug
+DEST=./.build/release
 SWIFTFILE=../${SWIFTFILE}
 /bin/bash -c "source Scripts/build-swift.sh"
 cp -r templates $DEST

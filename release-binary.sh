@@ -12,12 +12,12 @@ mkdir -p $1/$MAC_DIST
 mkdir -p $1/$LINUX_DIST
 
 SHARED_DIR=`pwd`/__docker_shared
-docker build -t hexaville .
+docker build --no-cache -t hexaville .
 docker run -v ${SHARED_DIR}:/Hexaville/.build hexaville
 mv ${SHARED_DIR}/debug/Hexaville.zip $1/$LINUX_DIST
 
-swift build
-cp -r templates .build/debug
-cp -r Scripts .build/debug
-cd .build/debug
+swift build -c release
+cp -r templates .build/release
+cp -r Scripts .build/release
+cd .build/release
 zip $1/$MAC_DIST/Hexaville.zip Hexaville -r templates -r Scripts
