@@ -66,6 +66,7 @@ class SwiftVersionTests: XCTestCase {
     
     static var allTests = [
         ("testContainer", testContainer),
-        ("testSwiftVersion", testSwiftVersion)
+        ("testSwiftVersion", testSwiftVersion),
+        ("testSwiftDevelopmentSnapshot", testSwiftDevelopmentSnapshot)
     ]
 }
