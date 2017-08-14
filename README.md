@@ -63,6 +63,21 @@ and then, should link Hexaville executable path to /usr/local/bin or something l
 hexaville generate Hello --dest /path/to/your/app
 ```
 
+#### swift-tools-version
+You can specify swift-tools-version for the new project with `--swift-tools-version` option.
+Current default tool version is `3.1`
+
+If the tool version is higher than 3.1, layouts and definiations of `Package.swift` are refined.
+
+**EX.**
+```sh
+# swift.version will be 3.1
+hexaville generate Hello --swift-tools-version 3.1
+
+# swift.version will be swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
+hexaville generate Hello --swift-tools-version swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
+```
+
 ### Open your project with Xcode
 
 ```
@@ -262,9 +277,20 @@ You can configure swift versioning and build configuration in `swift` directive
 ```yaml
 name: test-app
 swift:
-  version: "4.0" #version should be string type of major.minor.[patch]
+  version: 4.0 #format should be major.minor.[patch] or valid SWIFT DEVELOPMENT-SNAPSHOT name
   build:
     configuration: release
+```
+
+### Use SWIFT DEVELOPMENT-SNAPSHOT
+
+You can also specify SWIFT DEVELOPMENT-SNAPSHOT as internal using swift version.  
+The format is same as [swiftenv version](https://swiftenv.fuller.li/en/latest/commands.html#version)
+
+**EX.**
+```
+swift:
+  version: swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
 ```
 
 ## Static Assets
