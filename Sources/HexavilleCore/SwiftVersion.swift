@@ -68,7 +68,7 @@ extension SwiftVersionContainer {
     public func asCompareableVersion() -> SwiftVersion {
         switch self {
         case .developmentSnapshot(let snapshot):
-            return SwiftVersion(major: snapshot.major, minor: snapshot.major, patch: snapshot.patch)
+            return SwiftVersion(major: snapshot.major, minor: snapshot.minor, patch: snapshot.patch)
             
         case .release(let version):
             return version

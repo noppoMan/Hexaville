@@ -11,6 +11,7 @@ import Foundation
 public enum SpawnError: Error {
     case couldNotOpenPipe
     case couldNotSpawn
+    case terminatedWithStatus(Int32)
 }
 
 public typealias OutputClosure = (String) -> Void
@@ -62,6 +63,20 @@ public final class Spawn {
             throw SpawnError.couldNotSpawn
         }
         watchStreams()
+        
+        var status: Int32 = 0
+        #if os(Linux)
+            pthread_join(tid, nil)
+        #else
+            if let tid = tid {
+                pthread_join(tid, nil)
+            }
+        #endif
+        
+        waitpid(pid, &status, 0)
+        if status != 0 {
+            throw SpawnError.terminatedWithStatus(status)
+        }
     }
     
     struct ThreadInfo {
@@ -94,18 +109,5 @@ public final class Spawn {
             dynamicBuffer.deallocate(capacity: bufferSize)
             return nil
         }, &threadInfo)
-    }
-    
-    deinit {
-        var status: Int32 = 0
-        #if os(Linux)
-            pthread_join(tid, nil)
-        #else
-            if let tid = tid {
-                pthread_join(tid, nil)
-            }
-        #endif
-        
-        waitpid(pid, &status, 0)
     }
 }

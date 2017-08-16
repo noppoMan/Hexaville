@@ -198,8 +198,7 @@ class Deploy: Command {
             )
             try launcher.launch()
         } catch {
-            print(error)
-            throw error
+            fatalError("\(error)")
         }
     }
 }

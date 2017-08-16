@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 DEST=./.build/release
 SWIFTFILE=../${SWIFTFILE}
 /bin/bash -c "source Scripts/build-swift.sh"
