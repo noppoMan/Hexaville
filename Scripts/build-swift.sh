@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+set -e
+
 DEST=${DEST}/${BUILD_CONFIGURATION}
 swift package update
 swift build -c ${BUILD_CONFIGURATION}

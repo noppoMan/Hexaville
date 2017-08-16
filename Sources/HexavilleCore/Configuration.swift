@@ -72,9 +72,9 @@ public struct Configuration {
             }
         }
         
-        let build: Build
+        public let build: Build
         
-        let version: SwiftVersionContainer
+        public let version: SwiftVersionContainer
         
         init(yml: Yaml) throws {
             let swiftBuildConfiguration = yml["build"]["configuration"].string ?? "debug"
