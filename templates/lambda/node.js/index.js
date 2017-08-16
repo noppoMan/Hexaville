@@ -7,7 +7,8 @@ const byline = require('./byline');
 //   "path": "/random_img",
 //   "httpMethod": "GET",
 //   "headers": {
-//     "Accept": " application/json"
+//     "Accept": " application/json",
+//     "Host": "xxx.amazonaws.com"
 //   },
 //   "queryStringParameters": null,
 //   "pathParameters": {
@@ -51,6 +52,15 @@ exports.handler = function(event, context, callback) {
     headers = {};
   }
   headers["User-Agent"] = event.requestContext.identity.userAgent;
+  if(event.requestContext.stage) {
+    process.env["X_APIGATEWAY_STAGE"] = event.requestContext.stage;
+  }
+  if(event.headers["Host"]) {
+    process.env["X_APIGATEWAY_HOST"] = event.headers["Host"];
+  }
+  if(event.requestContext["apiId"]) {
+    process.env["X_APIGATEWAY_API_ID"] = event.requestContext["apiId"];
+  }
 
   const query = Object.keys(queryStringParameters).map(function(key) { return `${key}=${queryStringParameters[key]}` }).join("&");
   if(query !== "") {
@@ -68,7 +78,10 @@ exports.handler = function(event, context, callback) {
     header,
     "--body",
     body
-  ], { stdio: ['pipe', 'pipe', process.stderr]});
+  ], {
+    stdio: ['pipe', 'pipe', process.stderr],
+    env: process.env
+  });
 
   const response = [];
   var responsePhaseIsStart = false;
@@ -134,9 +147,9 @@ exports.handler = function(event, context, callback) {
       callback(null, {statusCode: 500, "headers": {"Content-Type": "application/json"}, body: body});
     }
   });
-}
+};
 
-// //for debug
+//for debug
 // exports.handler(event, null, function(err, data){
 //   console.log(data);
 // });
