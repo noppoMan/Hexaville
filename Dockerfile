@@ -29,4 +29,4 @@ WORKDIR Hexaville
 
 RUN mkdir -p .build/release
 
-CMD [./Scripts/zip.sh || exit $?]
+CMD ["/bin/bash", "./Scripts/zip.sh"]
