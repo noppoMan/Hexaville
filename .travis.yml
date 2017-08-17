@@ -8,5 +8,5 @@ install:
   - source Scripts/install-swift.sh
 
 script:
-  - travis_wait 30 swift build
+  - swift build
   - swift test
