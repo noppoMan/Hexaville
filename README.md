@@ -111,9 +111,7 @@ try app.run()
 
 ### Edit Hexavillefile.yml
 
-Fill `access_key_id`, `secret_access_key`, `region` and `lambda.role` in!
-
-`lambda.role` should be a `arn:aws:iam::{accountId}:role/{roleName}` format.
+Fill `access_key_id`, `secret_access_key`, `region`.
 
 ```yml
 name: test-app
@@ -125,7 +123,7 @@ aws:
   region: us-east-1
   lambda:
     bucket: xxxxxxxxx # here is generated automatically
-    role: xxxxxxxxx
+    role: xxxxxxxxx # should be a `arn:aws:iam::{accountId}:role/{roleName}`
     timout: 10
 build:
   nocache: false
@@ -133,6 +131,16 @@ swift:
   build:
     configuration: release # default is debug
 ```
+
+#### Required Properties
+
+* name
+* service
+
+if `service` is `aws`
+
+* aws
+  * lambda.bucket
 
 ### Deploy a Project
 
