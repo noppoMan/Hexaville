@@ -32,14 +32,14 @@ public struct AWSConfiguration {
     }
     
     public struct LambdaCodeConfig {
-        public let role: String
+        public let role: String?
         public let bucket: String
         public let timeout: Int
         public let memory: Int32?
         public let vpcConfig: Lambda.VpcConfig?
         public let environment: [String : String]
         
-        public init(role: String, bucket: String, timeout: Int = 10, memory: Int32? = nil, vpcConfig: Lambda.VpcConfig? = nil, environment: [String : String] = [:]) {
+        public init(role: String?, bucket: String, timeout: Int = 10, memory: Int32? = nil, vpcConfig: Lambda.VpcConfig? = nil, environment: [String : String] = [:]) {
             self.role = role
             self.bucket = bucket
             self.timeout = timeout

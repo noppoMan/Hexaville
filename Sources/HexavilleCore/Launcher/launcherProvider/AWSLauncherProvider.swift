@@ -142,6 +142,87 @@ extension AWSLauncherProvider {
     }
 }
 
+// IAM
+extension AWSLauncherProvider {
+    private var assumeRolePolicyDocument: String {
+        var str = ""
+        str+="{"
+            str+="\"Version\": \"2012-10-17\","
+            str+="\"Statement\": {"
+                str+="\"Effect\": \"Allow\","
+                str+="\"Principal\": {\"Service\": \"lambda.amazonaws.com\"},"
+                str+="\"Action\": \"sts:AssumeRole\""
+            str+="}"
+        str+="}"
+        return str
+    }
+    
+    private var policyDocument: String {
+        var str = ""
+        str+="{"
+            str+="\"Version\": \"2012-10-17\","
+            str+="\"Statement\": ["
+                str+="{"
+                    str+="\"Effect\": \"Allow\","
+                    str+="\"Action\": ["
+                        str+="\"logs:CreateLogGroup\","
+                        str+="\"logs:CreateLogStream\","
+                        str+="\"logs:PutLogEvents\""
+                    str+="],"
+                    str+="\"Resource\": \"arn:aws:logs:*:*:*\""
+                str+="}"
+            str+="]"
+        str+="}"
+        return str
+    }
+    
+    private var lambdaLoleName: String {
+        return "\(appName)-and-lambda-basic-execution"
+    }
+    
+    public func resolveLambdaRoleARN() throws  -> String {
+        let arn: String
+        if let roleARN = lambdaCodeConfig.role {
+            arn = roleARN
+        } else {
+            let role = try createOrGetLambdaRole()
+            try attachPolicyToRoleIfNeeded()
+            arn = role.arn
+        }
+        return arn
+    }
+    
+    public func attachPolicyToRoleIfNeeded() throws {
+        let policyName = "permissions-policy-for-lambda"
+        
+        do {
+            let input = Iam.GetRolePolicyRequest(roleName: lambdaLoleName, policyName: policyName)
+            _ = try iam.getRolePolicy(input)
+        } catch {
+            let putRolePolicyInput = Iam.PutRolePolicyRequest(
+                roleName: lambdaLoleName,
+                policyDocument: policyDocument,
+                policyName: policyName
+            )
+            _ = try iam.putRolePolicy(putRolePolicyInput)
+        }
+    }
+    
+    public func createOrGetLambdaRole() throws -> Iam.Role {
+        do {
+            let output = try iam.getRole(Iam.GetRoleRequest(roleName: lambdaLoleName))
+            return output.role
+        } catch {
+            let crateRoleInput = Iam.CreateRoleRequest(
+                roleName: lambdaLoleName,
+                assumeRolePolicyDocument: assumeRolePolicyDocument
+            )
+            let createRoleOutput = try iam.createRole(crateRoleInput)
+            return createRoleOutput.role
+        }
+    }
+}
+
 // ApiGateway aliases
 extension AWSLauncherProvider {
     var apiName: String {
@@ -443,11 +524,13 @@ extension AWSLauncherProvider {
     }
     
     public func updateFunctionCode(code: Lambda.FunctionCode) throws -> Lambda.FunctionConfiguration {
+        let arn = try resolveLambdaRoleARN()
+        
         do {
             _ = try getFunction()
-            return try updateFunction(code: code, environment: lambdaCodeConfig.environment)
+            return try updateFunction(code: code, roleARN: arn, environment: lambdaCodeConfig.environment)
         } catch LambdaError.resourceNotFoundException(_) {
-            return try createFunction(code: code, environment: lambdaCodeConfig.environment)
+            return try createFunction(code: code, roleARN: arn, environment: lambdaCodeConfig.environment)
         } catch {
             throw error
         }
@@ -462,7 +545,7 @@ extension AWSLauncherProvider {
         return configuration
     }
     
-    public func updateFunction(code: Lambda.FunctionCode, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
+    public func updateFunction(code: Lambda.FunctionCode, roleARN: String, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
         
         let input = Lambda.UpdateFunctionCodeRequest(
             functionName: functionName,
@@ -478,7 +561,7 @@ extension AWSLauncherProvider {
             functionName: functionName,
             vpcConfig: lambdaCodeConfig.vpcConfig,
             memorySize: lambdaCodeConfig.memory,
-            role: lambdaCodeConfig.role,
+            role: roleARN,
             environment: Lambda.Environment(variables: environment),
             timeout: Int32(lambdaCodeConfig.timeout)
         )
@@ -486,7 +569,7 @@ extension AWSLauncherProvider {
         return try lambda.updateFunctionConfiguration(updateFunctionConfigurationRequest)
     }
     
-    public func createFunction(code: Lambda.FunctionCode, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
+    public func createFunction(code: Lambda.FunctionCode, roleARN: String, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
         
         let input = Lambda.CreateFunctionRequest(
             vpcConfig: lambdaCodeConfig.vpcConfig,
@@ -497,7 +580,7 @@ extension AWSLauncherProvider {
             functionName: functionName,
             code: code,
             memorySize: lambdaCodeConfig.memory,
-            role: lambdaCodeConfig.role,
+            role: roleARN,
             environment: Lambda.Environment(variables: environment),
             handler: lambdaHandler
         )

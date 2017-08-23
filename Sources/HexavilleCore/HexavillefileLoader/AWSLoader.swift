@@ -48,7 +48,7 @@ struct AWSLoader: PlatformConfigurationLoadable {
         }
         
         let lambdaCodeConfig = AWSConfiguration.LambdaCodeConfig(
-            role: config["lambda"]["role"].string ?? "",
+            role: config["lambda"]["role"].string,
             bucket: lambdaBucket,
             timeout: config["lambda"]["timout"].int ?? 10,
             vpcConfig: vpcConfig,

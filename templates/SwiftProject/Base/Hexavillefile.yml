@@ -7,7 +7,7 @@ aws:
   # region: us-east-1
   lambda:
     bucket: {{bucketName}}
-    role: xxxxxxxxxxxxxxxxxxxxxxxxxx
+#    role: xxxxxxxxxxxxxxxxxxxxxxxxxx
 #     vpc:
 #       subnetIds:
 #         - xxxxxx
