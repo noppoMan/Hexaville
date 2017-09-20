@@ -64,6 +64,15 @@ public struct AWSConfiguration {
 
 public struct Configuration {
     public struct SwiftConfiguration {
+        
+        public static var supportedVersionsRange: CountableClosedRange<Int> {
+            return 3...4
+        }
+        
+        public static var defaultVersion: SwiftVersionContainer {
+            return .release(SwiftVersion(major: 4, minor: 0))
+        }
+        
         public struct Build {
             public let configuration: String
             
@@ -95,7 +104,7 @@ public struct Configuration {
                 self.version = .release(try SwiftVersion(string: version.description))
                 
             } else {
-                self.version = .release(SwiftVersion(major: 3, minor: 1))
+                self.version = SwiftConfiguration.defaultVersion
             }
         }
     }

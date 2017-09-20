@@ -44,12 +44,12 @@ class GenerateProject: Command {
     private func resolveSwiftVersion() throws -> SwiftVersionContainer {
         guard let version = swiftToolVersion.value else {
             // default is 3.1
-            return .release(SwiftVersion(major: 3, minor: 1))
+            return Configuration.SwiftConfiguration.defaultVersion
         }
         
         let swiftVersion = try SwiftVersionContainer(string: version)
         
-        if (3...4 ~= swiftVersion.asCompareableVersion().major) == false {
+        if (Configuration.SwiftConfiguration.supportedVersionsRange ~= swiftVersion.asCompareableVersion().major) == false {
             throw HexavilleError.unsupportedSwiftToolsVersion(version)
         }
         
