@@ -1,6 +1,6 @@
 # Hexaville
 
-<img src="https://camo.githubusercontent.com/5871196ce0d8f5b7ba22d74eaa8754a03f53819a/687474703a2f2f696d672e736869656c64732e696f2f62616467652f73776966742d332e312d627269676874677265656e2e737667"> [<img src="https://travis-ci.org/noppoMan/Hexaville.svg?branch=master">](https://travis-ci.org/noppoMan/Hexaville)
+[<img src="https://travis-ci.org/noppoMan/Hexaville.svg?branch=master">](https://travis-ci.org/noppoMan/Hexaville) <img src="https://camo.githubusercontent.com/20738bb8299d3bba047a2257835816c996f32dce/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6f732d6d61634f532d677265656e2e7376673f7374796c653d666c6174"> <img src="https://camo.githubusercontent.com/e03f50adf26f5ec614c12cfd26146990e82f72ce/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6f732d6c696e75782d677265656e2e7376673f7374796c653d666c6174">
 
 Hexaville - The Serverless Framework using AWS Lambda + ApiGateway etc as a back end.
 Build applications comprised of microservices that run in response to events, auto-scale for you, and only charge you when they run. This lowers the total cost of maintaining your apps, enabling you to develop more, faster.
@@ -65,12 +65,15 @@ hexaville generate Hello --dest /path/to/your/app
 
 #### swift-tools-version
 You can specify swift-tools-version for the new project with `--swift-tools-version` option.
-Current default tool version is `3.1`
+Current default tool version is `4.0`
 
 If the tool version is higher than 3.1, layouts and definiations of `Package.swift` are refined.
 
 **EX.**
 ```sh
+# swift.version will be 4.0
+hexaville generate Hello
+
 # swift.version will be 3.1
 hexaville generate Hello --swift-tools-version 3.1
 
@@ -279,7 +282,7 @@ aws:
 
 You can configure swift versioning and build configuration in `swift` directive
 
-* default swift version is `3.1`
+* default swift version is `4.0`
 * default build configuration is `debug`
 
 ```yaml
