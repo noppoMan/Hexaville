@@ -1,8 +1,10 @@
 os:
   - linux
+  - osx
 language: generic
 sudo: required
 dist: trusty
+osx_image: xcode9
 
 install:
   - source Scripts/install-swift.sh
