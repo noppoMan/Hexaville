@@ -38,8 +38,8 @@ class GenerateProject: Command {
     let name = "generate"
     let shortDescription  = "Generate initial project"
     let projectName = Parameter()
-    let swiftToolVersion = Key<String>("--swift-tools-version", usage: "Major Swift Tool Version for this project. default is 3.1")
-    let dest = Key<String>("-o", "--dest", usage: "Destination for the project")
+    let swiftToolVersion = Key<String>("--swift-tools-version", description: "Major Swift Tool Version for this project. default is 3.1")
+    let dest = Key<String>("-o", "--dest", description: "Destination for the project")
     
     private func resolveSwiftVersion() throws -> SwiftVersionContainer {
         guard let version = swiftToolVersion.value else {
@@ -129,7 +129,7 @@ func loadHexavilleFile(hexavilleFilePath: String) throws -> Yaml {
 class RoutesCommand: Command {
     let name = "routes"
     let shortDescription  = "Show routes and endpoint for the API"
-    let stage = Key<String>("--stage", usage: "Deployment Stage. default is staging")
+    let stage = Key<String>("--stage", description: "Deployment Stage. default is staging")
     
     func execute() throws {
         do {
@@ -160,8 +160,8 @@ class Deploy: Command {
     let name = "deploy"
     let shortDescription  = "Deploy your application to the specified cloud provider"
     let target = Parameter()
-    let hexavillefilePath = Key<String>("-c", "--hexavillefile", usage: "Path for the Hexavillefile.yml")
-    let stage = Key<String>("--stage", usage: "Deployment Stage. default is staging")
+    let hexavillefilePath = Key<String>("-c", "--hexavillefile", description: "Path for the Hexavillefile.yml")
+    let stage = Key<String>("--stage", description: "Deployment Stage. default is staging")
     
     func execute() throws {
         do {
@@ -203,7 +203,6 @@ class Deploy: Command {
     }
 }
 
-
-CLI.setup(name: "hexaville")
-CLI.register(commands: [GenerateProject(), Deploy(), RoutesCommand()])
-_ = CLI.go()
+let hexavilleCLI = CLI(name: "hexaville")
+hexavilleCLI.commands = [GenerateProject(), Deploy(), RoutesCommand()]
+_ = hexavilleCLI.go()
