@@ -25,7 +25,7 @@ let _urlSessionShared = URLSession(configuration: URLSessionConfiguration(), del
 #endif
 
 extension URLSession {
-    func resumeSync(with url: URL) throws -> Data {
+    func fetch(with url: URL) throws -> Data {
         let chan = Channel<(Error?, Data?)>.make(capacity: 1)
         
         let task = self.dataTask(with: url) { data, response, error in
@@ -48,7 +48,7 @@ extension URLSession {
 
 let app = HexavilleFramework()
 
-let router = Router()
+var router = Router()
 
 app.use(RandomNumberGenerateMiddleware())
 
@@ -70,7 +70,7 @@ router.use(.post, "/hello/:id") { request, context in
 }
 
 router.use(.get, "/random_img") { request, context in
-    let data = try URLSession.shared.resumeSync(with: URL(string: "http://lorempixel.com/400/200/")!)
+    let data = try URLSession.shared.fetch(with: URL(string: "http://lorempixel.com/400/200/")!)
     return Response(headers: ["Content-Type": "image/png"], body: data.base64EncodedData())
 }
 
