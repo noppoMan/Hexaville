@@ -68,7 +68,7 @@ public typealias Hashids = Hashids_<UInt32>
 
 
 // MARK: Hashids generic class
-open class Hashids_<T>: HashidsGenerator where T:Equatable, T:UnsignedInteger {
+open class Hashids_<T>: HashidsGenerator where T:UnsignedInteger {
     public typealias Char = T
     
     fileprivate var minHashLength: UInt
