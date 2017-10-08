@@ -19,7 +19,7 @@ public struct DotEnvParser {
         string.components(separatedBy: "\n")
             .forEach {
                 if $0.isEmpty { return }
-                let first = $0.substring(with: $0.startIndex..<$0.index($0.startIndex, offsetBy: 1))
+                let first = String($0[$0.startIndex..<$0.index($0.startIndex, offsetBy: 1)])
                 if first == "#" { return }
                 let splited = $0.components(separatedBy: "=")
                 guard splited.count > 1 else { return }

@@ -17,8 +17,7 @@ import SwiftyJSON
 extension AWSSDKSwiftCore.AWSShape {
     public func toJSONString() -> String {
         do {
-            let dict = try self.serializeToDictionary()
-            let data = try AWSSDKSwiftCore.JSONSerializer.serialize(dict)
+            let data = try JSONEncoder().encode(self)
             return String(data: data, encoding: .utf8) ?? ""
         } catch {
             return ""

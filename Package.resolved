@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/noppoMan/aws-sdk-swift-core.git",
         "state": {
           "branch": null,
-          "revision": "24b9cc84ca885b272d98da9889c190f15b86706d",
-          "version": "0.2.4"
+          "revision": "11d4a97a137406082575addd9de34c620c405bee",
+          "version": "1.0.2"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/noppoMan/Prorsum.git",
         "state": {
           "branch": null,
-          "revision": "95a1270399db6361f7a6564706c8dd3d2671dcb4",
-          "version": "0.1.14"
+          "revision": "6f2558056fb887a84331c5da7d6ac4211bc16187",
+          "version": "0.1.16"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/swift-aws/apigateway.git",
         "state": {
           "branch": null,
-          "revision": "ddeb6a1195d694823b624ac51b076cf497ffc4df",
-          "version": "0.3.0"
+          "revision": "693a95788922d1dee36ed915cdf3460ec681ce27",
+          "version": "1.0.2"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/swift-aws/iam.git",
         "state": {
           "branch": null,
-          "revision": "30f99dfecd46b3e80436f4b951833f97fabe9c7c",
-          "version": "0.3.0"
+          "revision": "27bc747a52c4be302629a8e4d01eb71fc5e8f1c2",
+          "version": "1.0.2"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/swift-aws/lambda.git",
         "state": {
           "branch": null,
-          "revision": "d3bc38b2a865b33aa5bfd6ed80ef5b2b56af01f2",
-          "version": "0.3.0"
+          "revision": "b243f5b29862e91cee7222dbbee62d7e59482087",
+          "version": "1.0.2"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/swift-aws/s3.git",
         "state": {
           "branch": null,
-          "revision": "10d222774d15638377e80b9cca81f290b15971cb",
-          "version": "0.3.2"
+          "revision": "41ee9b86c141f19e552c67636ecb5183e9615d68",
+          "version": "1.0.2"
         }
       },
       {
