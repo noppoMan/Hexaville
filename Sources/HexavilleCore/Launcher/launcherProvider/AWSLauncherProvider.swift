@@ -6,6 +6,12 @@
 //
 //
 
+#if os(OSX)
+    import Darwin.C
+#else
+    import Glibc
+#endif
+
 import SwiftAWSS3
 import SwiftAWSLambda
 import SwiftAWSApigateway
@@ -217,6 +223,7 @@ extension AWSLauncherProvider {
                 assumeRolePolicyDocument: assumeRolePolicyDocument
             )
             let createRoleOutput = try iam.createRole(crateRoleInput)
+            sleep(10) // waiting for role is ready.
             return createRoleOutput.role
         }
     }
