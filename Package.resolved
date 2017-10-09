@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/swift-aws/apigateway.git",
         "state": {
           "branch": null,
-          "revision": "119a02eb92f73166d0d31d620b14d1582717da88",
-          "version": "1.0.1"
+          "revision": "0ab0b93fba088ede44007d518e56b6fab52656c8",
+          "version": "1.1.0"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/swift-aws/iam.git",
         "state": {
           "branch": null,
-          "revision": "2a5dcc8a77e716c1437c8d5e7c0703fc2dfe8eab",
-          "version": "1.0.1"
+          "revision": "ec257ca181bcff0a8048bd008976df4f1e6b50ac",
+          "version": "1.1.0"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/swift-aws/lambda.git",
         "state": {
           "branch": null,
-          "revision": "b30a64d1760ed2cee36abb4757d9cdc499c118ea",
-          "version": "1.0.1"
+          "revision": "ff62b1bd991e229a50607a261ad6bf937433a557",
+          "version": "1.1.0"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/swift-aws/s3.git",
         "state": {
           "branch": null,
-          "revision": "6d8d022205e5af64c7cfb5a83bb58cada4fac198",
-          "version": "1.0.1"
+          "revision": "5777a734b49f59ef5f204c2ab5ad5c4cc1e68cc5",
+          "version": "1.1.0"
         }
       },
       {
