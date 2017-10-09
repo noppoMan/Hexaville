@@ -23,4 +23,4 @@ swift build -c ${SWIFT_BUILD_CONFIGURATION}
 cp -r templates .build/${SWIFT_BUILD_CONFIGURATION}
 cp -r Scripts .build/${SWIFT_BUILD_CONFIGURATION}
 cd .build/${SWIFT_BUILD_CONFIGURATION}
-zip $1/$MAC_DIST/Hexaville.zip Hexaville -r templates -r Scripts
+zip $1/$MAC_DIST/Hexaville.zip hexaville -r templates -r Scripts
