@@ -214,7 +214,7 @@ public struct SwiftDevelopmentSnapshot {
         self.fullName = string
         
         let endIndex = components[1].index(components[1].endIndex, offsetBy: -2)
-        let dateString = components[1].substring(with: components[1].startIndex..<endIndex)
+        let dateString = String(components[1][components[1].startIndex..<endIndex])
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         guard let date = dateFormatter.date(from: dateString) else {

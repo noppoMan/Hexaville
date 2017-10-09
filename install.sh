@@ -29,7 +29,6 @@ mkdir -p $HEXAVILLE_HOME
 mv Hexaville.zip $HEXAVILLE_HOME
 cd $HEXAVILLE_HOME
 unzip -o Hexaville.zip
-mv Hexaville hexaville
 RCFILE=`echo ${SHELL##*/}`rc
 echo "" >> $HOME/.${RCFILE}
 echo "export PATH=\"\$PATH:$HEXAVILLE_HOME\"" >> $HOME/.${RCFILE}
