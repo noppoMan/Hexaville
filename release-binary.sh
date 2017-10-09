@@ -28,3 +28,10 @@ cp -r Scripts .build/${SWIFT_BUILD_CONFIGURATION}
 echo "$VERSION" > .build/${SWIFT_BUILD_CONFIGURATION}/.hexaville-version
 cd .build/${SWIFT_BUILD_CONFIGURATION}
 zip $1/$MAC_DIST/Hexaville.zip hexaville .hexaville-version -r templates -r Scripts
+
+# publish
+cd $1
+git commit -am "publish $VERSION"
+git push origin master
+
+echo "version $VERSION is published!"
