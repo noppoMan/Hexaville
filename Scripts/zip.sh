@@ -14,4 +14,4 @@ cp /usr/lib/x86_64-linux-gnu/libbsd.so $DEST/libbsd.so.0
 cp -r templates $DEST
 cp -r Scripts $DEST
 cd $DEST
-zip Hexaville.zip Hexaville ./*.so ./*.so.* -r templates -r Scripts
+zip Hexaville.zip hexaville ./*.so ./*.so.* -r templates -r Scripts
