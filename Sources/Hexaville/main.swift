@@ -203,6 +203,14 @@ class Deploy: Command {
     }
 }
 
-let hexavilleCLI = CLI(name: "hexaville")
+func detectVersion() -> String {
+    if let path = try? Finder.findPath(childDir: "/.hexaville-version"), let version = try? String(contentsOfFile: path) {
+        return version.components(separatedBy: "\n").first ?? "Unknown"
+    }
+    
+    return "Unknown"
+}
+
+let hexavilleCLI = CLI(name: "hexaville", version: detectVersion())
 hexavilleCLI.commands = [GenerateProject(), Deploy(), RoutesCommand()]
 _ = hexavilleCLI.go()

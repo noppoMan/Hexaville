@@ -8,3 +8,4 @@ lambda-package.zip
 __docker_shared
 bin
 Vagrantfile
+.hexaville-version
