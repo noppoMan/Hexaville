@@ -147,7 +147,7 @@ if `service` is `aws`
 
 ### Deploy a Project
 
-`Usage: hexaville deploy <target>`
+`Usage: hexaville deploy <executableName>`
 
 Use this when you have made changes to your Functions, Events or Resources.
 This operation take a while.
@@ -157,7 +157,23 @@ cd /path/to/your/app
 hexaville deploy Hello
 ```
 
-Got `bucketAlreadyExists` Error?
+#### Troubleshooting
+
+**1. What is executableName?**
+
+`<executableName>` is a name that specified in `products(name: 'executableName')` on Package.swift. In following case, it's a `my-app` not `MyApp`.
+
+```swift
+let package = Package(
+    name: "MyApp",
+    products: [
+        .executable(name: "my-app", targets: ["MyApp"])
+    ],
+    ....
+)
+```
+
+**2. Got `bucketAlreadyExists` Error?**
 
 If you got **bucketAlreadyExists("The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.")**, Change the bucket name for lambda in the Hexavillfile.yml
 
