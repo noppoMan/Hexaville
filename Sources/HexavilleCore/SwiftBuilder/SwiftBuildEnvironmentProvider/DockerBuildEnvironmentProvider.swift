@@ -37,7 +37,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         try String(contentsOfFile: templatePath+"/Dockerfile", encoding: .utf8)
             .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: config.forSwift.version.downloadURLString)
             .replacingOccurrences(of: "{{SWIFTFILE}}", with: config.forSwift.version.fileName)
-            .replacingOccurrences(of: "{{EXECUTABLE_NAME}}", with: executableTarget)
+            .replacingOccurrences(of: "{{EXECUTABLE_TARGET}}", with: executableTarget)
             .replacingOccurrences(of: "{{DEST}}", with: dest)
             .write(
                 toFile: hexavilleApplicationPath+"/Dockerfile",

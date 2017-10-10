@@ -33,6 +33,8 @@ extension AWSSDKSwiftCore.AWSShape {
 
 public enum AWSLauncherProviderError: Error {
     case couldNotZipPackage
+    case targetIsNotFound(String)
+    case productIsNotExecutable(String)
 }
 
 public struct AWSLauncherProvider {
@@ -111,14 +113,14 @@ extension AWSLauncherProvider {
         return content
     }
     
-    fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Data {
+    fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executable: String) throws -> Data {
         
         let nodejsTemplatePath = try Finder.findTemplatePath(for: "/lambda/node.js")
         
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
         
         try String(contentsOfFile: "\(nodejsTemplatePath)/index.js", encoding: .utf8)
-            .replacingOccurrences(of: "{{executablePath}}", with: executableTarget)
+            .replacingOccurrences(of: "{{executablePath}}", with: executable)
             .write(toFile: buildResult.destination+"/index.js", atomically: true, encoding: .utf8)
         
         try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js", encoding: .utf8)
@@ -132,7 +134,7 @@ extension AWSLauncherProvider {
         let shellPath = "/tmp/build-lambda-package.sh"
         let shellContent = lambdaPackageShellContent()
         try shellContent.write(toFile: shellPath, atomically: true, encoding: .utf8)
-        let proc = Proc("/bin/sh", [shellPath, pkgFileName, buildResult.destination, executableTarget])
+        let proc = Proc("/bin/sh", [shellPath, pkgFileName, buildResult.destination, executable])
         
         if proc.terminationStatus > 0 {
             throw AWSLauncherProviderError.couldNotZipPackage
@@ -500,13 +502,13 @@ extension AWSLauncherProvider {
         _ = try s3.createBucket(input)
     }
     
-    fileprivate func uploadCodeToS3(buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> Lambda.FunctionCode {
+    fileprivate func uploadCodeToS3(buildResult: BuildResult, hexavilleApplicationPath: String, executable: String) throws -> Lambda.FunctionCode {
         
         print("Starting zip package........")
         let zipData = try zipPackage(
             buildResult: buildResult,
             hexavilleApplicationPath: hexavilleApplicationPath,
-            executableTarget: executableTarget
+            executable: executable
         )
         print("Zip package done.")
         
@@ -622,7 +624,19 @@ extension AWSLauncherProvider {
     }
     
     func deploy(deploymentStage: DeploymentStage, buildResult: BuildResult, hexavilleApplicationPath: String, executableTarget: String) throws -> DeployResult {
-        let code = try uploadCodeToS3(buildResult: buildResult, hexavilleApplicationPath: hexavilleApplicationPath, executableTarget: executableTarget)
+        
+        let dumpPackageJSON = try Data.init(contentsOf: URL(string: "file://\(buildResult.destination)/package-dump.json")!)
+        let packageDump = try JSONDecoder().decode(SwiftPMDumpPackage.self, from: dumpPackageJSON)
+        
+        guard let product = packageDump.findProduct(fromTargetName: executableTarget) else {
+            throw AWSLauncherProviderError.targetIsNotFound(executableTarget)
+        }
+        
+        if !product.isExecutable {
+            throw AWSLauncherProviderError.productIsNotExecutable(executableTarget)
+        }
+        
+        let code = try uploadCodeToS3(buildResult: buildResult, hexavilleApplicationPath: hexavilleApplicationPath, executable: product.name)
         
         let lambdaConfiguration = try updateFunctionCode(code: code)
         
