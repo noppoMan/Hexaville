@@ -18,7 +18,7 @@ public struct Finder {
             .joined(separator: "/")
     }
     
-    internal static func findPath(childDir: String) throws -> String {
+    public static func findPath(childDir: String) throws -> String {
         let manager = FileManager.default
         
         var templatesPathCandidates: [String] = []
