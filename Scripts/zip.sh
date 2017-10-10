@@ -3,7 +3,7 @@
 set -e
 
 SWIFTFILE=../${SWIFTFILE}
-DEST=.build/release
+DEST=.build/${BUILD_CONFIGURATION}
 swift package update
 swift build -c ${BUILD_CONFIGURATION}
 cp -r /${SWIFTFILE}/usr/lib/swift/linux/*.so $DEST
