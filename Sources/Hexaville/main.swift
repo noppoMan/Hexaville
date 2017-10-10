@@ -38,12 +38,12 @@ class GenerateProject: Command {
     let name = "generate"
     let shortDescription  = "Generate initial project"
     let projectName = Parameter()
-    let swiftToolVersion = Key<String>("--swift-tools-version", description: "Major Swift Tool Version for this project. default is 3.1")
+    let swiftToolVersion = Key<String>("--swift-tools-version", description: "Major Swift Tool Version for this project. default is 4.0")
     let dest = Key<String>("-o", "--dest", description: "Destination for the project")
     
     private func resolveSwiftVersion() throws -> SwiftVersionContainer {
         guard let version = swiftToolVersion.value else {
-            // default is 3.1
+            // default is 4.0
             return Configuration.SwiftConfiguration.defaultVersion
         }
         
@@ -144,7 +144,7 @@ class RoutesCommand: Command {
             
             let launcher = Launcher(
                 hexavilleApplicationPath: cwd,
-                executableTarget: "\(cwd)".components(separatedBy: "/").last ?? "",
+                executable: "\(cwd)".components(separatedBy: "/").last ?? "",
                 configuration: config,
                 deploymentStage: deploymentStage
             )
@@ -159,7 +159,7 @@ class RoutesCommand: Command {
 class Deploy: Command {
     let name = "deploy"
     let shortDescription  = "Deploy your application to the specified cloud provider"
-    let target = Parameter()
+    let executableName = Parameter()
     let hexavillefilePath = Key<String>("-c", "--hexavillefile", description: "Path for the Hexavillefile.yml")
     let stage = Key<String>("--stage", description: "Deployment Stage. default is staging")
     
@@ -192,7 +192,7 @@ class Deploy: Command {
             
             let launcher = Launcher(
                 hexavilleApplicationPath: hexavileApplicationPath,
-                executableTarget: target.value,
+                executable: executableName.value,
                 configuration: config,
                 deploymentStage: deploymentStage
             )
