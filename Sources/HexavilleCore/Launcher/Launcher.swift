@@ -73,16 +73,16 @@ public class Launcher {
     
     let hexavilleApplicationPath: String
     
-    let executableTarget: String
+    let executable: String
     
     let deploymentStage: DeploymentStage
     
     let configuration: Configuration
     
-    public init(hexavilleApplicationPath: String, executableTarget: String, configuration: Configuration, deploymentStage: DeploymentStage = .staging) {
+    public init(hexavilleApplicationPath: String, executable: String, configuration: Configuration, deploymentStage: DeploymentStage = .staging) {
         self.provider = configuration.createProvider()
         self.hexavilleApplicationPath = hexavilleApplicationPath
-        self.executableTarget = executableTarget
+        self.executable = executable
         self.configuration = configuration
         self.deploymentStage = deploymentStage
     }
@@ -120,7 +120,7 @@ public class Launcher {
         return try builder.build(
             config: configuration,
             hexavilleApplicationPath: hexavilleApplicationPath,
-            executableTarget: executableTarget
+            executable: executable
         )
     }
     
@@ -133,7 +133,7 @@ public class Launcher {
             deploymentStage: deploymentStage,
             buildResult: result,
             hexavilleApplicationPath: hexavilleApplicationPath,
-            executableTarget: executableTarget
+            executable: executable
         )
         
         print("######################################################")

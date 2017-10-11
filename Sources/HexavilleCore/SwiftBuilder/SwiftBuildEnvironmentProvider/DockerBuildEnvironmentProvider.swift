@@ -20,7 +20,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "docker"
     }
     
-    func build(config: Configuration, hexavilleApplicationPath: String, executableTarget: String) throws -> BuildResult {
+    func build(config: Configuration, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
         let templatePath = try Finder.findTemplatePath()
         let buildSwiftShellPath = try Finder.findScriptPath(for: "build-swift.sh")
         
@@ -37,7 +37,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         try String(contentsOfFile: templatePath+"/Dockerfile", encoding: .utf8)
             .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: config.forSwift.version.downloadURLString)
             .replacingOccurrences(of: "{{SWIFTFILE}}", with: config.forSwift.version.fileName)
-            .replacingOccurrences(of: "{{EXECUTABLE_NAME}}", with: executableTarget)
+            .replacingOccurrences(of: "{{EXECUTABLE_NAME}}", with: executable)
             .replacingOccurrences(of: "{{DEST}}", with: dest)
             .write(
                 toFile: hexavilleApplicationPath+"/Dockerfile",
@@ -52,7 +52,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 encoding: .utf8
         )
         
-        let tag = executableTarget.lowercased()
+        let tag = executable.lowercased()
         
         var opts = ["build", "-t", tag, "-f", "\(hexavilleApplicationPath)/Dockerfile", hexavilleApplicationPath]
         if config.forBuild.noCache {
