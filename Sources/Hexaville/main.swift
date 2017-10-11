@@ -209,7 +209,7 @@ class Deploy: Command {
 }
 
 func detectVersion() -> String {
-    if let path = try? Finder.findPath(childDir: "/.hexaville-version"), let version = try? String(contentsOfFile: path) {
+    if let path = try? Finder.findPath(childDir: "/.hexaville-version"), let version = try? String(contentsOfFile: path, encoding: .utf8) {
         return version.components(separatedBy: "\n").first ?? "Unknown"
     }
     
