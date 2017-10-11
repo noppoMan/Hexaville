@@ -6,14 +6,6 @@
 //
 //
 
-//
-//  main.swift
-//  Hexaville
-//
-//  Created by Yuki Takei on 2017/05/16.
-//
-//
-
 #if os(Linux)
     import Glibc
 #else
@@ -32,6 +24,18 @@ enum HexavilleError: Error {
     case couldNotFindManifestFile(String)
     case couldNotFindHexavillefile(String)
     case unsupportedSwiftToolsVersion(String)
+}
+
+private func transformToAbsolutePath(_ path: String) -> String {
+    func isRelative(_ path: String) -> Bool {
+        return path.first != "/"
+    }
+    
+    if isRelative(path) {
+        return "\(FileManager.default.currentDirectoryPath)/\(path)"
+    }
+    
+    return path
 }
 
 class GenerateProject: Command {
@@ -167,7 +171,8 @@ class Deploy: Command {
         do {
             var hexavileApplicationPath = FileManager.default.currentDirectoryPath
             var hexavilleFileYAML = "Hexavillefile.yml"
-            if let hexavillefilePath = hexavillefilePath.value {
+            if var hexavillefilePath = hexavillefilePath.value {
+                hexavillefilePath = transformToAbsolutePath(hexavillefilePath)
                 if !FileManager.default.fileExists(atPath: hexavillefilePath) {
                     throw HexavilleError.couldNotFindHexavillefile(hexavillefilePath)
                 }
