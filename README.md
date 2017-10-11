@@ -335,6 +335,21 @@ import HexavilleFramework
 let data = try AssetLoader.shared.load(fileInAssets: "/html/index.html")
 ```
 
+# Against for the Severless weak points
+
+## Too many connections will created between Serveless functions and RDB, Cache Server
+
+Almost Web develoeprs access RDB, Cache Server through connection pooling from your applications. It's a one of the best practice for reducing connection for them. But Functions that are called on Serverless is like a Pre-Folk. It means can not have connection pooling and the number of connection of Database is same as number of functions that are executed in parallel.
+
+In that case, Hexaville provides you to connection pooling mechanism with [hexaville-tcp-proxy-server](hexaville-tcp-proxy-server).
+
+hexaville-tcp-proxy-server is not only a Proxy Sever But Connection Pooling Server.
+See the detail to see [README](hexaville-tcp-proxy-server).
+
+## Cold Start
+
+Not implemented yet.
+
 ## Contributing
 All developers should feel welcome and encouraged to contribute to Hexaville, see our getting started document here to get involved.
 
