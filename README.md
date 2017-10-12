@@ -21,8 +21,15 @@ Ubuntu 14.04 in Docker
 * [RedisSessionStore](https://github.com/Hexaville/RedisSessionStore): Redis Session Store
 
 ## Recommended Database Clients
-* [SwiftKnex](https://github.com/noppoMan/SwiftKnex): A Mysql Native Client and Query Builder written in Pure Swift
 * [Dynamodb](https://github.com/swift-aws/dynamodb): A Dynamodb typesafe client for swift (This is part of aws-sdk-swift)
+
+## Example Application for Hexaville
+
+[HexavilleTODOExample](https://github.com/Hexaville/HexavilleTODOExample) has following practical examples for Hexaville application.
+
+* User authentication with GitHub's OAuth
+* Data persistence with DynamoDB
+* Dynamic HTML Rendering
 
 ## Quick Start
 
@@ -341,10 +348,10 @@ let data = try AssetLoader.shared.load(fileInAssets: "/html/index.html")
 
 Almost Web develoeprs access RDB, Cache Server through connection pooling from your applications. It's a one of the best practice for reducing connection for them. But Functions that are called on Serverless is like a Pre-Folk. It means can not have connection pooling and the number of connection of Database is same as number of functions that are executed in parallel.
 
-In that case, Hexaville provides you to connection pooling mechanism with [hexaville-tcp-proxy-server](hexaville-tcp-proxy-server).
+In that case, Hexaville provides you to connection pooling mechanism with [hexaville-tcp-proxy-server](https://github.com/Hexaville/hexaville-tcp-proxy-server).
 
 hexaville-tcp-proxy-server is not only a Proxy Sever But Connection Pooling Server.
-See the detail to see [README](hexaville-tcp-proxy-server).
+See the detail to see [README](https://github.com/Hexaville/hexaville-tcp-proxy-server).
 
 ## Cold Start
 
