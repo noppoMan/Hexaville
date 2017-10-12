@@ -23,6 +23,14 @@ Ubuntu 14.04 in Docker
 ## Recommended Database Clients
 * [Dynamodb](https://github.com/swift-aws/dynamodb): A Dynamodb typesafe client for swift (This is part of aws-sdk-swift)
 
+## Example Application for Hexaville
+
+[HexavilleTODOExample](https://github.com/Hexaville/HexavilleTODOExample) has following practical examples for Hexaville application.
+
+* User authentication with GitHub's OAuth
+* Data persistence with DynamoDB
+* Dynamic HTML Rendering
+
 ## Quick Start
 
 ### Install Docker for mac
