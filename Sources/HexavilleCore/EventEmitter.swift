@@ -15,11 +15,11 @@ public class EventEmitter<T> {
     
     private var mutex = Mutex()
     
-    public var onceListenerCounts: Int {
+    public var onceListenersCount: Int {
         return onceListeners.count
     }
     
-    public var onListenerCounts: Int {
+    public var onListenersCount: Int {
         return onListeners.count
     }
     

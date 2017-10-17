@@ -26,7 +26,7 @@ class EventEmitterTests: XCTestCase {
         
         wait(for: [expectation], timeout: 1)
         
-        XCTAssertEqual(evm.onListenerCounts, 1)
+        XCTAssertEqual(evm.onListenersCount, 1)
     }
     
     func testOnce() {
@@ -43,7 +43,7 @@ class EventEmitterTests: XCTestCase {
         
         wait(for: [expectation], timeout: 1)
         
-        XCTAssertEqual(evm.onceListenerCounts, 0)
+        XCTAssertEqual(evm.onceListenersCount, 0)
     }
     
     static var allTests = [
