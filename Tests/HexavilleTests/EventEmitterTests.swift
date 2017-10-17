@@ -13,35 +13,35 @@ import XCTest
 class EventEmitterTests: XCTestCase {
     
     func testOn() {
-        let expectation = XCTestExpectation(description: "testOnce")
+        let exp = expectation(description: "testOnce")
         
         let evm = EventEmitter<Int>()
         
         evm.on {
             XCTAssertEqual($0 + 1, 2)
-            expectation.fulfill()
+            exp.fulfill()
         }
         
         evm.emit(with: 1)
         
-        wait(for: [expectation], timeout: 1)
+        wait(for: [exp], timeout: 1)
         
         XCTAssertEqual(evm.onListenersCount, 1)
     }
     
     func testOnce() {
-        let expectation = XCTestExpectation(description: "testOnce")
+        let exp = expectation(description: "testOnce")
         
         let evm = EventEmitter<Int>()
         
         evm.once {
             XCTAssertEqual($0 + 1, 2)
-            expectation.fulfill()
+            exp.fulfill()
         }
         
         evm.emit(with: 1)
         
-        wait(for: [expectation], timeout: 1)
+        wait(for: [exp], timeout: 1)
         
         XCTAssertEqual(evm.onceListenersCount, 0)
     }
