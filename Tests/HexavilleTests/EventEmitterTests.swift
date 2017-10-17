@@ -24,7 +24,7 @@ class EventEmitterTests: XCTestCase {
         
         evm.emit(with: 1)
         
-        wait(for: [exp], timeout: 1)
+        waitForExpectations(timeout: 1, handler: nil)
         
         XCTAssertEqual(evm.onListenersCount, 1)
     }
@@ -41,7 +41,7 @@ class EventEmitterTests: XCTestCase {
         
         evm.emit(with: 1)
         
-        wait(for: [exp], timeout: 1)
+        waitForExpectations(timeout: 1, handler: nil)
         
         XCTAssertEqual(evm.onceListenersCount, 0)
     }
