@@ -10,8 +10,30 @@ import Foundation
 
 
 enum DockerBuildEnvironmentProviderError: Error {
+    case dockerIsNotFound
     case dockerBuildFailed
     case couldNotMakeSharedDir
+}
+
+extension DockerBuildEnvironmentProviderError: CustomStringConvertible {
+    var description: String {
+        switch self {
+        case .dockerIsNotFound:
+            return """
+            [DockerBuildEnvironmentProviderError] Could not find 'docker' in your machine. Please install docker.
+            
+              See Official installation guides with 'open https://docs.docker.com/engine/installation'
+            
+            
+            """
+
+        case .dockerBuildFailed:
+            return "[DockerBuildEnvironmentProviderError] docker build is failed with the above reason."
+            
+        case .couldNotMakeSharedDir:
+            return "[DockerBuildEnvironmentProviderError] Could not make shared directory between Host machine and Docker. Please make sure permission of your working directory."
+        }
+    }
 }
 
 struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
@@ -21,6 +43,13 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     }
     
     func build(config: Configuration, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
+        
+        print("\nDocker version")
+        let dockerVersionResult = Process.exec("docker", ["version"])
+        if dockerVersionResult.terminationStatus != 0 {
+            throw DockerBuildEnvironmentProviderError.dockerIsNotFound
+        }
+        
         let templatePath = try Finder.findTemplatePath()
         let buildSwiftShellPath = try Finder.findScriptPath(for: "build-swift.sh")
         
