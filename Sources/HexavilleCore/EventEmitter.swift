@@ -15,24 +15,32 @@ public class EventEmitter<T> {
     
     private var mutex = Mutex()
     
-    private var onceHandlers: [(T) -> Void] = []
+    public var onceListenerCounts: Int {
+        return onceListeners.count
+    }
     
-    private var handlers: [(T) -> Void] = []
+    public var onListenerCounts: Int {
+        return onListeners.count
+    }
+    
+    private var onceListeners: [(T) -> Void] = []
+    
+    private var onListeners: [(T) -> Void] = []
     
     public init() {}
     
     public func emit(with value: T) {
         defer {
             mutex.lock()
-            onceHandlers.removeAll()
+            onceListeners.removeAll()
             mutex.unlock()
         }
         
-        for handle in onceHandlers {
+        for handle in onceListeners {
             handle(value)
         }
         
-        for handle in handlers {
+        for handle in onListeners {
             handle(value)
         }
     }
@@ -42,7 +50,7 @@ public class EventEmitter<T> {
             mutex.unlock()
         }
         mutex.lock()
-        onceHandlers.append(handler)
+        onceListeners.append(handler)
     }
     
     public func on(handler: @escaping (T) -> Void) {
@@ -50,6 +58,6 @@ public class EventEmitter<T> {
             mutex.unlock()
         }
         mutex.lock()
-        handlers.append(handler)
+        onListeners.append(handler)
     }
 }
