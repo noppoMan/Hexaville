@@ -216,6 +216,14 @@ func detectVersion() -> String {
     return "Unknown"
 }
 
+// SIGINT handling
+SignalHandler.shared.trap(with: .int) {
+    defer {
+        exit(SignalHandler.Signal.int.rawValue)
+    }
+    SignalEventEmitter.shared.emit(with: .int)
+}
+
 let hexavilleCLI = CLI(name: "hexaville", version: detectVersion())
 hexavilleCLI.commands = [GenerateProject(), Deploy(), RoutesCommand()]
 _ = hexavilleCLI.go()
