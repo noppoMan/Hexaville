@@ -30,5 +30,8 @@ mv Hexaville.zip $HEXAVILLE_HOME
 cd $HEXAVILLE_HOME
 unzip -o Hexaville.zip
 RCFILE=`echo ${SHELL##*/}`rc
-echo "" >> $HOME/.${RCFILE}
-echo "export PATH=\"\$PATH:$HEXAVILLE_HOME\"" >> $HOME/.${RCFILE}
+content=`cat $HOME/.${RCFILE}`
+if [[ $content != *$HEXAVILLE_HOME* ]]; then
+  echo "" >> $HOME/.${RCFILE}
+  echo "export PATH=\"\$PATH:$HEXAVILLE_HOME\"" >> $HOME/.${RCFILE}
+fi
