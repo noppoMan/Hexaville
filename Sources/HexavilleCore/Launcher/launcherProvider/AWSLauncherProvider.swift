@@ -482,17 +482,16 @@ extension AWSLauncherProvider {
     }
     
     public func createBucketIfNotExists() throws {
-        if try bucketIsExists() == false {
+        do {
             try createBucket()
+            print("\(lambdaCodeConfig.bucket) is successfully created")
+        } catch S3Error.bucketAlreadyOwnedByYou {
+            print("\(lambdaCodeConfig.bucket) is already exist")
+        } catch S3Error.bucketAlreadyExists {
+            print("\(lambdaCodeConfig.bucket) is already exist")
+        } catch {
+            throw error
         }
-    }
-    
-    public func bucketIsExists() throws -> Bool {
-        let output = try s3.listBuckets()
-        guard let alreadyExsits = output.buckets?.bucket?.contains(where: { $0.name ==  lambdaCodeConfig.bucket}) else {
-            return false
-        }
-        return alreadyExsits
     }
     
     public func createBucket() throws {
