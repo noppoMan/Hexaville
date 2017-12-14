@@ -801,8 +801,8 @@ extension AWSLauncherProvider {
         print("deplying to \(deploymentStage.stringValue)")
         let createDeploymentRequest = Apigateway.CreateDeploymentRequest(
             cacheClusterEnabled: false,
-            cacheClusterSize: nil,
             variables: [:],
+            cacheClusterSize: nil,
             description: "",
             restApiId: restApiId,
             stageName: deploymentStage.stringValue,
