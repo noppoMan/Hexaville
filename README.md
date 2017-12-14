@@ -357,6 +357,14 @@ See the detail to see [README](https://github.com/Hexaville/hexaville-tcp-proxy-
 
 Not implemented yet.
 
+## How to update Hexaville CLI Version?
+
+```sh
+$ rm -rf ~/.hexaville
+$ curl -L https://rawgit.com/noppoMan/Hexaville/master/install.sh | bash
+$ hexaville version
+```
+
 ## Contributing
 All developers should feel welcome and encouraged to contribute to Hexaville, see our getting started document here to get involved.
 
