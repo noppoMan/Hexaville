@@ -13,9 +13,9 @@ enum SwiftBuilderError: Error {
 }
 
 class SwiftBuilder {
-    let version: SwiftVersionContainer
+    let version: SwiftVersion
     
-    init(version: SwiftVersionContainer) {
+    init(version: SwiftVersion) {
         self.version = version
     }
     

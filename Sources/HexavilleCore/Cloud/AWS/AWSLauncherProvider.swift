@@ -20,6 +20,13 @@ import AWSSDKSwiftCore
 import Foundation
 import SwiftyJSON
 
+struct Resource {
+    let pathPart: String
+    let method: String?
+    var apiGatewayResource: Apigateway.Resource?
+    var apiGatewayParentResource: Apigateway.Resource?
+}
+
 extension AWSSDKSwiftCore.AWSShape {
     public func toJSONString() -> String {
         do {

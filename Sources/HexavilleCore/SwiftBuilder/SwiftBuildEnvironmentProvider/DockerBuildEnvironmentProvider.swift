@@ -57,7 +57,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
         let dest: String
-        if config.forSwift.version.asCompareableVersion() > SwiftVersion(major: 3, minor: 1) {
+        if config.forSwift.version.asCompareableVersion() > Version(major: 3, minor: 1) {
             dest = "/hexaville-app/.build/x86_64-unknown-linux"
         } else {
             dest = "/hexaville-app/.build"

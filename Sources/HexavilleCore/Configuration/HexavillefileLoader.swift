@@ -50,7 +50,7 @@ public struct HexavillefileLoader {
         case "aws":
             return Configuration(
                 name: appName,
-                platformConfiguration: try AWSLoader(appName: appName, yaml: config["aws"], environment: environment).load(),
+                platformConfiguration: try AWSConfigurationLoader(appName: appName, yaml: config["aws"], environment: environment).load(),
                 buildConfiguration: buildConfiguration,
                 swiftConfiguration: swiftConfiguration
             )

@@ -7,8 +7,6 @@
 //
 
 import Foundation
-import AWSSDKSwiftCore
-import SwiftAWSApigateway
 import SwiftyJSON
 
 public enum DeploymentStage {
@@ -54,13 +52,6 @@ public struct Routes {
 public struct Route {
     let method: [String]
     let resource: String
-}
-
-struct Resource {
-    let pathPart: String
-    let method: String?
-    var apiGatewayResource: Apigateway.Resource?
-    var apiGatewayParentResource: Apigateway.Resource?
 }
 
 struct DeployResult {

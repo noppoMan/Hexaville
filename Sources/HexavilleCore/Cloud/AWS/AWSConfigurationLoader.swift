@@ -11,7 +11,7 @@ import Yaml
 import AWSSDKSwiftCore
 import SwiftAWSLambda
 
-struct AWSLoader: PlatformConfigurationLoadable {
+struct AWSConfigurationLoader: PlatformConfigurationLoadable {
     
     let appName: String
     

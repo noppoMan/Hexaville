@@ -2,27 +2,27 @@
 //  SwiftVersion.swift
 //  HexavillePackageDescription
 //
-//  Created by Yuki Takei on 2017/08/13.
+//  Created by Yuki Takei on 2017/12/18.
 //
 
 import Foundation
 
-public enum SwiftVersionContainer {
-    case release(SwiftVersion)
+public enum SwiftVersion {
+    case release(Version)
     case developmentSnapshot(SwiftDevelopmentSnapshot)
 }
 
-extension SwiftVersionContainer {
+extension SwiftVersion {
     public init(string versionString: String) throws {
         if versionString.contains(substring: SwiftDevelopmentSnapshot.snapshotIdentifer) {
             self = .developmentSnapshot(try SwiftDevelopmentSnapshot(string: versionString))
         } else {
-            self = .release(try SwiftVersion(string: versionString))
+            self = .release(try Version(string: versionString))
         }
     }
 }
 
-extension SwiftVersionContainer {
+extension SwiftVersion {
     public var versionString: String {
         switch self {
         case .developmentSnapshot(let snapshot):
@@ -65,10 +65,10 @@ extension SwiftVersionContainer {
         return "\(downloadBaseURLString)/\(path)/\(fileName).tar.gz"
     }
     
-    public func asCompareableVersion() -> SwiftVersion {
+    public func asCompareableVersion() -> Version {
         switch self {
         case .developmentSnapshot(let snapshot):
-            return SwiftVersion(major: snapshot.major, minor: snapshot.minor, patch: snapshot.patch)
+            return Version(major: snapshot.major, minor: snapshot.minor, patch: snapshot.patch)
             
         case .release(let version):
             return version
@@ -76,90 +76,6 @@ extension SwiftVersionContainer {
     }
 }
 
-public protocol SwiftVersionRepresentable: Hashable, Comparable {
-    var major: Int { get }
-    var minor: Int { get }
-    var patch: Int { get }
-}
-
-extension SwiftVersionRepresentable {
-    public static func < <Other: SwiftVersionRepresentable>(lhs: Self, rhs: Other) -> Bool {
-        if lhs.major != rhs.major {
-            return lhs.major < rhs.major
-        } else {
-            if lhs.minor < rhs.minor {
-                return true
-            }
-            return lhs.patch < rhs.patch
-        }
-    }
-}
-
-extension SwiftVersionRepresentable {
-    public var hashValue: Int {
-        return (major << 8) | minor | patch
-    }
-    
-    public static func == <Other: SwiftVersionRepresentable>(lhs: Self, rhs: Other) -> Bool {
-        return lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch == rhs.patch
-    }
-    
-    public static func ~= <Other: SwiftVersionRepresentable>(match: Self, version: Other) -> Bool {
-        return match == version
-    }
-}
-
-enum SwiftVersionError: Error {
-    case invalidVersion(String)
-    case notEmpty
-}
-
-public struct SwiftVersion: SwiftVersionRepresentable {
-    public let major: Int
-    public let minor: Int
-    public let patch: Int
-    
-    public var versionString: String {
-        var version = "\(major).\(minor)"
-        if patch > 0 {
-            version += ".\(patch)"
-        }
-        return version
-    }
-    
-    public init(major: Int, minor: Int, patch: Int = 0) {
-        self.major = major
-        self.minor = minor
-        self.patch = patch
-    }
-}
-
-extension SwiftVersion {
-    public init(string: String) throws {
-        let components = string.components(separatedBy: ".")
-        if components.count == 0 {
-            throw SwiftVersionError.notEmpty
-        }
-        
-        var intCastedComponents: [Int] = try components.map({
-            guard let int = Int($0) else {
-                throw SwiftVersionError.invalidVersion(string)
-            }
-            return int
-        })
-        
-        switch intCastedComponents.count {
-        case 1:
-            self = SwiftVersion(major: intCastedComponents[0], minor: 0)
-        case 2:
-            self = SwiftVersion(major: intCastedComponents[0], minor: intCastedComponents[1])
-        case 3:
-            self = SwiftVersion(major: intCastedComponents[0], minor: intCastedComponents[1], patch: intCastedComponents[2])
-        default:
-            throw SwiftVersionError.invalidVersion(string)
-        }
-    }
-}
 
 public enum SwiftDevelopmentSnapshotError: Error {
     case invalidDevelopmentSnapshotName(String)

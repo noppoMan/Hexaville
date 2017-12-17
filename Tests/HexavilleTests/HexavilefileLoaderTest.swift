@@ -68,7 +68,7 @@ class HexavilefileLoaderTest: XCTestCase {
                 XCTAssertEqual(config.lambdaCodeConfig.memory, 512)
                 XCTAssertEqual(config.lambdaCodeConfig.vpcConfig!.subnetIds!, ["subnet-foo-bar", "subnet-bar-foo"])
                 XCTAssertEqual(config.lambdaCodeConfig.vpcConfig!.securityGroupIds!, ["sg-foo-bar", "sg-bar-foo"])
-                XCTAssertEqual(configuration.forSwift.version.asCompareableVersion(), SwiftVersion(major: 4, minor: 0))
+                XCTAssertEqual(configuration.forSwift.version.asCompareableVersion(), Version(major: 4, minor: 0))
                 
             }
             
