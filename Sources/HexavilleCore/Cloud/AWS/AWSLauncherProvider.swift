@@ -837,6 +837,6 @@ extension AWSLauncherProvider {
     
     func pathForARN(_ path: String) throws -> String {
         let regex = try NSRegularExpression(pattern: "\\{[a-zA-Z_-]*\\}", options: [])
-        return regex.stringByReplacingMatches(in: path, options: [], range: NSRange(location: 0, length: path.characters.count), withTemplate: "*")
+        return regex.stringByReplacingMatches(in: path, options: [], range: NSRange(location: 0, length: path.count), withTemplate: "*")
     }
 }

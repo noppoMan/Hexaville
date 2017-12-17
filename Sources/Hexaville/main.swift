@@ -65,12 +65,11 @@ class GenerateProject: Command {
         let suffix = "-\(hashId)-bucket"
         
         let bucketNameMaxLength = 63
-        let maxLength = bucketNameMaxLength - (prefix + suffix).characters.count
+        let maxLength = bucketNameMaxLength - (prefix + suffix).count
         
-        let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-".characters)
+        let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-")
         let sanitizedCharacters = projectName
             .lowercased()
-            .characters
             .filter { allowedCharacters.contains($0) }
             .prefix(maxLength)
         
