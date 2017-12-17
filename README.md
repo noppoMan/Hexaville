@@ -331,6 +331,12 @@ swift:
 
 You can extend timeout within second that is described at `Integration Timeout` section in [API Gateway's developer guide](http://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html#api-gateway-limits). Default is 10.
 
+```
+aws: 
+  lambda:
+    timeout: 20
+```
+
 ## Static Assets
 
 You can also upload static assets.
