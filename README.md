@@ -327,6 +327,10 @@ swift:
   version: swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
 ```
 
+## Extending Timeout Second
+
+You can extend timeout within second that is described at `Integration Timeout` section in [API Gateway's developer guide](http://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html#api-gateway-limits). Default is 10.
+
 ## Static Assets
 
 You can also upload static assets.
