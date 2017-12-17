@@ -51,6 +51,7 @@ struct AWSLoader: PlatformConfigurationLoadable {
             role: config["lambda"]["role"].string,
             bucket: lambdaBucket,
             timeout: config["lambda"]["timeout"].int ?? 10,
+            memory: Int32(config["lambda"]["memory"].int ?? 128),
             vpcConfig: vpcConfig,
             environment: environment
         )

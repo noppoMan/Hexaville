@@ -26,6 +26,7 @@ class HexavilefileLoaderTest: XCTestCase {
         str += "    bucket: hexaville-test-app-8uh-bucket\n"
         str += "    role: arn:aws:iam::foo:role/lambda_basic_execution\n"
         str += "    timeout: 20\n"
+        str += "    memory: 512\n"
         str += "    vpc:\n"
         str += "      subnetIds:\n"
         str += "        - subnet-foo-bar\n"
@@ -64,6 +65,7 @@ class HexavilefileLoaderTest: XCTestCase {
                 XCTAssertEqual(config.lambdaCodeConfig.bucket, "hexaville-test-app-8uh-bucket")
                 XCTAssertEqual(config.lambdaCodeConfig.role, "arn:aws:iam::foo:role/lambda_basic_execution")
                 XCTAssertEqual(config.lambdaCodeConfig.timeout, 20)
+                XCTAssertEqual(config.lambdaCodeConfig.memory, 512)
                 XCTAssertEqual(config.lambdaCodeConfig.vpcConfig!.subnetIds!, ["subnet-foo-bar", "subnet-bar-foo"])
                 XCTAssertEqual(config.lambdaCodeConfig.vpcConfig!.securityGroupIds!, ["sg-foo-bar", "sg-bar-foo"])
                 XCTAssertEqual(configuration.forSwift.version.asCompareableVersion(), SwiftVersion(major: 4, minor: 0))

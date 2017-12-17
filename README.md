@@ -76,7 +76,7 @@ Current default tool version is `4.0`
 
 If the tool version is higher than 3.1, layouts and definiations of `Package.swift` are refined.
 
-**EX.**
+**e.g.**
 ```sh
 # swift.version will be 4.0
 hexaville generate Hello
@@ -279,6 +279,21 @@ FACEBOOK_APP_ID=xxxxxxx
 FACEBOOK_APP_SECRET=xxxxxxx
 ```
 
+## Extending Basic Settings
+
+You can extend followings settings at `lambda` property in `Hexavillefile.yml`
+
+* `Timeout`: Default is 10. Timeout limit is described at `Integration Timeout` section in [API Gateway's developer guide](http://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html#api-gateway-limits).
+* `Memory`: Default is 128(MB). Memory allocation range is described at `Memory allocation range` section in [Lambda's developer guide](http://docs.aws.amazon.com/lambda/latest/dg/limits.html).
+
+**e.g.**
+```yaml
+aws: 
+  lambda:
+    timeout: 20
+    memory: 1024
+```
+
 ## VPC
 
 You can add VPC configuration to the lambda function in Hexavillefile.yml by adding a vpc object property in the lambda configuration section. This object should contain the securityGroupIds and subnetIds array properties needed to construct VPC for this function.
@@ -321,20 +336,10 @@ swift:
 You can also specify SWIFT DEVELOPMENT-SNAPSHOT as internal using swift version.  
 The format is same as [swiftenv version](https://swiftenv.fuller.li/en/latest/commands.html#version)
 
-**EX.**
-```
+**e.g.**
+```yaml
 swift:
   version: swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
-```
-
-## Extending Timeout Second
-
-You can extend timeout within second that is described at `Integration Timeout` section in [API Gateway's developer guide](http://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html#api-gateway-limits). Default is 10.
-
-```
-aws: 
-  lambda:
-    timeout: 20
 ```
 
 ## Static Assets
