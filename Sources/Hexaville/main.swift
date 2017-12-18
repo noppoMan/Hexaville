@@ -45,13 +45,13 @@ class GenerateProject: Command {
     let swiftToolVersion = Key<String>("--swift-tools-version", description: "Major Swift Tool Version for this project. default is 4.0")
     let dest = Key<String>("-o", "--dest", description: "Destination for the project")
     
-    private func resolveSwiftVersion() throws -> SwiftVersionContainer {
+    private func resolveSwiftVersion() throws -> SwiftVersion {
         guard let version = swiftToolVersion.value else {
             // default is 4.0
             return Configuration.SwiftConfiguration.defaultVersion
         }
         
-        let swiftVersion = try SwiftVersionContainer(string: version)
+        let swiftVersion = try SwiftVersion(string: version)
         
         if (Configuration.SwiftConfiguration.supportedVersionsRange ~= swiftVersion.asCompareableVersion().major) == false {
             throw HexavilleError.unsupportedSwiftToolsVersion(version)
@@ -65,12 +65,11 @@ class GenerateProject: Command {
         let suffix = "-\(hashId)-bucket"
         
         let bucketNameMaxLength = 63
-        let maxLength = bucketNameMaxLength - (prefix + suffix).characters.count
+        let maxLength = bucketNameMaxLength - (prefix + suffix).count
         
-        let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-".characters)
+        let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-")
         let sanitizedCharacters = projectName
             .lowercased()
-            .characters
             .filter { allowedCharacters.contains($0) }
             .prefix(maxLength)
         

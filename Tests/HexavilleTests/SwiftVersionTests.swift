@@ -16,7 +16,7 @@ class SwiftVersionTests: XCTestCase {
     func testContainer() {
         do {
             let version = "swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a"
-            let container = try SwiftVersionContainer(string: version)
+            let container = try SwiftVersion(string: version)
             let exepect = "https://swift.org/builds/swift-4.0-branch/ubuntu1404/swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a/swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a-ubuntu14.04.tar.gz"
             XCTAssertEqual(container.downloadURLString, exepect)
             
@@ -26,7 +26,7 @@ class SwiftVersionTests: XCTestCase {
         
         do {
             let version = "3.1.1"
-            let container = try SwiftVersionContainer(string: version)
+            let container = try SwiftVersion(string: version)
             let exepect = "https://swift.org/builds/swift-3.1.1-release/ubuntu1404/swift-3.1.1-RELEASE/swift-3.1.1-RELEASE-ubuntu14.04.tar.gz"
             XCTAssertEqual(container.downloadURLString, exepect)
             
@@ -37,13 +37,13 @@ class SwiftVersionTests: XCTestCase {
     
     func testSwiftVersion() {
         // equitability
-        XCTAssertEqual(SwiftVersion(major: 4, minor: 0), try SwiftVersion(string: "4.0"))
-        XCTAssertEqual(SwiftVersion(major: 3, minor: 1), try SwiftVersion(string: "3.1"))
-        XCTAssertEqual(SwiftVersion(major: 3, minor: 1, patch: 1), try SwiftVersion(string: "3.1.1"))
+        XCTAssertEqual(Version(major: 4, minor: 0), try Version(string: "4.0"))
+        XCTAssertEqual(Version(major: 3, minor: 1), try Version(string: "3.1"))
+        XCTAssertEqual(Version(major: 3, minor: 1, patch: 1), try Version(string: "3.1.1"))
         
         // comparison
-        XCTAssert(SwiftVersion(major: 4, minor: 0) > SwiftVersion(major: 3, minor: 1))
-        XCTAssert(SwiftVersion(major: 3, minor: 1, patch: 1) > SwiftVersion(major: 3, minor: 1))
+        XCTAssert(Version(major: 4, minor: 0) > Version(major: 3, minor: 1))
+        XCTAssert(Version(major: 3, minor: 1, patch: 1) > Version(major: 3, minor: 1))
         
         // parseError
         do {
