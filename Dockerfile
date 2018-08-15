@@ -14,8 +14,9 @@ RUN apt-get install -y clang \
   wget \
   zip
 
-ENV SWIFT_DOWNLOAD_URL=https://swift.org/builds/swift-4.0-release/ubuntu1404/swift-4.0-RELEASE/swift-4.0-RELEASE-ubuntu14.04.tar.gz
-ENV SWIFTFILE=swift-4.0-RELEASE-ubuntu14.04
+ENV SWIFT_VERSION="swift-4.1"
+ENV SWIFT_DOWNLOAD_URL=https://swift.org/builds/${SWIFT_VERSION}-release/ubuntu1404/${SWIFT_VERSION}-RELEASE/${SWIFT_VERSION}-RELEASE-ubuntu14.04.tar.gz
+ENV SWIFTFILE=${SWIFT_VERSION}-RELEASE-ubuntu14.04
 ENV BUILD_CONFIGURATION=release
 ENV DEST=/Hexaville/.build
 

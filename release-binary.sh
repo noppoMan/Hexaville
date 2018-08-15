@@ -18,7 +18,7 @@ mkdir -p $1/$MAC_DIST
 mkdir -p $1/$LINUX_DIST
 
 SHARED_DIR=`pwd`/__docker_shared
-docker build --no-cache -t hexaville .
+docker build -t hexaville .
 docker run -v ${SHARED_DIR}:/Hexaville/.build -e PUBLISH_VERSION=$VERSION hexaville
 mv ${SHARED_DIR}/${SWIFT_BUILD_CONFIGURATION}/Hexaville.zip $1/$LINUX_DIST
 
