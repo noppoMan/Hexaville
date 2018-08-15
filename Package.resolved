@@ -2,12 +2,21 @@
   "object": {
     "pins": [
       {
+        "package": "SwiftAWSApigateway",
+        "repositoryURL": "https://github.com/swift-aws/apigateway.git",
+        "state": {
+          "branch": null,
+          "revision": "2924aecd232deee56cd14cfb1ea54a0fdce6a2f0",
+          "version": "1.1.6"
+        }
+      },
+      {
         "package": "AWSSDKSwiftCore",
         "repositoryURL": "https://github.com/noppoMan/aws-sdk-swift-core.git",
         "state": {
           "branch": null,
-          "revision": "4e83cdf53a95d648016889dc602b4e7bf897d5a7",
-          "version": "1.0.8"
+          "revision": "48298a7bec6c838553f314cb48c81f2a363e8253",
+          "version": "1.0.10"
         }
       },
       {
@@ -38,12 +47,30 @@
         }
       },
       {
+        "package": "SwiftAWSIam",
+        "repositoryURL": "https://github.com/swift-aws/iam.git",
+        "state": {
+          "branch": null,
+          "revision": "7f0ce270eb8f856561b3097dad1d980f9b202213",
+          "version": "1.1.6"
+        }
+      },
+      {
+        "package": "SwiftAWSLambda",
+        "repositoryURL": "https://github.com/swift-aws/lambda.git",
+        "state": {
+          "branch": null,
+          "revision": "ca7f24e1567ae6b58d1816bbb26fe8bad6ff6534",
+          "version": "1.1.6"
+        }
+      },
+      {
         "package": "Prorsum",
         "repositoryURL": "https://github.com/noppoMan/Prorsum.git",
         "state": {
           "branch": null,
-          "revision": "c1bbe27eedf53121237854b3aa393237a4e973fe",
-          "version": "0.3.2"
+          "revision": "b278e88142a3b5a87feabc44b6522dabfcda8f99",
+          "version": "0.3.3"
         }
       },
       {
@@ -56,39 +83,12 @@
         }
       },
       {
-        "package": "SwiftAWSApigateway",
-        "repositoryURL": "https://github.com/swift-aws/apigateway.git",
-        "state": {
-          "branch": null,
-          "revision": "37222385adb15120ff03396b20ca6b9dd783bc4a",
-          "version": "1.1.3"
-        }
-      },
-      {
-        "package": "SwiftAWSIam",
-        "repositoryURL": "https://github.com/swift-aws/iam.git",
-        "state": {
-          "branch": null,
-          "revision": "b64000f258c082f22212161a3014c1bf02ebce91",
-          "version": "1.1.3"
-        }
-      },
-      {
-        "package": "SwiftAWSLambda",
-        "repositoryURL": "https://github.com/swift-aws/lambda.git",
-        "state": {
-          "branch": null,
-          "revision": "675cd8d8a223a34abc3895c8eed5a5a6648949d2",
-          "version": "1.1.3"
-        }
-      },
-      {
         "package": "SwiftAWSS3",
         "repositoryURL": "https://github.com/swift-aws/s3.git",
         "state": {
           "branch": null,
-          "revision": "08540d9c6a6a1e54d2297aa57cf2a033e3258493",
-          "version": "1.1.3"
+          "revision": "9deea717490c08c5dac87e8b818cbdb2b227c7e6",
+          "version": "1.1.6"
         }
       },
       {
@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/jakeheis/SwiftCLI.git",
         "state": {
           "branch": null,
-          "revision": "8e5916bfcc7f8acee6fb2cb36d1ffefb02ac2460",
-          "version": "3.1.0"
+          "revision": "37f4a7f863f6fe76ce44fc0023f331eea0089beb",
+          "version": "5.2.0"
         }
       },
       {
@@ -105,8 +105,8 @@
         "repositoryURL": "https://github.com/IBM-Swift/SwiftyJSON.git",
         "state": {
           "branch": null,
-          "revision": "1190845cf7d25a5c8ea7653fe03dcdd39a082056",
-          "version": "16.0.2"
+          "revision": "693d2d28fe2f91aedf02c3754baade625fd97c46",
+          "version": "17.0.2"
         }
       },
       {
@@ -114,8 +114,8 @@
         "repositoryURL": "https://github.com/behrang/YamlSwift.git",
         "state": {
           "branch": null,
-          "revision": "901c4943f3206afb3b965bad2d1338e3c4fdbeba",
-          "version": "3.4.0"
+          "revision": "978901aed4025e36ebf60c040c9000c559d7c3e0",
+          "version": "3.4.3"
         }
       }
     ]
