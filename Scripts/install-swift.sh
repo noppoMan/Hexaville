@@ -24,6 +24,7 @@ fi
 
 if [[ $OS != "macos" ]];
 then
+    sudo apt-get update
     sudo apt-get install -y clang libicu-dev uuid-dev
 
     if [[ $OS == "ubuntu1510" ]];
