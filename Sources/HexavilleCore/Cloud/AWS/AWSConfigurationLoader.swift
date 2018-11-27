@@ -9,7 +9,7 @@
 import Foundation
 import Yaml
 import AWSSDKSwiftCore
-import SwiftAWSLambda
+import Lambda
 
 struct AWSConfigurationLoader: PlatformConfigurationLoadable {
     
