@@ -14,7 +14,7 @@ public enum SwiftVersion {
 
 extension SwiftVersion {
     public init(string versionString: String) throws {
-        if versionString.contains(substring: SwiftDevelopmentSnapshot.snapshotIdentifer) {
+        if versionString.contains(SwiftDevelopmentSnapshot.snapshotIdentifer) {
             self = .developmentSnapshot(try SwiftDevelopmentSnapshot(string: versionString))
         } else {
             self = .release(try Version(string: versionString))

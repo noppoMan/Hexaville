@@ -13,7 +13,6 @@
 #endif
 
 import Foundation
-import Prorsum
 import SwiftyJSON
 import SwiftCLI
 import Yaml

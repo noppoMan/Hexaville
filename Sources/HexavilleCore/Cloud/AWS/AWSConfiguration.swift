@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import SwiftAWSS3
-import SwiftAWSLambda
-import SwiftAWSApigateway
-import SwiftAWSIam
+import S3
+import Lambda
+import APIGateway
+import IAM
 import AWSSDKSwiftCore
 
 public struct AWSConfiguration {
