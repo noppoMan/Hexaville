@@ -92,12 +92,12 @@
         }
       },
       {
-        "package": "Yaml",
-        "repositoryURL": "https://github.com/behrang/YamlSwift.git",
+        "package": "Yams",
+        "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
           "branch": null,
-          "revision": "978901aed4025e36ebf60c040c9000c559d7c3e0",
-          "version": "3.4.3"
+          "revision": "26ab35f50ea891e8edefcc9d975db2f6b67e1d68",
+          "version": "1.0.1"
         }
       }
     ]

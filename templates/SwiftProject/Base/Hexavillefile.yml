@@ -1,23 +1,30 @@
-name: {{appName}}
-service: aws
-aws:
-  # credential:
-  #   access_key_id: xxxxxxxxxxxxxxxxxx
-  #   secret_access_key: xxxxxxxxxxxxxxxxxx
-  # region: us-east-1
-  lambda:
-    bucket: {{bucketName}}
-#    role: xxxxxxxxxxxxxxxxxxxxxxxxxx
-#     vpc:
-#       subnetIds:
-#         - xxxxxx
-#         - xxxxxx
-#       securityGroupIds:
-#         - xxxxxx
-#         - xxxxxx
-# build:
-#   nocache: false
+appName: {{appName}}
+executableTarget: {{appName}}
+
 swift:
   version: {{swiftVersion}}
-#   build:
-#     configuration: release # default is debug
+  # buildOptions:
+  #   configuration: debug
+
+# docker:
+#   buildOptions:
+#     nocache: false
+
+provider:
+  aws:
+    # credential:
+    #   accessKeyId: xxxxxxxxxxxxxxx
+    #   secretAccessKey: xxxxxxxxxxxxxxx
+    region: us-east-1
+    lambda:
+      s3Bucket: {{s3Bucket}}
+      # role: xxxxxxxxxxxxxxx
+      # timeout: 10
+      # memory: 256
+      # vpc:
+      #   subnetIds:
+      #     - xxxxxxxxxxxxxxx
+      #     - xxxxxxxxxxxxxxx
+      #   securityGroupIds:
+      #     - xxxxxxxxxxxxxxx
+      #     - xxxxxxxxxxxxxxx

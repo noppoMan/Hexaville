@@ -1,21 +1,13 @@
-//
-//  main.swift
-//  Hexaville
-//
-//  Created by Yuki Takei on 2017/05/17.
-//
-//
-
 #if os(Linux)
-    import Glibc
+import Glibc
 #else
-    import Darwin.C
+import Darwin.C
 #endif
 
 import Foundation
 import SwiftyJSON
 import SwiftCLI
-import Yaml
+import Yams
 import HexavilleCore
 
 enum HexavilleError: Error {
@@ -46,13 +38,12 @@ class GenerateProject: Command {
     
     private func resolveSwiftVersion() throws -> SwiftVersion {
         guard let version = swiftToolVersion.value else {
-            // default is 4.0
-            return Configuration.SwiftConfiguration.defaultVersion
+            return Constant.defaultSwiftVersion
         }
         
         let swiftVersion = try SwiftVersion(string: version)
         
-        if (Configuration.SwiftConfiguration.supportedVersionsRange ~= swiftVersion.asCompareableVersion().major) == false {
+        if (Constant.supportedSwiftVersionsRange ~= swiftVersion.asCompareableVersion().major) == false {
             throw HexavilleError.unsupportedSwiftToolsVersion(version)
         }
         
@@ -89,10 +80,10 @@ class GenerateProject: Command {
             let hashids = Hashids(salt: UUID().uuidString)
             
             #if os(Linux)
-                srandom(UInt32(time(nil)))
-                let randomNumber = Int(UInt32(random() % 10000))
+            srandom(UInt32(time(nil)))
+            let randomNumber = Int(UInt32(random() % 10000))
             #else
-                let randomNumber = Int(arc4random_uniform(9999))
+            let randomNumber = Int(arc4random_uniform(9999))
             #endif
             
             let swiftVersion = try resolveSwiftVersion()
@@ -123,9 +114,9 @@ class GenerateProject: Command {
     }
 }
 
-func loadHexavilleFile(hexavilleFilePath: String) throws -> Yaml {
+func loadHexavilleFile(hexavilleFilePath: String) throws -> HexavilleFile {
     let ymlString = try String(contentsOfFile: hexavilleFilePath, encoding: .utf8)
-    return try Yaml.load(ymlString)
+    return try HexavilleFile.load(ymlString: ymlString)
 }
 
 class RoutesCommand: Command {
@@ -142,11 +133,10 @@ class RoutesCommand: Command {
             }
             
             let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-            let config = try HexavillefileLoader(fromHexavillefilePath: ymlPath).load()
+            let config = try loadHexavilleFile(hexavilleFilePath: ymlPath)
             
             let launcher = Launcher(
                 hexavilleApplicationPath: cwd,
-                executable: "\(cwd)".components(separatedBy: "/").last ?? "",
                 configuration: config,
                 deploymentStage: deploymentStage
             )
@@ -161,7 +151,6 @@ class RoutesCommand: Command {
 class Deploy: Command {
     let name = "deploy"
     let shortDescription  = "Deploy your application to the specified cloud provider"
-    let executableName = Parameter()
     let hexavillefilePath = Key<String>("-c", "--hexavillefile", description: "Path for the Hexavillefile.yml")
     let stage = Key<String>("--stage", description: "Deployment Stage. default is staging")
     
@@ -187,17 +176,15 @@ class Deploy: Command {
             }
             
             let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-            let yml = try loadHexavilleFile(hexavilleFilePath: "\(hexavileApplicationPath)/\(hexavilleFileYAML)")
+            let config = try loadHexavilleFile(hexavilleFilePath: "\(hexavileApplicationPath)/\(hexavilleFileYAML)")
             
             print("Hexavillefile: \(hexavileApplicationPath)/\(hexavilleFileYAML)")
             
-            let config = try HexavillefileLoader(fromYaml: yml).load(withEnvironment: environment)
-            
             let launcher = Launcher(
                 hexavilleApplicationPath: hexavileApplicationPath,
-                executable: executableName.value,
                 configuration: config,
-                deploymentStage: deploymentStage
+                deploymentStage: deploymentStage,
+                environment: environment
             )
             try launcher.launch()
         } catch {

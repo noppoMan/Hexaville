@@ -64,16 +64,13 @@ public class Launcher {
     
     let hexavilleApplicationPath: String
     
-    let executable: String
-    
     let deploymentStage: DeploymentStage
     
-    let configuration: Configuration
+    let configuration: HexavilleFile
     
-    public init(hexavilleApplicationPath: String, executable: String, configuration: Configuration, deploymentStage: DeploymentStage = .staging) {
-        self.provider = configuration.createProvider()
+    public init(hexavilleApplicationPath: String, configuration: HexavilleFile, deploymentStage: DeploymentStage = .staging, environment: [String: String] = [:]) {
+        self.provider = configuration.createProvider(withEnvironment: environment)
         self.hexavilleApplicationPath = hexavilleApplicationPath
-        self.executable = executable
         self.configuration = configuration
         self.deploymentStage = deploymentStage
     }
@@ -107,11 +104,11 @@ public class Launcher {
     }
     
     private func buildSwift() throws -> BuildResult {
-        let builder = SwiftBuilder(version: configuration.forSwift.version)
+        let builder = SwiftBuilder(version: try configuration.swift.version)
         return try builder.build(
             config: configuration,
             hexavilleApplicationPath: hexavilleApplicationPath,
-            executable: executable
+            executable: configuration.executableTarget
         )
     }
     
@@ -124,7 +121,7 @@ public class Launcher {
             deploymentStage: deploymentStage,
             buildResult: result,
             hexavilleApplicationPath: hexavilleApplicationPath,
-            executable: executable
+            executable: configuration.executableTarget
         )
         
         print("######################################################")
@@ -141,16 +138,17 @@ public class Launcher {
 }
 
 
-extension Configuration {
-    func createProvider() -> CloudLauncherProvider {
-        switch self.forPlatform {
+extension HexavilleFile {
+    func createProvider(withEnvironment environemnt: [String: String]) -> CloudLauncherProvider {
+        switch provider {
         case .aws(let config):
             let provider = AWSLauncherProvider(
-                appName: self.name,
-                credential: config.credential,
-                region: config.region,
-                endpoints: config.endpoints,
-                lambdaCodeConfig: config.lambdaCodeConfig
+                appName: self.appName,
+                credential: config.awsSDKSwiftCredential,
+                region: config.awsSDKSwiftRegion,
+                endpoints: nil,
+                lambdaCodeConfig: config.lambda,
+                environment: environemnt
             )
             return .aws(provider)
         }

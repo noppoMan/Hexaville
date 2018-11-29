@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 enum DockerBuildEnvironmentProviderError: Error {
     case dockerIsNotFound
     case dockerBuildFailed
@@ -42,7 +41,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         return ProcessInfo.processInfo.environment["DOCKER_PATH"] ?? "docker"
     }
     
-    func build(config: Configuration, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
+    func build(config: HexavilleFile, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
         
         print("\nDocker version")
         let dockerVersionResult = Process.exec("docker", ["version"])
@@ -56,16 +55,18 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         try String(contentsOfFile: buildSwiftShellPath, encoding: .utf8)
             .write(toFile: "\(hexavilleApplicationPath)/build-swift.sh", atomically: true, encoding: .utf8)
         
+        let swiftVersion = config.swift.version
+        
         let dest: String
-        if config.forSwift.version.asCompareableVersion() > Version(major: 3, minor: 1) {
+        if swiftVersion.asCompareableVersion() > Version(major: 3, minor: 1) {
             dest = "/hexaville-app/.build/x86_64-unknown-linux"
         } else {
             dest = "/hexaville-app/.build"
         }
         
         try String(contentsOfFile: templatePath+"/Dockerfile", encoding: .utf8)
-            .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: config.forSwift.version.downloadURLString)
-            .replacingOccurrences(of: "{{SWIFTFILE}}", with: config.forSwift.version.fileName)
+            .replacingOccurrences(of: "{{SWIFT_DOWNLOAD_URL}}", with: swiftVersion.downloadURLString)
+            .replacingOccurrences(of: "{{SWIFTFILE}}", with: swiftVersion.fileName)
             .replacingOccurrences(of: "{{EXECUTABLE_NAME}}", with: executable)
             .replacingOccurrences(of: "{{DEST}}", with: dest)
             .write(
@@ -84,7 +85,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         let tag = executable.lowercased()
         
         var opts = ["build", "-t", tag, "-f", "\(hexavilleApplicationPath)/Dockerfile", hexavilleApplicationPath]
-        if config.forBuild.noCache {
+        if let docker = config.docker, let nocache = docker.buildOptions.nocache, nocache {
             opts.insert("--no-cache", at: 1)
         }
         
@@ -102,7 +103,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
         #if os(OSX)
             let dockerRunOpts = [
                 "-e",
-                "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
+                "BUILD_CONFIGURATION=\(config.swift.buildMode)",
                 "-v",
                 "\(sharedDir):\(dest)",
                 "-it",
@@ -131,6 +132,6 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             print($0, separator: "", terminator: "")
         }
         
-        return BuildResult(destination: sharedDir+"/\(config.forSwift.build.configuration)", dockerTag: tag)
+        return BuildResult(destination: sharedDir+"/\(config.swift.buildMode)", dockerTag: tag)
     }
 }

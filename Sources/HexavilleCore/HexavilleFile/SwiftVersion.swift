@@ -12,6 +12,19 @@ public enum SwiftVersion {
     case developmentSnapshot(SwiftDevelopmentSnapshot)
 }
 
+extension SwiftVersion: Decodable {
+    enum CodingKeys: CodingKey {
+        case release
+        case developmentSnapshot
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        self = try SwiftVersion(string: value)
+    }
+}
+
 extension SwiftVersion {
     public init(string versionString: String) throws {
         if versionString.contains(SwiftDevelopmentSnapshot.snapshotIdentifer) {
@@ -38,7 +51,7 @@ extension SwiftVersion {
     }
     
     public var osName: String {
-        return "ubuntu14.04"
+        return "ubuntu16.04"
     }
     
     public var path: String {
