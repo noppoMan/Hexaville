@@ -104,7 +104,7 @@ public class Launcher {
     }
     
     private func buildSwift() throws -> BuildResult {
-        let builder = SwiftBuilder(version: try configuration.swift.version)
+        let builder = SwiftBuilder(version: configuration.swift.version)
         return try builder.build(
             config: configuration,
             hexavilleApplicationPath: hexavilleApplicationPath,

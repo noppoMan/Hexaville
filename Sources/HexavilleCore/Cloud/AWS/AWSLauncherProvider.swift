@@ -431,7 +431,7 @@ extension AWSLauncherProvider {
         if resources.count == 0 { return }
         
         let deletedResourcesCount = resources.filter({ $0.shouldDeleteResource }).count
-        let deletedMethodsCount = resources.filter({ !$0.shouldDeleteResource }).flatMap({ $0.methods.count }).reduce(0) { $0 + $1 }
+        let deletedMethodsCount = resources.filter({ !$0.shouldDeleteResource }).compactMap({ $0.methods.count }).reduce(0) { $0 + $1 }
         
         print("There are \(deletedResourcesCount) deleted resources and \(deletedMethodsCount) deleted methods.")
         
