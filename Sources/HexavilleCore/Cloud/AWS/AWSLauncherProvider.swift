@@ -664,147 +664,55 @@ extension AWSLauncherProvider {
         }
         
         let resources = try apiGateway.getResources(APIGateway.GetResourcesRequest(restApiId: api.id!))
-        var resourceItems: [APIGateway.Resource] = resources.items ?? []
+        let resourceItems: [APIGateway.Resource] = resources.items ?? []
         
         guard let rootResource = resourceItems.filter({ $0.path == "/" }).first else {
             throw LauncherError.couldNotFindRootResource
         }
         
         let lambdaPolicies = fetchLambdaPolicies()
-        let manifest = try String(contentsOfFile: buildResult.destination+"/.routing-manifest.json", encoding: .utf8)
-        let dict = try JSONSerialization.jsonObject(with: manifest.data(using: .utf8) ?? Data(), options: []) as! [String: Any]
-        let manifestJSON = JSON(dict)
         
-        print("Routing Manifest loaded")
+        let httpMethod = "ANY"
+        let path = "/"
         
-        print("taking resources diff between live stage and current deploying ....")
-        let resourcesForDelete = checkDeletedResources(manifestJSON: manifestJSON, resources: resourceItems)
-        showDeletedResources(resourcesForDelete)
+        try updateIntegrations(
+            lambdaURI: lambdaURI,
+            restApiId: restApiId,
+            resourceId: rootResource.id!,
+            httpMethod: httpMethod
+        )
         
-        var activeSourceARNs: [String] = []
+        let sourceARN = try self.sourceARN(
+            region: region,
+            lambdaURI: lambdaURI,
+            restApiId: restApiId,
+            httpMethod: httpMethod,
+            path: path
+        )
         
-        for json in manifestJSON["routing"].arrayValue {
-            let path = json["path"].stringValue
-            let paths: [String]
-            if path == "/" {
-                paths = [path]
-            } else {
-                paths = path.components(separatedBy: "/").filter({ !$0.isEmpty })
-            }
-            
-            var apiResources: [Resource] = []
-            
-            for (index, pathPart) in paths.enumerated() {
-                var parentApiGatewayResource: APIGateway.Resource?
-                if index == 0 {
-                    parentApiGatewayResource = rootResource
-                } else {
-                    parentApiGatewayResource = apiResources[index-1].apiGatewayResource
-                }
-                
-                var apiGatewayResource: APIGateway.Resource?
-                if let _apiGatewayResource = resourceItems.filter({
-                    if let parentPath = parentApiGatewayResource?.path, let parentIsSame = $0.path?.contains(parentPath) {
-                        return $0.pathPart == pathPart && parentIsSame
-                    }
-                    return $0.pathPart == pathPart
-                }).first {
-                    apiGatewayResource = _apiGatewayResource
-                }
-                
-                let resource = Resource(
-                    pathPart: pathPart,
-                    method: index == paths.count-1 ? json["method"].stringValue : nil,
-                    apiGatewayResource: apiGatewayResource,
-                    apiGatewayParentResource: parentApiGatewayResource
-                )
-                
-                apiResources.append(resource)
-            }
-            
-            var lastApiResource: APIGateway.Resource = rootResource
-            
-            for apiResource in apiResources {
-                if apiResource.pathPart == "/" {
-                    // TODO
-                }
-                else if let apiGatewayResource = apiResource.apiGatewayResource {
-                    lastApiResource = apiGatewayResource
-                }
-                else
-                {
-                    let request = APIGateway.CreateResourceRequest(
-                        pathPart: apiResource.pathPart,
-                        restApiId: restApiId,
-                        parentId: lastApiResource.id!
-                    )
-                    let response = try apiGateway.createResource(request)
-                    print("Created CreateResource for \(response.toJSONString())")
-                    lastApiResource = response
-                    if !resourceItems.contains(where: { $0.id == response.id }) {
-                        resourceItems.append(response)
-                    }
-                }
-                
-                if let httpMethod = apiResource.method?.uppercased() {
-                    try updateIntegrations(
-                        lambdaURI: lambdaURI,
-                        restApiId: restApiId,
-                        resourceId: lastApiResource.id!,
-                        httpMethod: httpMethod
-                    )
-                    
-                    let sourceARN = try self.sourceARN(
-                        region: region,
-                        lambdaURI: lambdaURI,
-                        restApiId: restApiId,
-                        httpMethod: httpMethod,
-                        path: path
-                    )
-                    
-                    activeSourceARNs.append(sourceARN)
-                    
-                    if lambdaPolicies["Statement"].arrayValue.filter({
-                        $0["Condition"]["ArnLike"].dictionaryValue["AWS:SourceArn"]?.stringValue == sourceARN
-                    }).count == 0 {
-                        // TODO limit
-                        let addPermissionRequest = Lambda.AddPermissionRequest(
-                            action: "lambda:InvokeFunction",
-                            statementId: UUID().uuidString.lowercased(),
-                            principal: "apigateway.amazonaws.com",
-                            functionName: functionName,
-                            sourceArn: sourceARN
-                        )
-                        _ = try lambda.addPermission(addPermissionRequest)
-                    }
-                }
-            }
+        if lambdaPolicies["Statement"].arrayValue.filter({
+            $0["Condition"]["ArnLike"].dictionaryValue["AWS:SourceArn"]?.stringValue == sourceARN
+        }).count == 0 {
+            // TODO limit
+            let addPermissionRequest = Lambda.AddPermissionRequest(
+                action: "lambda:InvokeFunction",
+                statementId: UUID().uuidString.lowercased(),
+                principal: "apigateway.amazonaws.com",
+                functionName: functionName,
+                sourceArn: sourceARN
+            )
+            _ = try lambda.addPermission(addPermissionRequest)
         }
         
-        for resourceForDelete in resourcesForDelete {
-            for method in resourceForDelete.methods {
-                let input = APIGateway.DeleteMethodRequest(resourceId: resourceForDelete.resource.id!, restApiId: restApiId, httpMethod: method.method)
-                print("deleting method for.... \(input.toJSONString())")
-                _ = try apiGateway.deleteMethod(input)
-            }
-        }
         
         try lambdaPolicies["Statement"].arrayValue.filter({
             guard let arn = $0["Condition"]["ArnLike"].dictionaryValue["AWS:SourceArn"]?.string else { return false }
-            return !activeSourceARNs.contains(arn)
+            return sourceARN != arn
         })
-            .forEach { policy in
-                let input = Lambda.RemovePermissionRequest(functionName: functionName, statementId: policy["Sid"].stringValue)
-                print("deleting lambda policy for.... \(input.toJSONString())")
-                _ = try lambda.removePermission(input)
-        }
-        
-        for resourceForDelete in resourcesForDelete {
-            if !resourceForDelete.shouldDeleteResource { continue }
-            let input = APIGateway.DeleteResourceRequest(resourceId: resourceForDelete.resource.id!, restApiId: restApiId)
-            
-            print("deleting resource for.... \(input.toJSONString())")
-            try apiGateway.deleteResource(input)
+        .forEach { policy in
+            let input = Lambda.RemovePermissionRequest(functionName: functionName, statementId: policy["Sid"].stringValue)
+            print("deleting lambda policy for.... \(input.toJSONString())")
+            _ = try lambda.removePermission(input)
         }
         
         print("deplying to \(deploymentStage.stringValue)")
