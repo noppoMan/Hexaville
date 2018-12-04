@@ -17,7 +17,7 @@ class SwiftVersionTests: XCTestCase {
         do {
             let version = "swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a"
             let container = try SwiftVersion(string: version)
-            let exepect = "https://swift.org/builds/swift-4.0-branch/ubuntu1604/swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a/swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a-ubuntu16.04.tar.gz"
+            let exepect = "https://swift.org/builds/swift-4.0-branch/ubuntu1404/swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a/swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a-ubuntu14.04.tar.gz"
             XCTAssertEqual(container.downloadURLString, exepect)
             
         } catch {
@@ -27,7 +27,7 @@ class SwiftVersionTests: XCTestCase {
         do {
             let version = "3.1.1"
             let container = try SwiftVersion(string: version)
-            let exepect = "https://swift.org/builds/swift-3.1.1-release/ubuntu1604/swift-3.1.1-RELEASE/swift-3.1.1-RELEASE-ubuntu16.04.tar.gz"
+            let exepect = "https://swift.org/builds/swift-3.1.1-release/ubuntu1404/swift-3.1.1-RELEASE/swift-3.1.1-RELEASE-ubuntu14.04.tar.gz"
             XCTAssertEqual(container.downloadURLString, exepect)
             
         } catch {

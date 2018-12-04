@@ -17,10 +17,10 @@ provider:
     #   secretAccessKey: xxxxxxxxxxxxxxx
     region: us-east-1
     lambda:
-      s3Bucket: {{s3Bucket}}
+      s3Bucket: {{bucketName}}
       # role: xxxxxxxxxxxxxxx
-      # timeout: 10
-      # memory: 256
+      timeout: 10
+      memory: 256
       # vpc:
       #   subnetIds:
       #     - xxxxxxxxxxxxxxx

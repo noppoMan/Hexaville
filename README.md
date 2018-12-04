@@ -13,7 +13,7 @@ It's the greatest motivation to help many Swift and mobile application developer
 
 ### Swift Build Environments
 
-* Ubuntu 16.04(LTS) in Docker
+* Ubuntu 14.04(LTS) in Docker
 
 ## Peformance insite
 

@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:14.04
 
 RUN apt-get update -y
 RUN apt-get install -y clang \
@@ -15,8 +15,8 @@ RUN apt-get install -y clang \
   zip
 
 ENV SWIFT_VERSION="swift-4.2"
-ENV SWIFT_DOWNLOAD_URL=https://swift.org/builds/${SWIFT_VERSION}-release/ubuntu1404/${SWIFT_VERSION}-RELEASE/${SWIFT_VERSION}-RELEASE-ubuntu16.04.tar.gz
-ENV SWIFTFILE=${SWIFT_VERSION}-RELEASE-ubuntu16.04
+ENV SWIFT_DOWNLOAD_URL=https://swift.org/builds/${SWIFT_VERSION}-release/ubuntu1404/${SWIFT_VERSION}-RELEASE/${SWIFT_VERSION}-RELEASE-ubuntu14.04.tar.gz
+ENV SWIFTFILE=${SWIFT_VERSION}-RELEASE-ubuntu14.04
 ENV BUILD_CONFIGURATION=release
 ENV DEST=/Hexaville/.build
 

@@ -51,7 +51,7 @@ extension SwiftVersion {
     }
     
     public var osName: String {
-        return "ubuntu16.04"
+        return "ubuntu14.04"
     }
     
     public var path: String {
