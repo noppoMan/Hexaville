@@ -116,7 +116,7 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             
             let dockerRunOpts = [
                 "-e",
-                "BUILD_CONFIGURATION=\(config.forSwift.build.configuration)",
+                "BUILD_CONFIGURATION=\(config.swift.buildMode)",
                 "-e",
                 "VOLUME_USER=\(user)",
                 "-e",
