@@ -77,7 +77,7 @@ If the tool version is higher than 3.1, layouts and definiations of `Package.swi
 
 **e.g.**
 ```sh
-# swift.version will be 4.0
+# swift.version will be 4.2
 hexaville generate Hello
 
 # swift.version will be 3.1
