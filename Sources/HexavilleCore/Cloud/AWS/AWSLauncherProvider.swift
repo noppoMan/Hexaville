@@ -20,13 +20,6 @@ import AWSSDKSwiftCore
 import Foundation
 import SwiftyJSON
 
-struct Resource {
-    let pathPart: String
-    let method: String?
-    var apiGatewayResource: APIGateway.Resource?
-    var apiGatewayParentResource: APIGateway.Resource?
-}
-
 extension AWSSDKSwiftCore.AWSShape {
     public func toJSONString() -> String {
         do {
@@ -117,22 +110,31 @@ extension AWSLauncherProvider {
         content += "\n"
         content += "cd $2"
         content += "\n"
-        content += "zip $1 $3 byline.js index.js ./*.so ./*.so.* -r assets"
+        content += "zip $1 $3 bootstrap function.sh ./*.so ./*.so.* -r assets"
         return content
     }
     
     fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executable: String) throws -> Data {
         
-        let nodejsTemplatePath = try Finder.findTemplatePath(for: "/lambda/node.js")
+        let customRuntimeTemplatePath = try Finder.findTemplatePath(for: "/lambda")
         
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
+        let bootstrap = "bootstrap"
+        let functionsh = "function.sh"
         
-        try String(contentsOfFile: "\(nodejsTemplatePath)/index.js", encoding: .utf8)
+        try FileManager.default.copyFiles(
+            from: "\(customRuntimeTemplatePath)/\(functionsh)",
+            to: buildResult.destination+"/\(functionsh)"
+        )
+        
+        try String(contentsOfFile: "\(customRuntimeTemplatePath)/\(functionsh)", encoding: .utf8)
             .replacingOccurrences(of: "{{executablePath}}", with: executable)
-            .write(toFile: buildResult.destination+"/index.js", atomically: true, encoding: .utf8)
+            .write(toFile: buildResult.destination+"/\(functionsh)", atomically: true, encoding: .utf8)
         
-        try String(contentsOfFile: "\(nodejsTemplatePath)/byline.js", encoding: .utf8)
-            .write(toFile: buildResult.destination+"/byline.js", atomically: true, encoding: .utf8)
+        try FileManager.default.copyFiles(
+            from: "\(customRuntimeTemplatePath)/\(bootstrap)",
+            to: buildResult.destination+"/\(bootstrap)"
+        )
         
         let assetPath = hexavilleApplicationPath+"/assets"
         if FileManager.default.fileExists(atPath: assetPath) {
@@ -257,7 +259,7 @@ extension AWSLauncherProvider {
     
     public func methodIsExists(restApiId: String, httpMethod: String, resourceId: String) -> Bool {
         do {
-            let input = APIGateway.GetMethodRequest(resourceId: resourceId, restApiId: restApiId, httpMethod: httpMethod)
+            let input = APIGateway.GetMethodRequest(resourceId: resourceId, httpMethod: httpMethod, restApiId: restApiId)
             _ = try apiGateway.getMethod(input)
             return true
         } catch {
@@ -267,7 +269,7 @@ extension AWSLauncherProvider {
     
     public func integrationIsExists(restApiId: String, httpMethod: String, resourceId: String) -> Bool {
         do {
-            let input = APIGateway.GetIntegrationRequest(resourceId: resourceId, restApiId: restApiId, httpMethod: httpMethod)
+            let input = APIGateway.GetIntegrationRequest(resourceId: resourceId, httpMethod: httpMethod, restApiId: restApiId)
             _ = try apiGateway.getIntegration(input)
             return true
         } catch {
@@ -288,10 +290,10 @@ extension AWSLauncherProvider {
     public func methodResponseIsExists(restApiId: String, statusCode: String, resourceId: String, httpMethod: String) -> Bool {
         do {
             let input = APIGateway.GetMethodResponseRequest(
-                restApiId: restApiId,
-                statusCode: statusCode,
                 resourceId: resourceId,
-                httpMethod: httpMethod
+                restApiId: restApiId,
+                httpMethod: httpMethod,
+                statusCode: statusCode
             )
             
             _ = try apiGateway.getMethodResponse(input)
@@ -304,10 +306,10 @@ extension AWSLauncherProvider {
     public func integrationResponseIsExists(restApiId: String, statusCode: String, resourceId: String, httpMethod: String) -> Bool {
         do {
             let input = APIGateway.GetIntegrationResponseRequest(
-                restApiId: restApiId,
-                statusCode: statusCode,
                 resourceId: resourceId,
-                httpMethod: httpMethod
+                restApiId: restApiId,
+                httpMethod: httpMethod,
+                statusCode: statusCode
             )
             
             _ = try apiGateway.getIntegrationResponse(input)
@@ -323,10 +325,9 @@ extension AWSLauncherProvider {
         if !methodIsExists(restApiId: restApiId, httpMethod: httpMethod, resourceId: resourceId) {
             let putMethodRequest = APIGateway.PutMethodRequest(
                 restApiId: restApiId,
-                authorizationType: "NONE",
-                httpMethod: httpMethod,
-                apiKeyRequired: false,
-                resourceId: resourceId
+                resourceId: resourceId,
+                apiKeyRequired: false, authorizationType: "NONE",
+                httpMethod: httpMethod
             )
             let out = try apiGateway.putMethod(putMethodRequest)
             print("Created PutMethod for \(out.toJSONString())")
@@ -334,14 +335,13 @@ extension AWSLauncherProvider {
         
         if integrationIsExists(restApiId: restApiId, httpMethod: httpMethod, resourceId: resourceId) {
             let lambdaURIPatch = APIGateway.PatchOperation(
-                path: "/uri",
-                op: .replace,
-                value: lambdaURI
+                value: lambdaURI, path: "/uri",
+                op: .replace
             )
             
             let input = APIGateway.UpdateIntegrationRequest(
-                restApiId: restApiId,
                 resourceId: resourceId,
+                restApiId: restApiId,
                 httpMethod: httpMethod,
                 patchOperations: [lambdaURIPatch]
             )
@@ -349,11 +349,11 @@ extension AWSLauncherProvider {
             print("Updated PutIntegration for \(out.toJSONString())")
         } else {
             let putIntegrationRequest = APIGateway.PutIntegrationRequest(
-                restApiId: restApiId,
                 integrationHttpMethod: "POST",
-                type: .awsProxy,
-                uri: lambdaURI,
                 resourceId: resourceId,
+                uri: lambdaURI,
+                restApiId: restApiId,
+                type: .awsProxy,
                 httpMethod: httpMethod
             )
             let out = try apiGateway.putIntegration(putIntegrationRequest)
@@ -364,8 +364,8 @@ extension AWSLauncherProvider {
             let input = APIGateway.PutIntegrationResponseRequest(
                 restApiId: restApiId,
                 statusCode: statusCode,
-                httpMethod: httpMethod,
-                resourceId: resourceId
+                resourceId: resourceId,
+                httpMethod: httpMethod
             )
             
             let out = try apiGateway.putIntegrationResponse(input)
@@ -374,10 +374,10 @@ extension AWSLauncherProvider {
         
         if !methodResponseIsExists(restApiId: restApiId, statusCode: statusCode, resourceId: resourceId, httpMethod: httpMethod) {
             let input = APIGateway.PutMethodResponseRequest(
-                restApiId: restApiId,
-                statusCode: statusCode,
                 resourceId: resourceId,
-                httpMethod: httpMethod
+                restApiId: restApiId,
+                httpMethod: httpMethod,
+                statusCode: statusCode
             )
             let out = try apiGateway.putMethodResponse(input)
             print("Created PutMethodResponse for \(out.toJSONString())")
@@ -474,20 +474,20 @@ extension AWSLauncherProvider {
         let key = "\(date)-lambda-package.zip"
         
         let input = S3.PutObjectRequest(
-            body: zipData,
-            key: key,
             contentType: "application/octet-stream",
             contentEncoding: "UTF-8",
-            bucket: lambdaCodeConfig.s3Bucket
+            bucket: lambdaCodeConfig.s3Bucket,
+            key: key,
+            body: zipData
         )
         
         let output = try s3.putObject(input)
         
         return Lambda.FunctionCode(
-            s3ObjectVersion: output.versionId,
             s3Bucket: lambdaCodeConfig.s3Bucket,
-            zipFile: nil,
-            s3Key: key
+            s3ObjectVersion: output.versionId,
+            s3Key: key,
+            zipFile: nil
         )
     }
     
@@ -563,8 +563,8 @@ extension AWSLauncherProvider {
     public func updateFunction(code: Lambda.FunctionCode, roleARN: String, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
         
         let input = Lambda.UpdateFunctionCodeRequest(
-            s3Bucket: code.s3Bucket,
             s3Key: code.s3Key,
+            s3Bucket: code.s3Bucket,
             s3ObjectVersion: code.s3ObjectVersion,
             functionName: functionName,
             publish: true
@@ -573,12 +573,12 @@ extension AWSLauncherProvider {
         _ = try lambda.updateFunctionCode(input)
         
         let updateFunctionConfigurationRequest = Lambda.UpdateFunctionConfigurationRequest(
-            role: roleARN,
-            environment: Lambda.Environment(variables: environment),
-            functionName: functionName,
-            timeout: lambdaCodeConfig.timeout,
             vpcConfig: lambdaCodeConfig.awsSDKSwiftVPCConfig,
-            memorySize: lambdaCodeConfig.memory
+            timeout: lambdaCodeConfig.timeout,
+            role: roleARN,
+            memorySize: lambdaCodeConfig.memory,
+            environment: Lambda.Environment(variables: environment),
+            functionName: functionName
         )
         
         return try lambda.updateFunctionConfiguration(updateFunctionConfigurationRequest)
@@ -587,17 +587,16 @@ extension AWSLauncherProvider {
     public func createFunction(code: Lambda.FunctionCode, roleARN: String, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
         
         let input = Lambda.CreateFunctionRequest(
-            role: roleARN,
-            environment: Lambda.Environment(variables: environment),
-            functionName: functionName,
-            timeout: Int32(lambdaCodeConfig.timeout),
             vpcConfig: lambdaCodeConfig.awsSDKSwiftVPCConfig,
+            timeout: Int32(lambdaCodeConfig.timeout), role: roleARN,
+            handler: lambdaHandler,
+            runtime: .provided,
             memorySize: lambdaCodeConfig.memory,
+            publish: true,
             description: "Automatically generated by Hexaville",
             code: code,
-            publish: true,
-            handler: lambdaHandler,
-            runtime: .nodejs43
+            environment: Lambda.Environment(variables: environment),
+            functionName: functionName
         )
         
         return try lambda.createFunction(input)
@@ -657,8 +656,8 @@ extension AWSLauncherProvider {
         
         if patchOperations.count > 0 {
             let input = APIGateway.UpdateRestApiRequest(
-                patchOperations: patchOperations,
-                restApiId: restApiId
+                restApiId: restApiId,
+                patchOperations: patchOperations
             )
             _ = try apiGateway.updateRestApi(input)
         }
@@ -696,10 +695,10 @@ extension AWSLauncherProvider {
             // TODO limit
             let addPermissionRequest = Lambda.AddPermissionRequest(
                 action: "lambda:InvokeFunction",
-                statementId: UUID().uuidString.lowercased(),
                 principal: "apigateway.amazonaws.com",
                 functionName: functionName,
-                sourceArn: sourceARN
+                sourceArn: sourceARN,
+                statementId: UUID().uuidString.lowercased()
             )
             _ = try lambda.addPermission(addPermissionRequest)
         }
@@ -710,17 +709,17 @@ extension AWSLauncherProvider {
             return sourceARN != arn
         })
         .forEach { policy in
-            let input = Lambda.RemovePermissionRequest(functionName: functionName, statementId: policy["Sid"].stringValue)
+            let input = Lambda.RemovePermissionRequest(statementId: policy["Sid"].stringValue, functionName: functionName)
             print("deleting lambda policy for.... \(input.toJSONString())")
             _ = try lambda.removePermission(input)
         }
         
         print("deplying to \(deploymentStage.stringValue)")
         let createDeploymentRequest = APIGateway.CreateDeploymentRequest(
-            restApiId: restApiId,
-            stageDescription: "",
-            cacheClusterSize: nil,
             stageName: deploymentStage.stringValue,
+            restApiId: restApiId,
+            cacheClusterSize: nil,
+            stageDescription: "",
             cacheClusterEnabled: false,
             description: "",
             variables: [:]
