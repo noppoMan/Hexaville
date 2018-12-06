@@ -5,9 +5,9 @@
         "package": "AWSSDKSwift",
         "repositoryURL": "https://github.com/swift-aws/aws-sdk-swift.git",
         "state": {
-          "branch": "sync-models-with-aws-sdk-go-v1.15.90",
-          "revision": "f4282b423264c0aa29926ca1102f3cbc9d0c9aa4",
-          "version": null
+          "branch": null,
+          "revision": "b66a8ad7f949ef80a503069603ad1abd240e7f7d",
+          "version": "2.0.2"
         }
       },
       {
