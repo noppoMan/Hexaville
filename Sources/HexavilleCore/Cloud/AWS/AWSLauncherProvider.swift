@@ -597,7 +597,7 @@ extension AWSLauncherProvider {
             code: code,
             publish: true,
             handler: lambdaHandler,
-            runtime: .nodejs43
+            runtime: .nodejs810
         )
         
         return try lambda.createFunction(input)
