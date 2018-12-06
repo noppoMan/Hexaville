@@ -20,7 +20,7 @@ Ubuntu 14.04 in Docker
 * [RedisSessionStore](https://github.com/Hexaville/RedisSessionStore): Redis Session Store
 
 ## Recommended Database Clients
-* [Dynamodb](https://github.com/swift-aws/dynamodb): A Dynamodb typesafe client for swift (This is part of aws-sdk-swift)
+* [DynamoDB](https://github.com/swift-aws/aws-sdk-swift): A DynamoDB typesafe client in AWSSDKSwift
 
 ## Example Application for Hexaville
 
