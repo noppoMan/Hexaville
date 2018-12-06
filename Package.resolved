@@ -5,9 +5,9 @@
         "package": "AWSSDKSwift",
         "repositoryURL": "https://github.com/swift-aws/aws-sdk-swift.git",
         "state": {
-          "branch": "fix-build-error",
-          "revision": "0bc1bf12f54795fce0b8fa5e5115d15547b80a46",
-          "version": null
+          "branch": null,
+          "revision": "d5727e974fe9d1f7ed01f19b8ddfcbec59a57f43",
+          "version": "2.0.1"
         }
       },
       {
