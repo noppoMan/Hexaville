@@ -54,6 +54,10 @@ public struct AWSLauncherProvider {
     
     let environment: [String: String]
     
+    let bootstrap = "bootstrap"
+    
+    let functionsh = "function.sh"
+    
     public func endpoint(restApiId: String, deploymentStage: DeploymentStage) -> String {
         return "https://\(restApiId).execute-api.\(region.rawValue).amazonaws.com/\(deploymentStage.stringValue)"
     }
@@ -105,36 +109,20 @@ public struct AWSLauncherProvider {
 
 extension AWSLauncherProvider {
     fileprivate func lambdaPackageShellContent() -> String {
-        var content = ""
-        content += "#!/usr/bin/env sh"
-        content += "\n"
-        content += "cd $2"
-        content += "\n"
-        content += "zip $1 $3 bootstrap function.sh ./*.so ./*.so.* -r assets"
-        return content
+        return """
+#!/usr/bin/env sh
+cd $2
+zip $1 $3 \(bootstrap) \(functionsh) ./*.so ./*.so.* -r assets
+"""
     }
     
     fileprivate func zipPackage(buildResult: BuildResult, hexavilleApplicationPath: String, executable: String) throws -> Data {
-        
         let customRuntimeTemplatePath = try Finder.findTemplatePath(for: "/lambda")
         
         let pkgFileName = "\(hexavilleApplicationPath)/lambda-package.zip"
-        let bootstrap = "bootstrap"
-        let functionsh = "function.sh"
-        
-        try FileManager.default.copyFiles(
-            from: "\(customRuntimeTemplatePath)/\(functionsh)",
-            to: buildResult.destination+"/\(functionsh)"
-        )
-        
-        try String(contentsOfFile: "\(customRuntimeTemplatePath)/\(functionsh)", encoding: .utf8)
-            .replacingOccurrences(of: "{{executablePath}}", with: executable)
-            .write(toFile: buildResult.destination+"/\(functionsh)", atomically: true, encoding: .utf8)
-        
-        try FileManager.default.copyFiles(
-            from: "\(customRuntimeTemplatePath)/\(bootstrap)",
-            to: buildResult.destination+"/\(bootstrap)"
-        )
+    
+        _ = Process.exec("cp", ["-f", "\(customRuntimeTemplatePath)/\(functionsh)", buildResult.destination])
+        _ = Process.exec("cp", ["-f", "\(customRuntimeTemplatePath)/\(bootstrap)", buildResult.destination])
         
         let assetPath = hexavilleApplicationPath+"/assets"
         if FileManager.default.fileExists(atPath: assetPath) {
@@ -535,7 +523,7 @@ extension AWSLauncherProvider {
     }
     
     var lambdaHandler: String {
-        return "index.handler"
+        return "function.handler"
     }
     
     public func updateFunctionCode(code: Lambda.FunctionCode) throws -> Lambda.FunctionConfiguration {
@@ -543,9 +531,9 @@ extension AWSLauncherProvider {
         
         do {
             _ = try getFunction()
-            return try updateFunction(code: code, roleARN: arn, environment: environment)
+            return try updateFunction(code: code, roleARN: arn)
         } catch LambdaErrorType.resourceNotFoundException(_) {
-            return try createFunction(code: code, roleARN: arn, environment: environment)
+            return try createFunction(code: code, roleARN: arn)
         } catch {
             throw error
         }
@@ -560,8 +548,7 @@ extension AWSLauncherProvider {
         return configuration
     }
     
-    public func updateFunction(code: Lambda.FunctionCode, roleARN: String, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
-        
+    public func updateFunction(code: Lambda.FunctionCode, roleARN: String) throws -> Lambda.FunctionConfiguration {
         let input = Lambda.UpdateFunctionCodeRequest(
             s3Key: code.s3Key,
             s3Bucket: code.s3Bucket,
@@ -576,6 +563,8 @@ extension AWSLauncherProvider {
             vpcConfig: lambdaCodeConfig.awsSDKSwiftVPCConfig,
             timeout: lambdaCodeConfig.timeout,
             role: roleARN,
+            handler: lambdaHandler,
+            runtime: .provided,
             memorySize: lambdaCodeConfig.memory,
             environment: Lambda.Environment(variables: environment),
             functionName: functionName
@@ -584,8 +573,7 @@ extension AWSLauncherProvider {
         return try lambda.updateFunctionConfiguration(updateFunctionConfigurationRequest)
     }
     
-    public func createFunction(code: Lambda.FunctionCode, roleARN: String, environment: [String : String] = [:]) throws -> Lambda.FunctionConfiguration {
-        
+    public func createFunction(code: Lambda.FunctionCode, roleARN: String) throws -> Lambda.FunctionConfiguration {
         let input = Lambda.CreateFunctionRequest(
             vpcConfig: lambdaCodeConfig.awsSDKSwiftVPCConfig,
             timeout: Int32(lambdaCodeConfig.timeout), role: roleARN,

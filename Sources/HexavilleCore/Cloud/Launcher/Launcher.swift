@@ -69,6 +69,8 @@ public class Launcher {
     let configuration: HexavilleFile
     
     public init(hexavilleApplicationPath: String, configuration: HexavilleFile, deploymentStage: DeploymentStage = .staging, environment: [String: String] = [:]) {
+        var environment = environment
+        environment["SWIFT_EXECUTABLE"] = configuration.executableTarget
         self.provider = configuration.createProvider(withEnvironment: environment)
         self.hexavilleApplicationPath = hexavilleApplicationPath
         self.configuration = configuration

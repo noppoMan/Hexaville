@@ -1,4 +1,6 @@
 function handler() {
-  EVENT_DATA=$1
-  echo `{{executablePath}}` $EVENT_DATA
+  export LAMBDA_INTEGRATION_EVENT=$1
+  COMMAND="./$SWIFT_EXECUTABLE execute"
+  RESPONSE=`$COMMAND`
+  echo $RESPONSE
 }
