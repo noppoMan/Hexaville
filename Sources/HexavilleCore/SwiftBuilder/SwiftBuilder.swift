@@ -19,7 +19,7 @@ class SwiftBuilder {
         self.version = version
     }
     
-    func build(with defaultProvider: SwiftBuildEnvironmentProvider? = nil, config: Configuration, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
+    func build(with defaultProvider: SwiftBuildEnvironmentProvider? = nil, config: HexavilleFile, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
         let provider = DockerBuildEnvironmentProvider()
         return try provider.build(
             config: config,

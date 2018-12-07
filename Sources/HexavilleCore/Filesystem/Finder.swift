@@ -11,7 +11,7 @@ import Foundation
 public struct Finder {
     
     private static var absoluteFilePathAtCompiling: String {
-        return #file.characters
+        return #file
             .split(separator: "/", omittingEmptySubsequences: false)
             .dropLast(3)
             .map { String($0) }

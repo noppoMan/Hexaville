@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="4.1"
+VERSION="4.2"
 
 # Determine OS
 UNAME=`uname`;
@@ -12,27 +12,17 @@ then
 else
     if [[ $UNAME == "Linux" ]];
     then
-        UBUNTU_RELEASE=`lsb_release -a 2>/dev/null`;
-        if [[ $UBUNTU_RELEASE == *"15.10"* ]];
-        then
-            OS="ubuntu1510";
-        else
-            OS="ubuntu1404";
-        fi
+        OS="ubuntu1404";
     fi
 fi
 
-if [[ $OS != "macos" ]];
+if [[ $OS == "macos" ]]; 
 then
+    brew install libressl
+else
     sudo apt-get update
     sudo apt-get install -y clang libicu-dev uuid-dev
-
-    if [[ $OS == "ubuntu1510" ]];
-    then
-        SWIFTFILE="swift-$VERSION-RELEASE-ubuntu15.10";
-    else
-        SWIFTFILE="swift-$VERSION-RELEASE-ubuntu14.04";
-    fi
+    SWIFTFILE="swift-$VERSION-RELEASE-ubuntu14.04";
     wget https://swift.org/builds/swift-$VERSION-release/$OS/swift-$VERSION-RELEASE/$SWIFTFILE.tar.gz
     tar -zxf $SWIFTFILE.tar.gz
     export PATH=$PWD/$SWIFTFILE/usr/bin:"${PATH}"

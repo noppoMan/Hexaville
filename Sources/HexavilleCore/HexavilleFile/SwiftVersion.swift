@@ -12,9 +12,22 @@ public enum SwiftVersion {
     case developmentSnapshot(SwiftDevelopmentSnapshot)
 }
 
+extension SwiftVersion: Decodable {
+    enum CodingKeys: CodingKey {
+        case release
+        case developmentSnapshot
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        self = try SwiftVersion(string: value)
+    }
+}
+
 extension SwiftVersion {
     public init(string versionString: String) throws {
-        if versionString.contains(substring: SwiftDevelopmentSnapshot.snapshotIdentifer) {
+        if versionString.contains(SwiftDevelopmentSnapshot.snapshotIdentifer) {
             self = .developmentSnapshot(try SwiftDevelopmentSnapshot(string: versionString))
         } else {
             self = .release(try Version(string: versionString))

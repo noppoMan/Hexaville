@@ -8,8 +8,7 @@ Build applications comprised of microservices that run in response to events, au
 It's the greatest motivation to help many Swift and mobile application developers with rapid server side development and low cost operation.
 
 ### Supported Cloud Servises
-* AWS(lambda+api-gateway, Node.js 4.3 runtime)
-
+* AWS Lambda(Node.js 8.1 Runtime) + APIGateway
 
 ### Swift Build Environments
 
@@ -21,7 +20,7 @@ Ubuntu 14.04 in Docker
 * [RedisSessionStore](https://github.com/Hexaville/RedisSessionStore): Redis Session Store
 
 ## Recommended Database Clients
-* [Dynamodb](https://github.com/swift-aws/dynamodb): A Dynamodb typesafe client for swift (This is part of aws-sdk-swift)
+* [DynamoDB](https://github.com/swift-aws/aws-sdk-swift): A DynamoDB typesafe client in AWSSDKSwift
 
 ## Example Application for Hexaville
 
@@ -78,7 +77,7 @@ If the tool version is higher than 3.1, layouts and definiations of `Package.swi
 
 **e.g.**
 ```sh
-# swift.version will be 4.0
+# swift.version will be 4.2
 hexaville generate Hello
 
 # swift.version will be 3.1
@@ -109,7 +108,7 @@ app.use(RandomNumberGenerateMiddleware())
 
 let router = Router()
 
-router.use(.get, "/") { request, context in
+router.use(.GET, "/") { request, context in
     let htmlString = "<html><head><title>Hexaville</title></head><body>Welcome to Hexaville!</body></html>"
     return Response(headers: ["Content-Type": "text/html"], body: htmlString)
 }
@@ -124,51 +123,54 @@ try app.run()
 Fill `access_key_id`, `secret_access_key`, `region`.
 
 ```yml
-name: test-app
-service: aws
-aws:
-  credential:
-    access_key_id: xxxxxxxxx
-    secret_access_key: xxxxxxxxx
-  region: us-east-1
-  lambda:
-    bucket: xxxxxxxxx # here is generated automatically
-    role: xxxxxxxxx # should be a `arn:aws:iam::{accountId}:role/{roleName}`
-    timout: 10
-build:
-  nocache: false
+appName: hello
+executableTarget: hello
+
 swift:
-  build:
-    configuration: release # default is debug
+  version: 4.2
+  buildOptions:
+    configuration: release
+
+provider:
+  aws:
+    credential:
+      accessKeyId: xxxxxxxxxxxxxxx
+      secretAccessKey: xxxxxxxxxxxxxxx
+    region: us-east-1
+    lambda:
+      s3Bucket: xxxxxxxxx # here is generated automatically
+      role: xxxxxxxxx # should be a `arn:aws:iam::{accountId}:role/{roleName}`
+      timeout: 10
+      memory: 256
 ```
 
 #### Required Properties
 
-* name
-* service
+* appName
+* executableTarget
 
-if `service` is `aws`
+if `provider` is `aws`
 
-* aws
-  * lambda.bucket
+* provider
+  * aws.lambda.s3Bucket
 
 ### Deploy a Project
 
-`Usage: hexaville deploy <executableName>`
+`Usage: hexaville deploy`
 
 Use this when you have made changes to your Functions, Events or Resources.
 This operation take a while.
 
 ```sh
 cd /path/to/your/app
-hexaville deploy Hello
+hexaville deploy
 ```
 
 #### Troubleshooting
 
-**1. What is executableName?**
+**1. What is executableTarget in Hexavillefile.yml?**
 
-`<executableName>` is a name that specified in `products(name: 'executableName')` on Package.swift. In following case, it's a `my-app` not `MyApp`.
+`executableTarget` is a name that specified in `products(name: 'executableTarget')` on Package.swift. In following case, it's a `my-app` not `MyApp`.
 
 ```swift
 let package = Package(
@@ -186,7 +188,7 @@ If you got **bucketAlreadyExists("The requested bucket name is not available. Th
 
 ```yml
 lambda:
-  bucket: unique-bucket-name-here
+  s3Bucket: unique-bucket-name-here
 ```
 
 ### Show routes
@@ -288,10 +290,11 @@ You can extend followings settings at `lambda` property in `Hexavillefile.yml`
 
 **e.g.**
 ```yaml
-aws: 
-  lambda:
-    timeout: 20
-    memory: 1024
+provider:
+  aws:
+    lambda:
+      timeout: 20
+      memory: 1024
 ```
 
 ## VPC
@@ -301,33 +304,29 @@ You can add VPC configuration to the lambda function in Hexavillefile.yml by add
 Here's an example.
 
 ```yaml
-name: test-app
-service: aws
-aws:
-  ....
-  lambda:
-    ....
-    vpc:
-       subnetIds:
-         - subnet-1234
-         - subnet-56789
-       securityGroupIds:
-         - sg-1234
-         - sg-56789
+provider:
+  aws:
+    lambda:
+      vpc:
+        subnetIds:
+          - subnet-1234
+          - subnet-56789
+        securityGroupIds:
+          - sg-1234
+          - sg-56789
 ```
 
 ## Swift Versioning and Build Configuration
 
 You can configure swift versioning and build configuration in `swift` directive
 
-* default swift version is `4.0`
+* default swift version is `4.2`
 * default build configuration is `debug`
 
 ```yaml
-name: test-app
 swift:
-  version: 4.0 #format should be major.minor.[patch] or valid SWIFT DEVELOPMENT-SNAPSHOT name
-  build:
+  version: 4.2 #format should be major.minor.[patch] or valid SWIFT DEVELOPMENT-SNAPSHOT name
+  buildOptions:
     configuration: release
 ```
 
@@ -393,6 +392,7 @@ If you find a security vulnerability, please contact yuki@miketokyo.com as soon 
 ## Related Articles
 * [Serverless Server Side Swift with Hexaville](https://medium.com/@yukitakei/serverless-server-side-swift-with-hexaville-ef0e1788a20)
 * [Serverless Server Side Swift@Builderscon Tokyo 2017](https://speakerdeck.com/noppoman/serverless-server-side-swift)
+* [WEB+DB PRESS Vol.101](https://www.amazon.co.jp/WEB-DB-PRESS-Vol-101-%E6%A3%AE%E6%9C%AC/dp/4774192392)
 
 ## License
 

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Prorsum
 
 /**
  Thread safety EventEmitter
