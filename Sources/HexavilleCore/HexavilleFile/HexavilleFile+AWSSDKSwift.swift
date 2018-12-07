@@ -35,7 +35,7 @@ typealias AWSLambda = Lambda
 extension HexavilleFile.Provider.AWS.Lambda {
     var awsSDKSwiftVPCConfig: AWSLambda.VpcConfig? {
         if let vpc = self.vpc {
-            return AWSLambda.VpcConfig(subnetIds: vpc.subnetIds, securityGroupIds: vpc.securityGroupIds)
+            return AWSLambda.VpcConfig(securityGroupIds: vpc.securityGroupIds, subnetIds: vpc.subnetIds)
         }
         
         return nil
