@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "{{appName}}",
     dependencies: [
-        .package(url: "https://github.com/noppoMan/HexavilleFramework.git", .branch("v1.0.0-rc.1")),
+        .package(url: "https://github.com/noppoMan/HexavilleFramework.git", .upToNextMajor(from: "1.0.0-rc.1")),
     ],
     targets: [
         .target(name: "{{appName}}", dependencies: ["HexavilleFramework"]),
