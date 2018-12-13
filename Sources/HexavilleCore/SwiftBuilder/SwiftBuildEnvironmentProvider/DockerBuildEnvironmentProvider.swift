@@ -42,6 +42,11 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
     }
     
     func build(config: HexavilleFile, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
+        let tag = executable.lowercased()
+        let sharedDir = "\(hexavilleApplicationPath)/__docker_shared"
+        if let _ = ProcessInfo.processInfo.environment["DEBUG_SKIP_SWIFT_BUILD"] {
+            return BuildResult(destination: sharedDir+"/\(config.swift.buildMode)", dockerTag: tag)
+        }
         
         print("\nDocker version")
         let dockerVersionResult = Process.exec("docker", ["version"])
@@ -82,8 +87,6 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
                 encoding: .utf8
         )
         
-        let tag = executable.lowercased()
-        
         var opts = ["build", "-t", tag, "-f", "\(hexavilleApplicationPath)/Dockerfile", hexavilleApplicationPath]
         if let docker = config.docker, let nocache = docker.buildOptions.nocache, nocache {
             opts.insert("--no-cache", at: 1)
@@ -94,7 +97,6 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             throw DockerBuildEnvironmentProviderError.dockerBuildFailed
         }
         
-        let sharedDir = "\(hexavilleApplicationPath)/__docker_shared"
         let mkdirResult = Process.exec("mkdir", ["-p", sharedDir])
         if mkdirResult.terminationStatus != 0 {
             throw DockerBuildEnvironmentProviderError.couldNotMakeSharedDir
