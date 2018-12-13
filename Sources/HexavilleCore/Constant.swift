@@ -19,5 +19,9 @@ public struct Constant {
     public static var defaultSwiftVersion: SwiftVersion {
         return .release(Version(major: 4, minor: 2))
     }
+    
+    public static let appPrefix = "hexaville"
+    
+    public static let runtimeVersion = "rv1"
 }
 

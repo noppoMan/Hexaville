@@ -21,14 +21,14 @@ extension HexavilleFile {
             }
             
             public struct Lambda: Codable {
-                public let s3Bucket: String
+                public let s3Bucket: String?
                 public let role: String?
                 public let memory: Int32
                 public let timeout: Int32
                 public let vpc: VPC?
                 
                 public init(
-                    s3Bucket: String,
+                    s3Bucket: String?,
                     role: String? = nil,
                     timeout: Int32 = 10,
                     memory: Int32 = 256,
