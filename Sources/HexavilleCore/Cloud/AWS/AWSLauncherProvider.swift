@@ -65,7 +65,8 @@ public class AWSLauncherProvider {
         return .nodejs810
     }
     
-    var _fetchedBucketName: String?
+    /// for storing defaultBucketName that fetched from Lambda's TAG
+    private var _fetchedBucketName: String?
     
     let tagKeyForS3DefaultBucket = "S3_DEFAULT_BUCKET"
     
