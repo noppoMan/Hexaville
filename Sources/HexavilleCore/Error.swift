@@ -11,5 +11,5 @@ import Foundation
 enum HexavilleCoreError: Error {
     case missingRequiredParamInHexavillefile(String)
     case unsupportedService(String)
-    case couldNotFindTemplate(in: [String])
+    case couldNotFindFile(in: [String])
 }

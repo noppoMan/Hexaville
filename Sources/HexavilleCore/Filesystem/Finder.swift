@@ -21,19 +21,13 @@ public struct Finder {
     public static func findPath(childDir: String) throws -> String {
         let manager = FileManager.default
         
-        var templatesPathCandidates: [String] = []
+        let executablePath = ProcessInfo.processInfo.arguments[0]
+        let hexavilleDevelopmentRoot = executablePath.components(separatedBy: ".build")[0]
         
-        let paths = ProcessInfo.processInfo.arguments[0].split(separator: "/")
-        if paths.count > 3 {
-            let projectRoot = "/\(paths[0..<paths.count-3].joined(separator: "/"))"
-            let relativePath = FileManager.default.currentDirectoryPath+projectRoot
-            templatesPathCandidates.append(contentsOf: [projectRoot, relativePath])
-        }
-        
-        templatesPathCandidates.append(contentsOf: [
-            manager.currentDirectoryPath,
+        var templatesPathCandidates: [String] = [
+            "\(hexavilleDevelopmentRoot)",
             NSHomeDirectory()+"/.hexaville"
-        ])
+        ]
         
         do {
             let execPath = ProcessInfo.processInfo.arguments[0]
@@ -55,7 +49,7 @@ public struct Finder {
             return absoluteFilePathAtCompiling+childDir
         }
         
-        throw HexavilleCoreError.couldNotFindTemplate(in: templatesPathCandidates)
+        throw HexavilleCoreError.couldNotFindFile(in: templatesPathCandidates)
     }
     
     public static func findTemplatePath(for childDir: String = "") throws -> String {
