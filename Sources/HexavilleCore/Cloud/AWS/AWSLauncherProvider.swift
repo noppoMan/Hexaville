@@ -778,7 +778,7 @@ extension AWSLauncherProvider {
         do {
             let input = Lambda.GetFunctionRequest(functionName: functionName)
             let output = try lambda.getFunction(input)
-            defaultBucketName = (output.tags ?? [:])["S3_DEFAULT_BUCKET"] ?? createBucketName()
+            defaultBucketName = (output.tags ?? [:])[tagKeyForS3DefaultBucket] ?? createBucketName()
         } catch {
             switch error {
             case LambdaErrorType.resourceNotFoundException:
