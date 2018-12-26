@@ -191,9 +191,9 @@ lambda:
   s3Bucket: unique-bucket-name-here
 ```
 
-### Show routes
+### Show Your Endpoint
 
-show routes with running `routes` command at your Project root dir.
+show endpoint and routes to run `routes` command at your Project root.
 
 ```sh
 cd /path/to/your/app
@@ -202,18 +202,15 @@ hexaville routes
 
 Output is like following.
 ```
-Endpoint: https://id.execute-api.ap-northeast-1.amazonaws.com/staging
+Endpoint: https://xxxxxx.execute-api.ap-northeast-1.amazonaws.com/staging
 Routes:
-  POST    /hello/{id}
-  GET    /hello/{id}
-  GET    /hello
-  GET    /
-  GET    /random_img
+  ANY    /
+  ANY    /{proxy+}
 ```
 
 ### Access to your resources
 ```
-curl https://id.execute-api.ap-northeast-1.amazonaws.com/staging/
+curl https://xxxxxx.execute-api.ap-northeast-1.amazonaws.com/staging/
 ```
 
 ## Binary Media Types
