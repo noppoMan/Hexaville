@@ -50,24 +50,6 @@ class GenerateProject: Command {
         return swiftVersion
     }
     
-    private func createBucketName(from projectName: String, hashId: String) -> String {
-        let prefix = "hexaville-"
-        let suffix = "-\(hashId)-bucket"
-        
-        let bucketNameMaxLength = 63
-        let maxLength = bucketNameMaxLength - (prefix + suffix).count
-        
-        let allowedCharacters = Set("abcdefghijklmnopqrstuvwxyz1234567890-")
-        let sanitizedCharacters = projectName
-            .lowercased()
-            .filter { allowedCharacters.contains($0) }
-            .prefix(maxLength)
-        
-        let sanitizedName = String(sanitizedCharacters)
-        
-        return prefix + sanitizedName + suffix
-    }
-    
     func execute() throws {
         do {
             let out = (dest.value ?? FileManager.default.currentDirectoryPath) + "/\(projectName.value)"
@@ -77,14 +59,6 @@ class GenerateProject: Command {
             if FileManager.default.fileExists(atPath: packageSwiftPath) {
                 throw HexavilleError.projectAlreadyCreated(out)
             }
-            let hashids = Hashids(salt: UUID().uuidString)
-            
-            #if os(Linux)
-            srandom(UInt32(time(nil)))
-            let randomNumber = Int(UInt32(random() % 10000))
-            #else
-            let randomNumber = Int(arc4random_uniform(9999))
-            #endif
             
             let swiftVersion = try resolveSwiftVersion()
             
@@ -92,13 +66,8 @@ class GenerateProject: Command {
             try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Swift\(swiftVersion.asCompareableVersion().major)"))", to: out)
             try FileManager.default.copyFiles(from: "\(Finder.findTemplatePath(for: "/SwiftProject/Sources"))", to: "\(out)/Sources/\(projectName.value)")
             
-            let hashId = hashids.encode(randomNumber)!
-            
-            let bucketName = createBucketName(from: projectName.value, hashId: hashId)
-            
             try String(contentsOfFile: ymlPath, encoding: .utf8)
                 .replacingOccurrences(of: "{{appName}}", with: projectName.value)
-                .replacingOccurrences(of: "{{bucketName}}", with: bucketName)
                 .replacingOccurrences(of: "{{swiftVersion}}", with: swiftVersion.versionString)
                 .write(toFile: ymlPath, atomically: true, encoding: .utf8)
             

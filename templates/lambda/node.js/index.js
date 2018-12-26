@@ -67,18 +67,26 @@ exports.handler = function(event, context, callback) {
     path += `?${query}`;
   }
 
-  const header = Object.keys(headers).map(function(key) { return `${key}=${headers[key]}` }).join("&");
-  const body = event.body || '';
-
-  const proc = spawn(`${__dirname}/{{executablePath}}`, [
+  const opts = [
     "execute",
     method,
-    path,
-    "--header",
-    header,
-    "--body",
-    body
-  ], {
+    path
+  ];
+
+  const headerFields = Object.keys(headers);
+
+  if(headerFields.length > 0) {
+    const header = headerFields.map(function(key) { return `${key}=${headers[key]}` }).join("&");
+    opts.push("--header");
+    opts.push(new Buffer(header).toString("base64"));
+  }
+
+  if(event.body && event.body !== "") {
+    opts.push("--body");
+    opts.push(body);
+  }
+
+  const proc = spawn(`${__dirname}/{{executablePath}}`, opts, {
     stdio: ['pipe', 'pipe', process.stderr],
     env: process.env
   });

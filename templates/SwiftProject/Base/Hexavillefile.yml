@@ -17,7 +17,7 @@ provider:
     #   secretAccessKey: xxxxxxxxxxxxxxx
     region: us-east-1
     lambda:
-      s3Bucket: {{bucketName}}
+      # s3Bucket: xxxxxxxxxxxxxxx
       # role: xxxxxxxxxxxxxxx
       timeout: 10
       memory: 256
