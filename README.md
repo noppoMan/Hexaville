@@ -8,11 +8,18 @@ Build applications comprised of microservices that run in response to events, au
 It's the greatest motivation to help many Swift and mobile application developers with rapid server side development and low cost operation.
 
 ### Supported Cloud Servises
-* AWS Lambda(Node.js 8.1 Runtime) + APIGateway
+* [x] AWS Lambda(Node.js 8.1 Runtime) + APIGateway
+* [ ] Google Cloud Function
 
-### Swift Build Environments
+### Pre-Required
 
-Ubuntu 14.04 in Docker
+* [Docker](https://www.docker.com/): using for builiding swift application
+* [serverless](https://serverless.com/): using for deployment
+
+### Deployment Engine
+
+* 0.x: fullscratch deployment with (aws-sdk-swift)[https://github.com/swift-aws/aws-sdk-swift]
+* 1.x or later: [serverless framework](https://serverless.com/)
 
 ## Plugins
 * [HexavilleAuth](https://github.com/Hexaville): A pluggable framework for providing various authentication methods(OAuth, simple password based etc.)
@@ -30,12 +37,12 @@ Ubuntu 14.04 in Docker
 * Data persistence with DynamoDB
 * Dynamic HTML Rendering
 
-## Quick Start
+# Quick Start
 
-### Install Docker for mac
+## Install Docker for mac
 Install Docker for mac from [here](https://docs.docker.com/docker-for-mac/install/), If you haven't installed yet.
 
-### Install Hexaville from Script(Highly recommended)
+## Install Hexaville from Script(Highly recommended)
 
 ```
 curl -L https://rawgit.com/noppoMan/Hexaville/master/install.sh | bash
@@ -53,7 +60,7 @@ source ~/.bashrc
 hexaville
 ```
 
-### Install Hexaville from Source
+## Install Hexaville from Source
 ```sh
 git clone https://github.com/noppoMan/Hexaville.git
 cd Hexaville
@@ -61,7 +68,7 @@ swift build
 ```
 and then, should link Hexaville executable path to /usr/local/bin or something like that.
 
-### Create a Project
+## Create a Project
 
 `Usage: hexaville generate <projectName>`
 
@@ -69,7 +76,7 @@ and then, should link Hexaville executable path to /usr/local/bin or something l
 hexaville generate Hello --dest /path/to/your/app
 ```
 
-#### swift-tools-version
+### swift-tools-version
 You can specify swift-tools-version for the new project with `--swift-tools-version` option.
 Current default tool version is `4.0`
 
@@ -87,7 +94,7 @@ hexaville generate Hello --swift-tools-version 3.1
 hexaville generate Hello --swift-tools-version swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
 ```
 
-### Open your project with Xcode
+## Open your project with Xcode
 
 ```
 swift package generate-xcodeproj
@@ -118,55 +125,34 @@ app.use(router)
 try app.run()
 ```
 
-### Edit Hexavillefile.yml
+## Deploy Your Project
 
-Fill `access_key_id`, `secret_access_key`, `region`.
+Hexaville depends on [serverless](https://serverless.com/) at deployment.
 
-```yml
-appName: hello
-executableTarget: hello
+See Install Guide: https://serverless.com/framework/docs/getting-started/
 
-swift:
-  version: 4.2
-  buildOptions:
-    configuration: release
+### Packaging hexaville application
 
-provider:
-  aws:
-    credential:
-      accessKeyId: xxxxxxxxxxxxxxx
-      secretAccessKey: xxxxxxxxxxxxxxx
-    region: us-east-1
-    lambda:
-      s3Bucket: xxxxxxxxx # here is generated automatically
-      role: xxxxxxxxx # should be a `arn:aws:iam::{accountId}:role/{roleName}`
-      timeout: 10
-      memory: 256
-```
+`hexaville package` command does the following.
 
-#### Required Properties
-
-* appName
-* executableTarget
-
-if `provider` is `aws`
-
-* provider
-  * aws.lambda.s3Bucket
-
-### Deploy a Project
-
-`Usage: hexaville deploy`
-
-Use this when you have made changes to your Functions, Events or Resources.
-This operation take a while.
+* build a swift application on the docker(Ubuntu14.04) to create the ELF that is executed on servrless environment.
+* zip ELF, swift standard libraries, runtime program and assets
 
 ```sh
 cd /path/to/your/app
-hexaville deploy
+hexaville package
 ```
 
-#### Troubleshooting
+### Deploying to the cloud
+
+```sh
+serverless deploy --stage staging
+```
+
+Default serverless.yml that is created by `hexaville generate` has only staging and production environment.
+If you'd like to add other environments, please edit severless.yml manually.
+
+### Troubleshooting
 
 **1. What is executableTarget in Hexavillefile.yml?**
 
@@ -182,36 +168,12 @@ let package = Package(
 )
 ```
 
-**2. Got `bucketAlreadyExists` Error?**
-
-If you got **bucketAlreadyExists("The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.")**, Change the bucket name for lambda in the Hexavillfile.yml
-
-```yml
-lambda:
-  s3Bucket: unique-bucket-name-here
-```
-
-### Show Your Endpoint
-
-show endpoint and routes to run `routes` command at your Project root.
-
-```sh
-cd /path/to/your/app
-hexaville routes
-```
-
-Output is like following.
-```
-Endpoint: https://xxxxxx.execute-api.ap-northeast-1.amazonaws.com/staging
-Routes:
-  ANY    /
-  ANY    /{proxy+}
-```
-
-### Access to your resources
+## Access to your api resources
 ```
 curl https://xxxxxx.execute-api.ap-northeast-1.amazonaws.com/staging/
 ```
+
+or access the endpoint from Browser.
 
 ## Binary Media Types
 
@@ -222,7 +184,7 @@ Currenty Hexaville supports following binary media types
 * application/x-protobuf
 * application/x-google-protobuf
 
-### Here is an example for getting image/jpeg
+### How to get binary content?
 
 Threr are two rules to respond to the binary content in the routing handler.
 * RowBinaryData should be encoded as Base64
@@ -268,50 +230,11 @@ You can debug your application with the HexavilleFramework's builtin web server 
 
 ## Environment Variables
 
-You can pass environment variables to the lambda function with using `.env`.
-The `.env` file should be put at your root directory of the HexavilleFramework Application.
+See: https://serverless.com/framework/docs/providers/aws/guide/variables/
 
-**The contents in .env is...**
-```
-SWIFT_ENV=production
-FACEBOOK_APP_ID=xxxxxxx
-FACEBOOK_APP_SECRET=xxxxxxx
-```
+## VPC and Security Groups
 
-## Extending Basic Settings
-
-You can extend followings settings at `lambda` property in `Hexavillefile.yml`
-
-* `Timeout`: Default is 10. Timeout limit is described at `Integration Timeout` section in [API Gateway's developer guide](http://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html#api-gateway-limits).
-* `Memory`: Default is 128(MB). Memory allocation range is described at `Memory allocation range` section in [Lambda's developer guide](http://docs.aws.amazon.com/lambda/latest/dg/limits.html).
-
-**e.g.**
-```yaml
-provider:
-  aws:
-    lambda:
-      timeout: 20
-      memory: 1024
-```
-
-## VPC
-
-You can add VPC configuration to the lambda function in Hexavillefile.yml by adding a vpc object property in the lambda configuration section. This object should contain the securityGroupIds and subnetIds array properties needed to construct VPC for this function.
-
-Here's an example.
-
-```yaml
-provider:
-  aws:
-    lambda:
-      vpc:
-        subnetIds:
-          - subnet-1234
-          - subnet-56789
-        securityGroupIds:
-          - sg-1234
-          - sg-56789
-```
+See: https://serverless.com/framework/docs/providers/aws/guide/functions#vpc-configuration
 
 ## Swift Versioning and Build Configuration
 
@@ -366,7 +289,9 @@ See the detail to see [README](https://github.com/Hexaville/hexaville-tcp-proxy-
 
 ## Cold Start
 
-Not implemented yet.
+There are several third parties's libraries to againt cold start on github.
+
+The major one is [serverless-plugin-warmup](https://github.com/FidelLimited/serverless-plugin-warmup)
 
 ## How to update Hexaville CLI Version?
 
