@@ -55,6 +55,7 @@ class GenerateProject: Command {
             let out = (dest.value ?? FileManager.default.currentDirectoryPath) + "/\(projectName.value)"
             let packageSwiftPath = out+"/Package.swift"
             let ymlPath = out+"/Hexavillefile.yml"
+            let serverlessYmlPath = out+"/serverless.yml"
             
             if FileManager.default.fileExists(atPath: packageSwiftPath) {
                 throw HexavilleError.projectAlreadyCreated(out)
@@ -76,6 +77,10 @@ class GenerateProject: Command {
                 .replacingOccurrences(of: "{{appNameLower}}", with: projectName.value.lowercased())
                 .write(toFile: packageSwiftPath, atomically: true, encoding: .utf8)
             
+            try String(contentsOfFile: serverlessYmlPath, encoding: .utf8)
+                .replacingOccurrences(of: "{{appName}}", with: projectName.value.lowercased())
+                .write(toFile: serverlessYmlPath, atomically: true, encoding: .utf8)
+            
         } catch {
             print(error)
             throw error
@@ -88,74 +93,51 @@ func loadHexavilleFile(hexavilleFilePath: String) throws -> HexavilleFile {
     return try HexavilleFile.load(ymlString: ymlString)
 }
 
-class RoutesCommand: Command {
-    let name = "routes"
-    let shortDescription  = "Show routes and endpoint for the API"
-    let stage = Key<String>("--stage", description: "Deployment Stage. default is staging")
-    
-    func execute() throws {
-        do {
-            let cwd = FileManager.default.currentDirectoryPath
-            let ymlPath = cwd+"/Hexavillefile.yml"
-            if !FileManager.default.fileExists(atPath: ymlPath) {
-                throw HexavilleError.couldNotFindManifestFile(ymlPath)
-            }
-            
-            let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-            let config = try loadHexavilleFile(hexavilleFilePath: ymlPath)
-            
-            let launcher = Launcher(
-                hexavilleApplicationPath: cwd,
-                configuration: config,
-                deploymentStage: deploymentStage
-            )
-            try launcher.showRoutes()
-        } catch {
-            print(error)
-            throw error
-        }
-    }
-}
-
-class Deploy: Command {
-    let name = "deploy"
-    let shortDescription  = "Deploy your application to the specified cloud provider"
+class BuildCommand: Command {
+    let name = "package"
+    let shortDescription  = "build and packaging your hexaville application"
     let hexavillefilePath = Key<String>("-c", "--hexavillefile", description: "Path for the Hexavillefile.yml")
-    let stage = Key<String>("--stage", description: "Deployment Stage. default is staging")
     
     func execute() throws {
         do {
-            var hexavileApplicationPath = FileManager.default.currentDirectoryPath
+            var hexavilleApplicationPath = FileManager.default.currentDirectoryPath
             var hexavilleFileYAML = "Hexavillefile.yml"
-            if var hexavillefilePath = hexavillefilePath.value {
-                hexavillefilePath = transformToAbsolutePath(hexavillefilePath)
+            if let hexavillefilePath = hexavillefilePath.value {
+                hexavilleApplicationPath = transformToAbsolutePath(hexavillefilePath)
                 if !FileManager.default.fileExists(atPath: hexavillefilePath) {
                     throw HexavilleError.couldNotFindHexavillefile(hexavillefilePath)
                 }
                 var splited = hexavillefilePath.components(separatedBy: "/")
                 hexavilleFileYAML = splited.removeLast()
-                hexavileApplicationPath = splited.joined(separator: "/")
+                hexavilleApplicationPath = splited.joined(separator: "/")
             }
             
-            var environment: [String: String] = [:]
-            do {
-                environment = try DotEnvParser.parse(fromFile: hexavileApplicationPath+"/.env")
-            } catch {
-                print(".env was not found")
-            }
+            let config = try loadHexavilleFile(hexavilleFilePath: "\(hexavilleApplicationPath)/\(hexavilleFileYAML)")
             
-            let deploymentStage = DeploymentStage(string: stage.value ?? "staging")
-            let config = try loadHexavilleFile(hexavilleFilePath: "\(hexavileApplicationPath)/\(hexavilleFileYAML)")
+            print("Hexavillefile: \(hexavilleApplicationPath)/\(hexavilleFileYAML)")
             
-            print("Hexavillefile: \(hexavileApplicationPath)/\(hexavilleFileYAML)")
-            
-            let launcher = Launcher(
-                hexavilleApplicationPath: hexavileApplicationPath,
-                configuration: config,
-                deploymentStage: deploymentStage,
-                environment: environment
+            let builder = SwiftBuilder(version: config.swift.version)
+            let result = try builder.build(
+                config: config,
+                hexavilleApplicationPath: hexavilleApplicationPath,
+                executable: config.executableTarget
             )
-            try launcher.launch()
+            
+            let package = try AWSLambdaPackager().package(
+                buildResult: result,
+                hexavilleApplicationPath: hexavilleApplicationPath,
+                executable: config.executableTarget
+            )
+            
+            print("###########################################################################")
+            print("Your application package was successfully created at \(package.destination)")
+            print("next step.")
+            print("")
+            print("    serverless deploy --stage staging or production")
+            print("")
+            print("guide: https://serverless.com/framework/docs/providers/aws/guide/deploying/")
+            print("###########################################################################")
+            
         } catch {
             fatalError("\(error)")
         }
@@ -179,5 +161,5 @@ SignalHandler.shared.trap(with: .int) {
 }
 
 let hexavilleCLI = CLI(name: "hexaville", version: detectVersion())
-hexavilleCLI.commands = [GenerateProject(), Deploy(), RoutesCommand()]
+hexavilleCLI.commands = [GenerateProject(), BuildCommand()]
 _ = hexavilleCLI.go()

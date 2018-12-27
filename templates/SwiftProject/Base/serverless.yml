@@ -1,0 +1,40 @@
+service: {{appName}}
+package:
+  artifact: .hexaville/lambda-package.zip
+
+custom:
+  {{appName}}:
+    environment:
+      staging:
+        NODE_ENV: staging
+      production:
+        NODE_ENV: production
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+functions:
+  hexaville:
+    handler: index.handler
+    environment: ${self:custom.{{appName}}.environment.${opt:stage}}
+    timeout: 29
+    memorySize: 256
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{any+}
+          method: ANY
+
+resources:
+  Resources:
+    ApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        BinaryMediaTypes:
+          - "image/*"
+          - "application/x-protobuf"
+          - "application/x-google-protobuf"
+          - "application/octet-stream"

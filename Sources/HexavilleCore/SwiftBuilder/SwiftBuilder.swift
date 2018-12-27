@@ -7,19 +7,19 @@
 //
 import Foundation
 
-enum SwiftBuilderError: Error {
+public enum SwiftBuilderError: Error {
     case unsupportedPlatform(String)
     case swiftBuildFailed
 }
 
-class SwiftBuilder {
-    let version: SwiftVersion
+public class SwiftBuilder {
+    public let version: SwiftVersion
     
-    init(version: SwiftVersion) {
+    public init(version: SwiftVersion) {
         self.version = version
     }
     
-    func build(with defaultProvider: SwiftBuildEnvironmentProvider? = nil, config: HexavilleFile, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
+    public func build(with defaultProvider: SwiftBuildEnvironmentProvider? = nil, config: HexavilleFile, hexavilleApplicationPath: String, executable: String) throws -> BuildResult {
         let provider = DockerBuildEnvironmentProvider()
         return try provider.build(
             config: config,
