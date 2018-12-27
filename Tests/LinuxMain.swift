@@ -3,7 +3,6 @@ import XCTest
 
 XCTMain([
     testCase(HexavilefileLoaderTest.allTests),
-    testCase(DotEnvParserTests.allTests),
     testCase(SwiftVersionTests.allTests),
     testCase(EventEmitterTests.allTests)
 ])
