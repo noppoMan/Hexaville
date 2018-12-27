@@ -64,6 +64,8 @@ public class AWSLauncherProvider {
     
     public let lambdaCodeConfig: HexavilleFile.Provider.AWS.Lambda
     
+    public let deploymentStage: DeploymentStage
+    
     let environment: [String: String]
     
     var runtime: Lambda.Runtime {
@@ -73,18 +75,18 @@ public class AWSLauncherProvider {
     /// for storing defaultBucketName that fetched from Lambda's TAG
     private var _fetchedBucketName: String?
     
-    fileprivate let routes = [
+    fileprivate let apiRoutes = [
         APIRoute(path: "/", method: "ANY"),
         APIRoute(path: "{proxy+}", method: "ANY"),
     ]
     
     let tagKeyForS3DefaultBucket = "S3_DEFAULT_BUCKET"
     
-    public func endpoint(restApiId: String, deploymentStage: DeploymentStage) -> String {
+    public func endpoint(restApiId: String) -> String {
         return "https://\(restApiId).execute-api.\(region.rawValue).amazonaws.com/\(deploymentStage.stringValue)"
     }
     
-    public init(appName: String, credential: AWSSDKSwiftCore.Credential? = nil, region: AWSSDKSwiftCore.Region? = nil, endpoints: AWSEndpoints? = nil, lambdaCodeConfig: HexavilleFile.Provider.AWS.Lambda, environment: [String: String]) {
+    public init(appName: String, credential: AWSSDKSwiftCore.Credential? = nil, region: AWSSDKSwiftCore.Region? = nil, endpoints: AWSEndpoints? = nil, lambdaCodeConfig: HexavilleFile.Provider.AWS.Lambda, environment: [String: String], deploymentStage: DeploymentStage) {
         self.credential = credential
         
         self.appName = appName
@@ -126,6 +128,7 @@ public class AWSLauncherProvider {
         
         self.lambdaCodeConfig = lambdaCodeConfig
         self.environment = environment
+        self.deploymentStage = deploymentStage
     }
 }
 
@@ -261,7 +264,7 @@ extension AWSLauncherProvider {
 // ApiGateway aliases
 extension AWSLauncherProvider {
     var apiName: String {
-        return "\(Constant.appPrefix)-\(Constant.runtimeVersion)-\(appName.lowercased())"
+        return "\(deploymentStage.stringValue)-\(appName.lowercased())"
     }
     
     public func currentRestAPI() throws -> APIGateway.RestApi {
@@ -294,7 +297,7 @@ extension AWSLauncherProvider {
         }
     }
     
-    public func stageIsExists(restApiId: String, deploymentStage: DeploymentStage) -> Bool {
+    public func stageIsExists(restApiId: String) -> Bool {
         do {
             let input = APIGateway.GetStageRequest(restApiId: restApiId, stageName: deploymentStage.stringValue)
             _ = try apiGateway.getStage(input)
@@ -471,7 +474,7 @@ extension AWSLauncherProvider {
 // lambda aliases
 extension AWSLauncherProvider {
     var functionName: String {
-        return "\(Constant.appPrefix)-\(Constant.runtimeVersion)-\(appName.lowercased())-function"
+        return "\(apiName)-function"
     }
     
     var lambdaHandler: String {
@@ -559,7 +562,7 @@ extension AWSLauncherProvider {
 
 // for commands
 extension AWSLauncherProvider {
-    func routes(deploymentStage: DeploymentStage) throws -> Routes {
+    func routes() throws -> Routes {
         let api = try currentRestAPI()
         let resources = try apiGateway.getResources(APIGateway.GetResourcesRequest(restApiId: api.id!))
         let resourceItems: [APIGateway.Resource] = resources.items ?? []
@@ -568,10 +571,10 @@ extension AWSLauncherProvider {
             Route(method: $0.resourceMethods?.keys.map({ $0 }) ?? [], resource: $0.path!)
         })
         
-        return Routes(endpoint: endpoint(restApiId: api.id!, deploymentStage: deploymentStage), routes: routes)
+        return Routes(endpoint: endpoint(restApiId: api.id!), routes: routes)
     }
     
-    func deploy(deploymentStage: DeploymentStage, buildResult: BuildResult, hexavilleApplicationPath: String, executable: String) throws -> DeployResult {
+    func deploy(buildResult: BuildResult, hexavilleApplicationPath: String, executable: String) throws -> DeployResult {
         let code = try uploadCodeToS3(
             buildResult: buildResult,
             hexavilleApplicationPath: hexavilleApplicationPath,
@@ -619,7 +622,7 @@ extension AWSLauncherProvider {
         
         var activeSourceARNs: [String] = []
         
-        for route in routes {
+        for route in apiRoutes {
             let paths = [route.path]
             var apiResources: [APIResource] = []
             
@@ -799,7 +802,7 @@ extension AWSLauncherProvider {
         
         let hashId = hashids.encode(randomNumber)!
         
-        let prefix = "\(Constant.appPrefix)-\(Constant.runtimeVersion)-"
+        let prefix = "\(apiName)-"
         let suffix = "-\(hashId)-bucket"
         
         let bucketNameMaxLength = 63

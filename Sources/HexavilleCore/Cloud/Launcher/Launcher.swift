@@ -69,7 +69,7 @@ public class Launcher {
     let configuration: HexavilleFile
     
     public init(hexavilleApplicationPath: String, configuration: HexavilleFile, deploymentStage: DeploymentStage = .staging, environment: [String: String] = [:]) {
-        self.provider = configuration.createProvider(withEnvironment: environment)
+        self.provider = configuration.createProvider(withEnvironment: environment, deploymentStage: deploymentStage)
         self.hexavilleApplicationPath = hexavilleApplicationPath
         self.configuration = configuration
         self.deploymentStage = deploymentStage
@@ -78,7 +78,7 @@ public class Launcher {
     public func showRoutes() throws {
         switch provider {
         case .aws(let launcher):
-            let routes = try launcher.routes(deploymentStage: deploymentStage)
+            let routes = try launcher.routes()
             print("Endpoint: \(routes.endpoint)")
             print("Routes:")
             for route in routes.routes {
@@ -118,7 +118,6 @@ public class Launcher {
         print("Build swift done.")
         
         let deployResult = try provider.deploy(
-            deploymentStage: deploymentStage,
             buildResult: result,
             hexavilleApplicationPath: hexavilleApplicationPath,
             executable: configuration.executableTarget
@@ -139,7 +138,7 @@ public class Launcher {
 
 
 extension HexavilleFile {
-    func createProvider(withEnvironment environemnt: [String: String]) -> CloudLauncherProvider {
+    func createProvider(withEnvironment environemnt: [String: String], deploymentStage: DeploymentStage) -> CloudLauncherProvider {
         switch provider {
         case .aws(let config):
             let provider = AWSLauncherProvider(
@@ -148,7 +147,8 @@ extension HexavilleFile {
                 region: config.awsSDKSwiftRegion,
                 endpoints: nil,
                 lambdaCodeConfig: config.lambda,
-                environment: environemnt
+                environment: environemnt,
+                deploymentStage: deploymentStage
             )
             return .aws(provider)
         }

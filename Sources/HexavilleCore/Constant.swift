@@ -21,7 +21,5 @@ public struct Constant {
     }
     
     public static let appPrefix = "hexaville"
-    
-    public static let runtimeVersion = "rv1"
 }
 
