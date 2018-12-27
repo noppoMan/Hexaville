@@ -13,14 +13,13 @@ custom:
 provider:
   name: aws
   runtime: nodejs8.10
-  timeout: 20
-  memorySize: 256
 
 functions:
-  {{appName}}:
+  hexaville:
     handler: index.handler
     environment: ${self:custom.{{appName}}.environment.${opt:stage}}
     timeout: 29
+    memorySize: 256
     events:
       - http:
           path: /
@@ -28,3 +27,14 @@ functions:
       - http:
           path: /{any+}
           method: ANY
+
+resources:
+  Resources:
+    ApiGatewayRestApi:
+      Type: AWS::ApiGateway::RestApi
+      Properties:
+        BinaryMediaTypes:
+          - "image/*"
+          - "application/x-protobuf"
+          - "application/x-google-protobuf"
+          - "application/octet-stream"

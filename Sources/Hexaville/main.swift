@@ -133,7 +133,7 @@ class BuildCommand: Command {
             print("Your application package was successfully created at \(package.destination)")
             print("next step.")
             print("")
-            print("    sls deploy --stage staging or production")
+            print("    serverless deploy --stage staging or production")
             print("")
             print("guide: https://serverless.com/framework/docs/providers/aws/guide/deploying/")
             print("###########################################################################")
