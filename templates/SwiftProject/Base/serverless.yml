@@ -1,0 +1,30 @@
+service: {{appName}}
+package:
+  artifact: .hexaville/lambda-package.zip
+
+custom:
+  {{appName}}:
+    environment:
+      staging:
+        NODE_ENV: staging
+      production:
+        NODE_ENV: production
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 20
+  memorySize: 256
+
+functions:
+  {{appName}}:
+    handler: index.handler
+    environment: ${self:custom.{{appName}}.environment.${opt:stage}}
+    timeout: 29
+    events:
+      - http:
+          path: /
+          method: ANY
+      - http:
+          path: /{any+}
+          method: ANY

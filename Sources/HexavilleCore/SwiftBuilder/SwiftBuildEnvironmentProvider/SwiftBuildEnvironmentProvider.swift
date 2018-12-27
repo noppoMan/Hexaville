@@ -6,9 +6,9 @@
 //
 //
 
-struct BuildResult {
-    let destination: String
-    let dockerTag: String?
+public struct BuildResult {
+    public let destination: String
+    public let dockerTag: String?
     
     init(destination: String, dockerTag: String? = nil) {
         self.destination = destination
@@ -16,6 +16,6 @@ struct BuildResult {
     }
 }
 
-protocol SwiftBuildEnvironmentProvider {
+public protocol SwiftBuildEnvironmentProvider {
     func build(config: HexavilleFile, hexavilleApplicationPath: String, executable: String) throws -> BuildResult
 }

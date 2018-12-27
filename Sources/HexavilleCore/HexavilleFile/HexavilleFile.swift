@@ -8,7 +8,6 @@ public enum DecodingError: Error {
 public struct HexavilleFile: Decodable {
     public let appName: String
     public let executableTarget: String
-    public let provider: Provider
     public let docker: Docker?
     public let swift: Swift
     

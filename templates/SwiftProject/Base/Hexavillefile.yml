@@ -9,22 +9,3 @@ swift:
 # docker:
 #   buildOptions:
 #     nocache: false
-
-provider:
-  aws:
-    # credential:
-    #   accessKeyId: xxxxxxxxxxxxxxx
-    #   secretAccessKey: xxxxxxxxxxxxxxx
-    region: us-east-1
-    lambda:
-      # s3Bucket: xxxxxxxxxxxxxxx
-      # role: xxxxxxxxxxxxxxx
-      timeout: 10
-      memory: 256
-      # vpc:
-      #   subnetIds:
-      #     - xxxxxxxxxxxxxxx
-      #     - xxxxxxxxxxxxxxx
-      #   securityGroupIds:
-      #     - xxxxxxxxxxxxxxx
-      #     - xxxxxxxxxxxxxxx
