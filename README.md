@@ -18,7 +18,7 @@ It's the greatest motivation to help many Swift and mobile application developer
 
 ### Deployment Engine
 
-* 0.x: fullscratch deployment with (aws-sdk-swift)[https://github.com/swift-aws/aws-sdk-swift]
+* 0.x: fullscratch deployment with [aws-sdk-swift](https://github.com/swift-aws/aws-sdk-swift)
 * 1.x or later: [serverless framework](https://serverless.com/)
 
 ## Plugins
