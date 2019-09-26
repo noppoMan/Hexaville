@@ -13,11 +13,11 @@ public struct Constant {
     ]
     
     public static var supportedSwiftVersionsRange: CountableClosedRange<Int> {
-        return 3...4
+        return 5...5
     }
     
     public static var defaultSwiftVersion: SwiftVersion {
-        return .release(Version(major: 4, minor: 2))
+        return .release(Version(major: 5, minor: 1))
     }
     
     public static let appPrefix = "hexaville"
