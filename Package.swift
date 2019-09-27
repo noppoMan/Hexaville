@@ -8,13 +8,11 @@ let package = Package(
         .executable(name: "hexaville", targets: ["Hexaville"])
     ],
     dependencies: [
-        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", .upToNextMajor(from: "5.0.0")),
         .package(url: "https://github.com/jakeheis/SwiftCLI.git", .upToNextMajor(from: "5.0.0")),
         .package(url: "https://github.com/jpsim/Yams.git", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
         .target(name: "HexavilleCore", dependencies: [
-            "SwiftyJSON",
             "SwiftCLI",
             "Yams"
         ]),

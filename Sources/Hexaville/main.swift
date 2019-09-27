@@ -5,7 +5,6 @@ import Darwin.C
 #endif
 
 import Foundation
-import SwiftyJSON
 import SwiftCLI
 import Yams
 import HexavilleCore
