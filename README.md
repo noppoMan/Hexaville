@@ -78,17 +78,17 @@ hexaville generate Hello --dest /path/to/your/app
 
 ### swift-tools-version
 You can specify swift-tools-version for the new project with `--swift-tools-version` option.
-Current default tool version is `4.0`
+Current default tool version is `5.1`
 
 If the tool version is higher than 3.1, layouts and definiations of `Package.swift` are refined.
 
 **e.g.**
 ```sh
-# swift.version will be 4.2
+# swift.version will be 5.1
 hexaville generate Hello
 
-# swift.version will be 3.1
-hexaville generate Hello --swift-tools-version 3.1
+# swift.version will be 5.0
+hexaville generate Hello --swift-tools-version 5.0
 
 # swift.version will be swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
 hexaville generate Hello --swift-tools-version swift-4.0-DEVELOPMENT-SNAPSHOT-2017-08-04-a
@@ -240,12 +240,12 @@ See: https://serverless.com/framework/docs/providers/aws/guide/functions#vpc-con
 
 You can configure swift versioning and build configuration in `swift` directive
 
-* default swift version is `4.2`
+* default swift version is `5.1`
 * default build configuration is `debug`
 
 ```yaml
 swift:
-  version: 4.2 #format should be major.minor.[patch] or valid SWIFT DEVELOPMENT-SNAPSHOT name
+  version: 5.1 #format should be major.minor.[patch] or valid SWIFT DEVELOPMENT-SNAPSHOT name
   buildOptions:
     configuration: release
 ```
