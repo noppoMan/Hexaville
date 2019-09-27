@@ -83,7 +83,7 @@ exports.handler = function(event, context, callback) {
 
   if(event.body && event.body !== "") {
     opts.push("--body");
-    opts.push(body);
+    opts.push(event.body);
   }
 
   const proc = spawn(`${__dirname}/{{executablePath}}`, opts, {
