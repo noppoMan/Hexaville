@@ -72,7 +72,7 @@ extension Version {
             throw VersionError.notEmpty
         }
         
-        var intCastedComponents: [Int] = try components.map({
+        let intCastedComponents: [Int] = try components.map({
             guard let int = Int($0) else {
                 throw VersionError.invalidVersion(string)
             }

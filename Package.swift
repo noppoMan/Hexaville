@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.1
 import PackageDescription
 
 let package = Package(
@@ -8,13 +8,11 @@ let package = Package(
         .executable(name: "hexaville", targets: ["Hexaville"])
     ],
     dependencies: [
-        .package(url: "https://github.com/IBM-Swift/SwiftyJSON.git", .upToNextMajor(from: "17.0.1")),
         .package(url: "https://github.com/jakeheis/SwiftCLI.git", .upToNextMajor(from: "5.0.0")),
-        .package(url: "https://github.com/jpsim/Yams.git", .upToNextMajor(from: "1.0.1"))
+        .package(url: "https://github.com/jpsim/Yams.git", .upToNextMajor(from: "2.0.0"))
     ],
     targets: [
         .target(name: "HexavilleCore", dependencies: [
-            "SwiftyJSON",
             "SwiftCLI",
             "Yams"
         ]),

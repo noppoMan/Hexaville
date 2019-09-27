@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="4.2"
+VERSION="5.1"
 
 # Determine OS
 UNAME=`uname`;

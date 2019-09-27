@@ -5,7 +5,6 @@ import Darwin.C
 #endif
 
 import Foundation
-import SwiftyJSON
 import SwiftCLI
 import Yams
 import HexavilleCore
@@ -33,7 +32,7 @@ class GenerateProject: Command {
     let name = "generate"
     let shortDescription  = "Generate initial project"
     let projectName = Parameter()
-    let swiftToolVersion = Key<String>("--swift-tools-version", description: "Major Swift Tool Version for this project. default is 4.2")
+    let swiftToolVersion = Key<String>("--swift-tools-version", description: "Major Swift Tool Version for this project. default is 5.1")
     let dest = Key<String>("-o", "--dest", description: "Destination for the project")
     
     private func resolveSwiftVersion() throws -> SwiftVersion {
@@ -133,7 +132,7 @@ class BuildCommand: Command {
             print("Your application package was successfully created at \(package.destination)")
             print("next step.")
             print("")
-            print("    serverless deploy --stage staging or production")
+            print("    serverless deploy --stage your-stage-name")
             print("")
             print("guide: https://serverless.com/framework/docs/providers/aws/guide/deploying/")
             print("###########################################################################")
