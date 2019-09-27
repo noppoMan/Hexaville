@@ -130,10 +130,26 @@ struct DockerBuildEnvironmentProvider: SwiftBuildEnvironmentProvider {
             ]
         #endif
         
-        _ = try Spawn(args: ["/usr/bin/env", "docker", "run"] + dockerRunOpts) {
-            print($0, separator: "", terminator: "")
+        do {
+            try self.spawnDocker(dockerRunOpts)
+        } catch SpawnError.terminatedWithStatus(let errorCode) {
+            switch errorCode {
+            case 256:
+                // retry swift build when get the rename error from CNIOBoringSSL
+                try self.spawnDocker(dockerRunOpts)
+            default:
+                throw SpawnError.terminatedWithStatus(errorCode)
+            }
+        } catch {
+            throw error
         }
         
         return BuildResult(destination: sharedDir+"/\(config.swift.buildMode)", dockerTag: tag)
+    }
+    
+    private func spawnDocker(_ dockerRunOpts: [String]) throws {
+        _ = try Spawn(args: ["/usr/bin/env", "docker", "run"] + dockerRunOpts) {
+            print($0, separator: "", terminator: "")
+        }
     }
 }
