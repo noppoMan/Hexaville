@@ -7,7 +7,15 @@ swift package update
 swift build -c ${BUILD_CONFIGURATION}
 
 # swift libraries
-rm $DEST/libicudataswift.so.61 $DEST/libicui18nswift.so.61 $DEST/libicuucswift.so.61
+if [ -f "$DEST/libicudataswift.so.61" ]; then
+    rm $DEST/libicudataswift.so.61
+fi
+if [ -f "$DEST/libicui18nswift.so.61" ]; then
+    rm $DEST/libicui18nswift.so.61
+fi
+if [ -f "$DEST/libicuucswift.so.61" ]; then
+    rm $DEST/libicuucswift.so.61
+fi
 cp -rL /${SWIFTFILE}/usr/lib/swift/linux/*.so $DEST
 mv $DEST/libicudataswift.so $DEST/libicudataswift.so.61
 mv $DEST/libicui18nswift.so $DEST/libicui18nswift.so.61
